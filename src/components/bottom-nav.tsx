@@ -23,9 +23,9 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-surface-container-lowest/95 shadow-[0_-10px_30px_rgb(15_107_79_/_0.08)] backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl border-t border-outline-variant/35 bg-surface-container-lowest/95 shadow-[0_-10px_30px_rgb(15_107_79_/_0.08)] backdrop-blur md:hidden"
     >
-      <div className="safe-bottom mx-auto flex h-[88px] w-full max-w-[720px] items-center justify-around px-4">
+      <div className="safe-bottom mx-auto flex h-[68px] w-full max-w-[720px] items-center justify-around px-4">
         {items.map((item) => {
           const Icon = item.icon;
           const active = item.section === activeSection;

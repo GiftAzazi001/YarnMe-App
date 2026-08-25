@@ -17,6 +17,7 @@ import {
   type NormalizedStoredAnalysis,
 } from "@/lib/analysis-normalization";
 import { devTestInputs } from "@/lib/dev-test-inputs";
+import { useYarnSettings } from "@/lib/settings";
 
 export type QAMessage = {
   id: string;
@@ -24,9 +25,21 @@ export type QAMessage = {
   answer: string;
 };
 
+export type SourceUploadInput = {
+  file: File;
+  kind: "image" | "pdf";
+  name: string;
+  mimeType: string;
+  size: number;
+};
+
+export type SourceImageInput = SourceUploadInput;
+
 interface YarnContextType {
   sourceText: string;
   setSourceText: (text: string) => void;
+  sourceImage: SourceUploadInput | null;
+  setSourceImage: (image: SourceUploadInput | null) => void;
   language: LanguageCode;
   setLanguage: (lang: LanguageCode) => void;
   isAnalyzing: boolean;
@@ -37,7 +50,11 @@ interface YarnContextType {
   qaHistory: QAMessage[];
   setQaHistory: React.Dispatch<React.SetStateAction<QAMessage[]>>;
   historyList: NormalizedStoredAnalysis[];
-  runAnalysis: (text?: string, lang?: LanguageCode) => Promise<boolean>;
+  runAnalysis: (
+    text?: string,
+    lang?: LanguageCode,
+    image?: SourceUploadInput | null,
+  ) => Promise<boolean>;
   switchLanguage: (newLang: LanguageCode) => Promise<boolean>;
   askQuestion: (question: string) => Promise<string | null>;
   resetAll: () => void;
@@ -48,7 +65,6 @@ const YarnContext = createContext<YarnContextType | null>(null);
 
 const STORAGE_RESULT_KEY = "yarnme:current-result";
 const STORAGE_HISTORY_KEY = "yarnme:history-list";
-const STORAGE_PREF_LANG = "yarnme:preferred-language";
 
 function safeStorageGet(key: string): string | null {
   if (typeof window === "undefined") return null;
@@ -74,8 +90,14 @@ function safeStorageSet(key: string, value: string) {
 }
 
 export function YarnProvider({ children }: { children: React.ReactNode }) {
+  const { settings, languageRevision } = useYarnSettings();
   const [sourceText, setSourceText] = useState("");
+  const [sourceImage, setSourceImage] = useState<SourceUploadInput | null>(null);
   const [language, setLanguage] = useState<LanguageCode>("simple-english");
+  const [lastAppliedDefaultLanguage, setLastAppliedDefaultLanguage] =
+    useState<LanguageCode>("simple-english");
+  const [lastAppliedLanguageRevision, setLastAppliedLanguageRevision] =
+    useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] =
     useState<NormalizedStoredAnalysis | null>(null);
@@ -86,11 +108,6 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
   // Initial load from storage on client mount
   useEffect(() => {
     try {
-      const savedLang = safeStorageGet(STORAGE_PREF_LANG) as LanguageCode | null;
-      if (savedLang && (savedLang === "simple-english" || savedLang === "pidgin" || savedLang === "hausa")) {
-        setLanguage(savedLang);
-      }
-
       const savedResultRaw = safeStorageGet(STORAGE_RESULT_KEY);
       if (savedResultRaw) {
         const parsed = JSON.parse(savedResultRaw);
@@ -98,6 +115,7 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
         if (normalized) {
           setAnalysisResult(normalized);
           setSourceText(normalized.sourceText || "");
+          setLanguage(normalized.language);
         }
       }
 
@@ -116,6 +134,39 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    const canApplyDefault =
+      !analysisResult && !isAnalyzing && !sourceText.trim() && !sourceImage;
+
+    if (!canApplyDefault) {
+      return;
+    }
+
+    const shouldApplyDefault =
+      languageRevision !== lastAppliedLanguageRevision ||
+      language === lastAppliedDefaultLanguage;
+
+    if (!shouldApplyDefault) {
+      return;
+    }
+
+    if (settings.language !== language) {
+      setLanguage(settings.language);
+    }
+    setLastAppliedDefaultLanguage(settings.language);
+    setLastAppliedLanguageRevision(languageRevision);
+  }, [
+    analysisResult,
+    isAnalyzing,
+    language,
+    lastAppliedDefaultLanguage,
+    lastAppliedLanguageRevision,
+    languageRevision,
+    settings.language,
+    sourceImage,
+    sourceText,
+  ]);
+
   const saveToHistory = useCallback((newResult: NormalizedStoredAnalysis) => {
     setHistoryList((prev) => {
       const filtered = prev.filter(
@@ -132,12 +183,18 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const runAnalysis = useCallback(
-    async (textToAnalyze?: string, targetLang?: LanguageCode): Promise<boolean> => {
+    async (
+      textToAnalyze?: string,
+      targetLang?: LanguageCode,
+      imageToAnalyze?: SourceUploadInput | null,
+    ): Promise<boolean> => {
       const activeText = (textToAnalyze ?? sourceText).trim();
       const activeLang = targetLang ?? language;
+      const activeImage =
+        typeof imageToAnalyze === "undefined" ? sourceImage : imageToAnalyze;
 
-      if (!activeText) {
-        setError("Please enter or paste your notice first.");
+      if (!activeText && !activeImage) {
+        setError("Please enter, paste, or upload your notice first.");
         return false;
       }
 
@@ -146,14 +203,24 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
       setQaHistory([]);
 
       try {
-        const res = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sourceText: activeText,
-            language: activeLang,
-          }),
-        });
+        const res = activeImage
+          ? await fetch("/api/analyze", {
+              method: "POST",
+              body: (() => {
+                const formData = new FormData();
+                formData.append("language", activeLang);
+                formData.append("file", activeImage.file, activeImage.name);
+                return formData;
+              })(),
+            })
+          : await fetch("/api/analyze", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                sourceText: activeText,
+                language: activeLang,
+              }),
+            });
 
         const data = await res.json().catch(() => null);
 
@@ -186,7 +253,8 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
         }
 
         setAnalysisResult(normalized);
-        setSourceText(activeText);
+        setSourceText(parsed.data.sourceText);
+        setSourceImage(activeImage ?? null);
         setLanguage(activeLang);
 
         safeStorageSet(STORAGE_RESULT_KEY, JSON.stringify(normalized));
@@ -201,7 +269,7 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
     },
-    [sourceText, language, saveToHistory],
+    [sourceText, sourceImage, language, saveToHistory],
   );
 
   const switchLanguage = useCallback(
@@ -210,10 +278,9 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
       if (analysisResult.language === newLang) return true;
 
       setLanguage(newLang);
-      safeStorageSet(STORAGE_PREF_LANG, newLang);
-      return runAnalysis(analysisResult.sourceText, newLang);
+      return runAnalysis(analysisResult.sourceText, newLang, sourceImage);
     },
-    [analysisResult, runAnalysis],
+    [analysisResult, runAnalysis, sourceImage],
   );
 
   const askQuestion = useCallback(
@@ -221,16 +288,29 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
       if (!analysisResult || !question.trim()) return null;
 
       try {
-        const res = await fetch("/api/ask", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sourceText: analysisResult.sourceText,
-            language: analysisResult.language,
-            question: question.trim(),
-            meaning: analysisResult.analysis.meaning,
-          }),
-        });
+        const res = sourceImage
+          ? await fetch("/api/ask", {
+              method: "POST",
+              body: (() => {
+                const formData = new FormData();
+                formData.append("sourceText", analysisResult.sourceText);
+                formData.append("language", analysisResult.language);
+                formData.append("question", question.trim());
+                formData.append("meaning", analysisResult.analysis.meaning);
+                formData.append("file", sourceImage.file, sourceImage.name);
+                return formData;
+              })(),
+            })
+          : await fetch("/api/ask", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                sourceText: analysisResult.sourceText,
+                language: analysisResult.language,
+                question: question.trim(),
+                meaning: analysisResult.analysis.meaning,
+              }),
+            });
 
         const data = await res.json().catch(() => null);
         if (res.ok && data?.answer) {
@@ -248,12 +328,16 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
     },
-    [analysisResult],
+    [analysisResult, sourceImage],
   );
 
   const resetAll = useCallback(() => {
     setAnalysisResult(null);
     setSourceText("");
+    setSourceImage(null);
+    setLanguage(settings.language);
+    setLastAppliedDefaultLanguage(settings.language);
+    setLastAppliedLanguageRevision(languageRevision);
     setError(null);
     setQaHistory([]);
     try {
@@ -262,15 +346,21 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
         window.localStorage?.removeItem(STORAGE_RESULT_KEY);
       }
     } catch {}
-  }, []);
+  }, [settings.language, languageRevision]);
 
   const loadSample = useCallback(
     (index: number = 0) => {
       const sample = devTestInputs[index] || devTestInputs[0];
+      setAnalysisResult(null);
       setSourceText(sample.text);
+      setSourceImage(null);
+      setLanguage(settings.language);
+      setLastAppliedDefaultLanguage(settings.language);
+      setLastAppliedLanguageRevision(languageRevision);
       setError(null);
+      setQaHistory([]);
     },
-    [],
+    [settings.language, languageRevision],
   );
 
   return (
@@ -278,11 +368,10 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
       value={{
         sourceText,
         setSourceText,
+        sourceImage,
+        setSourceImage,
         language,
-        setLanguage: (lang) => {
-          setLanguage(lang);
-          safeStorageSet(STORAGE_PREF_LANG, lang);
-        },
+        setLanguage,
         isAnalyzing,
         analysisResult,
         setAnalysisResult,

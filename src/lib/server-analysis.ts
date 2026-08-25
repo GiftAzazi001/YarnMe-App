@@ -1,14 +1,19 @@
-import { GoogleGenAI, type GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, type ContentListUnion } from "@google/genai";
 import { z } from "zod";
 import {
   analysisJsonSchema,
   analysisResultSchema,
   analyzeRequestSchema,
   analyzeResponseSchema,
+  IMAGE_UPLOAD_MAX_BYTES,
   languageNames,
   languageSchema,
+  PDF_UPLOAD_MAX_BYTES,
+  PDF_UPLOAD_MAX_PAGES,
+  supportedPdfMimeTypes,
   type AnalysisResult,
   type LanguageCode,
+  type SupportedUploadMimeType,
 } from "@/lib/analysis";
 import {
   getGeminiModelConfig,
@@ -119,6 +124,54 @@ type GeminiAttemptOptions = {
   modelRole: Exclude<GeminiModelRole, "advanced">;
 };
 
+type SourceFileKind = "image" | "pdf";
+
+type SourceFileAnalyzeInput = {
+  data: string;
+  fileName: string;
+  kind: SourceFileKind;
+  mimeType: SupportedUploadMimeType;
+  size: number;
+};
+
+type AnalyzeInput =
+  | {
+      kind: "text";
+      sourceText: string;
+    }
+  | {
+      kind: "file";
+      file: SourceFileAnalyzeInput;
+    };
+
+type ParsedGeminiAnalysis = {
+  analysis: AnalysisResult;
+  sourceText: string;
+};
+
+const fileAnalysisResultSchema = z
+  .object({
+    visibleText: z.string().trim().min(1),
+    analysis: analysisResultSchema,
+  })
+  .strict();
+
+const fileAnalysisJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    visibleText: {
+      type: "string",
+      minLength: 1,
+      description:
+        "The exact readable text visible or extractable from the uploaded source file, preserving line breaks where useful. If text is unreadable, blurry, obscured, cut off, or missing from a PDF page, say exactly that instead of guessing.",
+    },
+    analysis: analysisJsonSchema,
+  },
+  required: ["visibleText", "analysis"],
+  propertyOrdering: ["visibleText", "analysis"],
+};
+
 function getGeminiApiKey(): string | undefined {
   return (
     process.env.GEMINI_API_KEY?.trim() ||
@@ -183,6 +236,76 @@ ${sourceText}
 """`;
 }
 
+function buildImagePrompt(fileName: string, language: LanguageCode) {
+  const selectedLangName = languageNames[language];
+  return `You are YarnMe, an assistant that explains confusing Nigerian official notices in plain, everyday language.
+
+The user has selected: ${selectedLangName}
+
+The user uploaded an image named "${fileName}". The image may be a notice, flyer, screenshot, announcement, or photographed document.
+
+Read ONLY the text and information that is visible in the attached image. Then explain and translate the visible information ENTIRELY in ${selectedLangName}.
+Do not mix in English words or sentences, except for proper nouns (names of places, institutions, documents, or official terms with no direct translation).
+
+Return valid JSON with:
+1. visibleText: the exact readable text you can see in the image. Preserve line breaks where useful. If text is blurry, cropped, obscured, unreadable, or incomplete, say that directly in visibleText instead of guessing.
+2. analysis: the same YarnMe structured analysis fields used for text notices.
+
+Image source-grounding rules:
+- Use the attached image as the source of truth.
+- Only use information visible in the image. Never add information not visible.
+- Never complete blurry, cropped, obscured, or cut-off words, sentences, amounts, dates, URLs, document names, eligibility requirements, or common institutional wording.
+- If a line is cut off or unreadable, put the exact visible fragment in uncertainties.text and explain why it cannot be safely interpreted in uncertainties.reason.
+- If any part of the image cannot be read reliably, add a sourceLimitations item explaining that the uploaded image is blurry, cropped, obscured, unreadable, or incomplete.
+- If the image does not contain a readable notice, say so honestly in ${selectedLangName}; keep arrays empty unless something is clearly visible.
+
+Core Rules:
+- Explain rather than merely translate.
+- Preserve the meaning of the visible source.
+- Extract only actions, eligibility, documents, payments, dates, and warnings that are directly visible in the image.
+- Return empty arrays when something is not present or not readable.
+- Complete your full response in ${selectedLangName} from start to finish. Do not truncate or leave any section unfinished.
+
+Target Language: ${selectedLangName}.
+ALL EXPLANATORY AND EXTRACTED STRING FIELDS IN analysis MUST BE IN ${selectedLangName.toUpperCase()}.
+${languageInstructions[language]}`;
+}
+
+function buildPdfPrompt(fileName: string, language: LanguageCode) {
+  const selectedLangName = languageNames[language];
+  return `You are YarnMe, an assistant that explains confusing Nigerian official notices in plain, everyday language.
+
+The user has selected: ${selectedLangName}
+
+The user uploaded a PDF named "${fileName}". The PDF may be a notice, flyer, announcement, form, or scanned document.
+
+Read ONLY the text and information that is clearly present in the attached PDF. Then explain and translate the readable information ENTIRELY in ${selectedLangName}.
+Do not mix in English words or sentences, except for proper nouns (names of places, institutions, documents, or official terms with no direct translation).
+
+Return valid JSON with:
+1. visibleText: the exact readable text you can reliably read from the PDF. Preserve page breaks and line breaks where useful. If a page, scan, sentence, table, amount, date, URL, or instruction is blurry, missing, cut off, obscured, unreadable, or incomplete, say that directly in visibleText instead of guessing.
+2. analysis: the same YarnMe structured analysis fields used for text notices.
+
+PDF source-grounding rules:
+- Use the attached PDF as the source of truth.
+- Only use information clearly present in the PDF. Never add information not present.
+- Never complete missing pages, unreadable scans, cut-off text, unclear tables, incomplete sentences, amounts, dates, URLs, document names, eligibility requirements, or common institutional wording.
+- If a passage is cut off, unreadable, missing, or unclear, put the exact readable fragment in uncertainties.text and explain why it cannot be safely interpreted in uncertainties.reason.
+- If any page or section cannot be read reliably, add a sourceLimitations item explaining that the uploaded PDF has missing, cut-off, obscured, scanned, unreadable, or incomplete information.
+- If the PDF does not contain a readable notice, say so honestly in ${selectedLangName}; keep arrays empty unless something is clearly present.
+
+Core Rules:
+- Explain rather than merely translate.
+- Preserve the meaning of the readable source.
+- Extract only actions, eligibility, documents, payments, dates, and warnings that are directly present in the PDF.
+- Return empty arrays when something is not present or not readable.
+- Complete your full response in ${selectedLangName} from start to finish. Do not truncate or leave any section unfinished.
+
+Target Language: ${selectedLangName}.
+ALL EXPLANATORY AND EXTRACTED STRING FIELDS IN analysis MUST BE IN ${selectedLangName.toUpperCase()}.
+${languageInstructions[language]}`;
+}
+
 export const askRequestSchema = z.object({
   sourceText: z.string().trim().min(1, "Source text is required."),
   language: languageSchema,
@@ -210,6 +333,66 @@ Instructions:
 - Answer the user's question directly, clearly, and concisely in ${languageNames[language]}.
 - Keep the answer strictly grounded in the source text. Do not invent details not present in the source.
 - If the source text does not contain the answer, politely state in ${languageNames[language]} that the provided text does not mention this detail.
+- Keep the response friendly, respectful, and easy to understand.
+- Return ONLY the answer as plain text.`;
+}
+
+function buildImageAskPrompt(
+  sourceText: string,
+  question: string,
+  language: LanguageCode,
+  fileName: string,
+  meaning?: string,
+) {
+  return `You are YarnMe, a helpful assistant answering a question about an uploaded notice image for a Nigerian user.
+
+The uploaded image is named "${fileName}" and is attached to this request.
+
+Visible text/transcript from the earlier image analysis:
+"""
+${sourceText}
+"""
+${meaning ? `Existing explanation: "${meaning}"` : ""}
+
+User question: "${question}"
+Target Language: ${languageNames[language]}.
+
+Instructions:
+- Answer the user's question directly, clearly, and concisely in ${languageNames[language]}.
+- Use the attached image as the source of truth. The transcript above may be incomplete.
+- Keep the answer strictly grounded in what is visible in the image or already captured in the visible text/transcript.
+- Do not invent details not visible in the uploaded image.
+- If the image is blurry, cut off, obscured, unreadable, or does not contain the answer, politely say in ${languageNames[language]} that the provided image does not show this detail clearly.
+- Keep the response friendly, respectful, and easy to understand.
+- Return ONLY the answer as plain text.`;
+}
+
+function buildPdfAskPrompt(
+  sourceText: string,
+  question: string,
+  language: LanguageCode,
+  fileName: string,
+  meaning?: string,
+) {
+  return `You are YarnMe, a helpful assistant answering a question about an uploaded PDF notice for a Nigerian user.
+
+The uploaded PDF is named "${fileName}" and is attached to this request.
+
+Readable text/transcript from the earlier PDF analysis:
+"""
+${sourceText}
+"""
+${meaning ? `Existing explanation: "${meaning}"` : ""}
+
+User question: "${question}"
+Target Language: ${languageNames[language]}.
+
+Instructions:
+- Answer the user's question directly, clearly, and concisely in ${languageNames[language]}.
+- Use the attached PDF as the source of truth. The transcript above may be incomplete.
+- Keep the answer strictly grounded in what is present in the PDF or already captured in the readable text/transcript.
+- Do not invent details not present in the uploaded PDF.
+- If the PDF is missing pages, scanned unclearly, cut off, obscured, unreadable, or does not contain the answer, politely say in ${languageNames[language]} that the provided PDF does not give that information clearly.
 - Keep the response friendly, respectful, and easy to understand.
 - Return ONLY the answer as plain text.`;
 }
@@ -568,10 +751,63 @@ function mapGeminiFailureStatus(info: GeminiErrorInfo) {
   }
 }
 
+function buildAnalysisContents(
+  input: AnalyzeInput,
+  language: LanguageCode,
+): ContentListUnion {
+  if (input.kind === "text") {
+    return buildPrompt(input.sourceText, language);
+  }
+
+  const prompt =
+    input.file.kind === "pdf"
+      ? buildPdfPrompt(input.file.fileName, language)
+      : buildImagePrompt(input.file.fileName, language);
+
+  return [
+    { text: prompt },
+    {
+      inlineData: {
+        data: input.file.data,
+        mimeType: input.file.mimeType,
+      },
+    },
+  ];
+}
+
+function parseGeminiAnalysis(
+  input: AnalyzeInput,
+  aiJson: unknown,
+): ParsedGeminiAnalysis | null {
+  if (input.kind === "text") {
+    const parsedAnalysis = analysisResultSchema.safeParse(aiJson);
+    if (!parsedAnalysis.success) return null;
+    return {
+      analysis: parsedAnalysis.data,
+      sourceText: input.sourceText,
+    };
+  }
+
+  const parsedFileAnalysis = fileAnalysisResultSchema.safeParse(aiJson);
+  if (!parsedFileAnalysis.success) return null;
+  const sourceLabel = input.file.kind === "pdf" ? "PDF" : "image";
+  return {
+    analysis: parsedFileAnalysis.data.analysis,
+    sourceText: [
+      `[Uploaded ${sourceLabel}: ${input.file.fileName}]`,
+      parsedFileAnalysis.data.visibleText,
+    ].join("\n"),
+  };
+}
+
+function getResponseJsonSchema(input: AnalyzeInput) {
+  return input.kind === "file" ? fileAnalysisJsonSchema : analysisJsonSchema;
+}
+
 async function generateGeminiContent(
   ai: GoogleGenAI,
   model: string,
-  sourceText: string,
+  input: AnalyzeInput,
   language: LanguageCode,
   options: GeminiAttemptOptions,
 ) {
@@ -581,11 +817,11 @@ async function generateGeminiContent(
   try {
     return await ai.models.generateContent({
       model,
-      contents: buildPrompt(sourceText, language),
+      contents: buildAnalysisContents(input, language),
       config: {
         abortSignal: controller.signal,
         responseMimeType: "application/json",
-        responseJsonSchema: analysisJsonSchema,
+        responseJsonSchema: getResponseJsonSchema(input),
         temperature: 0.1,
       },
     });
@@ -598,28 +834,13 @@ async function generateGeminiContent(
   }
 }
 
-export async function handleAnalyzeRequest(body: unknown): Promise<{
+async function runGeminiAnalysis(
+  input: AnalyzeInput,
+  language: LanguageCode,
+): Promise<{
   status: number;
   data: unknown;
 }> {
-  const parsedRequest = analyzeRequestSchema.safeParse(body);
-  if (!parsedRequest.success) {
-    const firstIssue = parsedRequest.error.issues[0];
-    if (firstIssue?.path[0] === "language") {
-      return {
-        status: 400,
-        data: { error: "Choose Simple English, Pidgin, or Hausa." },
-      };
-    }
-    return {
-      status: 400,
-      data: {
-        error:
-          firstIssue?.message || "Paste some text first so YarnMe can explain it.",
-      },
-    };
-  }
-
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
     return {
@@ -633,7 +854,6 @@ export async function handleAnalyzeRequest(body: unknown): Promise<{
   }
 
   const models = getGeminiModelConfig();
-  const { sourceText, language } = parsedRequest.data;
   const ai = getGeminiClient();
 
   const candidateModels = Array.from(
@@ -650,6 +870,7 @@ export async function handleAnalyzeRequest(body: unknown): Promise<{
   let lastError: unknown = null;
   let successfulResponse: {
     analysis: AnalysisResult;
+    sourceText: string;
     model: string;
   } | null = null;
 
@@ -661,7 +882,7 @@ export async function handleAnalyzeRequest(body: unknown): Promise<{
       const geminiResponse = await generateGeminiContent(
         ai,
         currentModel,
-        sourceText,
+        input,
         language,
         { modelRole: role },
       );
@@ -678,13 +899,14 @@ export async function handleAnalyzeRequest(body: unknown): Promise<{
         continue;
       }
 
-      const parsedAnalysis = analysisResultSchema.safeParse(aiJson);
-      if (!parsedAnalysis.success) {
+      const parsedAnalysis = parseGeminiAnalysis(input, aiJson);
+      if (!parsedAnalysis) {
         continue;
       }
 
       successfulResponse = {
-        analysis: parsedAnalysis.data,
+        analysis: parsedAnalysis.analysis,
+        sourceText: parsedAnalysis.sourceText,
         model: currentModel,
       };
       break;
@@ -731,14 +953,14 @@ export async function handleAnalyzeRequest(body: unknown): Promise<{
 
   const groundedAnalysis = applyIncompleteSourceSafeguards(
     successfulResponse.analysis,
-    sourceText,
+    successfulResponse.sourceText,
     language,
   );
 
   const response = analyzeResponseSchema.parse({
     analysis: groundedAnalysis,
     language,
-    sourceText,
+    sourceText: successfulResponse.sourceText,
     model: successfulResponse.model,
   });
 
@@ -746,6 +968,198 @@ export async function handleAnalyzeRequest(body: unknown): Promise<{
     status: 200,
     data: response,
   };
+}
+
+export async function handleAnalyzeRequest(body: unknown): Promise<{
+  status: number;
+  data: unknown;
+}> {
+  const parsedRequest = analyzeRequestSchema.safeParse(body);
+  if (!parsedRequest.success) {
+    const firstIssue = parsedRequest.error.issues[0];
+    if (firstIssue?.path[0] === "language") {
+      return {
+        status: 400,
+        data: { error: "Choose Simple English, Pidgin, or Hausa." },
+      };
+    }
+    return {
+      status: 400,
+      data: {
+        error:
+          firstIssue?.message || "Paste some text first so YarnMe can explain it.",
+      },
+    };
+  }
+
+  const { sourceText, language } = parsedRequest.data;
+  return runGeminiAnalysis({ kind: "text", sourceText }, language);
+}
+
+function getUploadDetails(file: File):
+  | {
+      kind: SourceFileKind;
+      mimeType: SupportedUploadMimeType;
+      maxBytes: number;
+    }
+  | null {
+  const extension = file.name.split(".").pop()?.toLowerCase();
+  const mimeType = file.type.trim().toLowerCase();
+  const pdfMimeTypes = supportedPdfMimeTypes as readonly string[];
+  const hasNoMimeType = mimeType.length === 0;
+
+  if (extension === "png") {
+    if (!hasNoMimeType && mimeType !== "image/png") return null;
+    return {
+      kind: "image",
+      mimeType: "image/png",
+      maxBytes: IMAGE_UPLOAD_MAX_BYTES,
+    };
+  }
+  if (extension === "jpg" || extension === "jpeg") {
+    if (!hasNoMimeType && mimeType !== "image/jpeg" && mimeType !== "image/jpg") {
+      return null;
+    }
+    return {
+      kind: "image",
+      mimeType: "image/jpeg",
+      maxBytes: IMAGE_UPLOAD_MAX_BYTES,
+    };
+  }
+  if (extension === "webp") {
+    if (!hasNoMimeType && mimeType !== "image/webp") return null;
+    return {
+      kind: "image",
+      mimeType: "image/webp",
+      maxBytes: IMAGE_UPLOAD_MAX_BYTES,
+    };
+  }
+  if (extension === "pdf") {
+    if (!hasNoMimeType && !pdfMimeTypes.includes(mimeType)) return null;
+    return {
+      kind: "pdf",
+      mimeType: "application/pdf",
+      maxBytes: PDF_UPLOAD_MAX_BYTES,
+    };
+  }
+  return null;
+}
+
+function getUploadFile(formData: FormData) {
+  return formData.get("file") ?? formData.get("image");
+}
+
+function formatUploadLimit(bytes = IMAGE_UPLOAD_MAX_BYTES) {
+  return `${Math.floor(bytes / (1024 * 1024))}MB`;
+}
+
+function estimatePdfPageCount(buffer: Buffer) {
+  const pdfText = buffer.toString("latin1");
+  return pdfText.match(/\/Type\s*\/Page\b/g)?.length ?? null;
+}
+
+function validatePdfPageLimit(
+  uploadDetails: { kind: SourceFileKind },
+  buffer: Buffer,
+):
+  | {
+      status: number;
+      data: unknown;
+    }
+  | null {
+  if (uploadDetails.kind !== "pdf") return null;
+  const pageCount = estimatePdfPageCount(buffer);
+  if (pageCount !== null && pageCount > PDF_UPLOAD_MAX_PAGES) {
+    return {
+      status: 413,
+      data: {
+        error: `This PDF has about ${pageCount} pages. Please upload a PDF with ${PDF_UPLOAD_MAX_PAGES} pages or fewer.`,
+      },
+    };
+  }
+  return null;
+}
+
+function supportedUploadMessage() {
+  return "YarnMe can read PNG, JPG, JPEG, WEBP, and PDF files for now.";
+}
+
+export async function handleAnalyzeUploadFormData(
+  formData: FormData,
+): Promise<{
+  status: number;
+  data: unknown;
+}> {
+  const parsedLanguage = languageSchema.safeParse(formData.get("language"));
+  if (!parsedLanguage.success) {
+    return {
+      status: 400,
+      data: { error: "Choose Simple English, Pidgin, or Hausa." },
+    };
+  }
+
+  const uploadValue = getUploadFile(formData);
+  if (!(uploadValue instanceof File)) {
+    return {
+      status: 400,
+      data: { error: "Choose an image or PDF file for YarnMe to read." },
+    };
+  }
+
+  if (uploadValue.size <= 0) {
+    return {
+      status: 400,
+      data: { error: "This file could not be read. Please choose another file." },
+    };
+  }
+
+  const uploadDetails = getUploadDetails(uploadValue);
+  if (!uploadDetails) {
+    return {
+      status: 415,
+      data: {
+        error: supportedUploadMessage(),
+      },
+    };
+  }
+
+  if (uploadValue.size > uploadDetails.maxBytes) {
+    return {
+      status: 413,
+      data: {
+        error: `This file is too large. Please upload a PNG, JPG, JPEG, WEBP, or PDF file under ${formatUploadLimit(uploadDetails.maxBytes)}.`,
+      },
+    };
+  }
+
+  let buffer: Buffer;
+  try {
+    buffer = Buffer.from(await uploadValue.arrayBuffer());
+  } catch {
+    return {
+      status: 400,
+      data: { error: "This file could not be read. Please choose another file." },
+    };
+  }
+
+  const pageLimitError = validatePdfPageLimit(uploadDetails, buffer);
+  if (pageLimitError) return pageLimitError;
+
+  const data = buffer.toString("base64");
+
+  return runGeminiAnalysis(
+    {
+      kind: "file",
+      file: {
+        data,
+        fileName: uploadValue.name || `uploaded-${uploadDetails.kind}`,
+        kind: uploadDetails.kind,
+        mimeType: uploadDetails.mimeType,
+        size: uploadValue.size,
+      },
+    },
+    parsedLanguage.data,
+  );
 }
 
 export async function handleAskRequest(body: unknown): Promise<{
@@ -806,7 +1220,171 @@ export async function handleAskRequest(body: unknown): Promise<{
         };
       }
     } catch (err) {
-      console.warn(`[YarnMe] Ask attempt with model ${currentModel} failed:`, err);
+      logGeminiError(
+        extractGeminiErrorInfo(err),
+        currentModel,
+        currentModel === models.primary ? "primary" : "fallback",
+      );
+    }
+  }
+
+  return {
+    status: 502,
+    data: { error: "Could not generate an answer right now. Please try again." },
+  };
+}
+
+export async function handleAskUploadFormData(formData: FormData): Promise<{
+  status: number;
+  data: unknown;
+}> {
+  const parsedLanguage = languageSchema.safeParse(formData.get("language"));
+  const sourceTextValue = formData.get("sourceText");
+  const questionValue = formData.get("question");
+  const meaningValue = formData.get("meaning");
+
+  if (!parsedLanguage.success) {
+    return {
+      status: 400,
+      data: { error: "Choose Simple English, Pidgin, or Hausa." },
+    };
+  }
+
+  const sourceText = typeof sourceTextValue === "string" ? sourceTextValue.trim() : "";
+  const question = typeof questionValue === "string" ? questionValue.trim() : "";
+  const meaning = typeof meaningValue === "string" ? meaningValue.trim() : undefined;
+
+  if (!sourceText || !question) {
+    return {
+      status: 400,
+      data: { error: "Invalid question request." },
+    };
+  }
+
+  const uploadValue = getUploadFile(formData);
+  if (!(uploadValue instanceof File)) {
+    return {
+      status: 400,
+      data: { error: "The uploaded file is no longer available for this question." },
+    };
+  }
+
+  if (uploadValue.size <= 0) {
+    return {
+      status: 400,
+      data: { error: "This file could not be read. Please upload it again." },
+    };
+  }
+
+  const uploadDetails = getUploadDetails(uploadValue);
+  if (!uploadDetails) {
+    return {
+      status: 415,
+      data: {
+        error: supportedUploadMessage(),
+      },
+    };
+  }
+
+  if (uploadValue.size > uploadDetails.maxBytes) {
+    return {
+      status: 413,
+      data: {
+        error: `This file is too large. Please upload a PNG, JPG, JPEG, WEBP, or PDF file under ${formatUploadLimit(uploadDetails.maxBytes)}.`,
+      },
+    };
+  }
+
+  let buffer: Buffer;
+  try {
+    buffer = Buffer.from(await uploadValue.arrayBuffer());
+  } catch {
+    return {
+      status: 400,
+      data: { error: "This file could not be read. Please upload it again." },
+    };
+  }
+
+  const pageLimitError = validatePdfPageLimit(uploadDetails, buffer);
+  if (pageLimitError) return pageLimitError;
+
+  const data = buffer.toString("base64");
+
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) {
+    return {
+      status: 500,
+      data: {
+        error: "Gemini is not configured",
+        details:
+          "Missing GEMINI_API_KEY. Please configure GEMINI_API_KEY in your deployment environment variables or Settings > Secrets.",
+      },
+    };
+  }
+
+  const models = getGeminiModelConfig();
+  const ai = getGeminiClient();
+  const candidateModels = Array.from(
+    new Set([
+      "gemini-3.1-flash-lite",
+      models.primary,
+      models.fallback,
+      "gemini-flash-latest",
+      models.advanced,
+      "gemini-3.7-flash",
+    ]),
+  ).filter((m): m is string => typeof m === "string" && m.startsWith("gemini-"));
+
+  for (const currentModel of candidateModels) {
+    try {
+      const prompt =
+        uploadDetails.kind === "pdf"
+          ? buildPdfAskPrompt(
+              sourceText,
+              question,
+              parsedLanguage.data,
+              uploadValue.name || "uploaded-pdf",
+              meaning,
+            )
+          : buildImageAskPrompt(
+              sourceText,
+              question,
+              parsedLanguage.data,
+              uploadValue.name || "uploaded-image",
+              meaning,
+            );
+
+      const response = await ai.models.generateContent({
+        model: currentModel,
+        contents: [
+          {
+            text: prompt,
+          },
+          {
+            inlineData: {
+              data,
+              mimeType: uploadDetails.mimeType,
+            },
+          },
+        ],
+        config: {
+          temperature: 0.2,
+        },
+      });
+
+      const answer = response.text?.trim();
+      if (answer) {
+        return {
+          status: 200,
+          data: { answer },
+        };
+      }
+    } catch (err) {
+      logGeminiError(
+        extractGeminiErrorInfo(err),
+        currentModel,
+        currentModel === models.primary ? "primary" : "fallback",
+      );
     }
   }
 

@@ -59,6 +59,8 @@
 :root {
   color-scheme: light;
   background: #f8f9ff;
+  --yarnme-reading-size: 1rem;
+  --yarnme-reading-line-height: 1.625;
 }
 
 * {
@@ -173,6 +175,31 @@ button {
   font-weight: 400;
 }
 
+[data-text-size="small"] {
+  --yarnme-reading-size: 0.9375rem;
+  --yarnme-reading-line-height: 1.6;
+}
+
+[data-text-size="medium"] {
+  --yarnme-reading-size: 1rem;
+  --yarnme-reading-line-height: 1.625;
+}
+
+[data-text-size="large"] {
+  --yarnme-reading-size: 1.125rem;
+  --yarnme-reading-line-height: 1.65;
+}
+
+.yarnme-readable main :where(.text-body-lg, .text-body-md, .text-body-sm, textarea, blockquote, li):not(:where(button, button *, a, a *, nav, nav *)) {
+  font-size: var(--yarnme-reading-size);
+  line-height: var(--yarnme-reading-line-height);
+}
+
+.yarnme-reading-title {
+  font-size: calc(var(--yarnme-reading-size) + 0.25rem);
+  line-height: 1.45;
+}
+
 .touch-target {
   min-height: 48px;
   min-width: 48px;
@@ -225,18 +252,12 @@ button {
   }
 }
 
-.progress-ring-circle {
-  stroke-dasharray: 283;
-  stroke-dashoffset: 283;
-  animation: progress-fill 3.8s ease-in-out infinite;
-}
-
-@keyframes progress-fill {
-  0% {
-    stroke-dashoffset: 283;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-  70%,
-  100% {
-    stroke-dashoffset: 0;
+
+  .ambient-pulse {
+    animation: none;
   }
 }

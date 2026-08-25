@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { BottomNav } from "@/components/bottom-nav";
 import { Logo } from "@/components/logo";
-import { FileText, History, MessageSquare, Settings } from "lucide-react";
+import { History, MessageSquare, Settings } from "lucide-react";
 import { Link, usePathname } from "@/lib/navigation";
 
 type AppShellProps = {
@@ -28,31 +28,21 @@ export function AppShell({
       : "yarn";
 
   return (
-    <div className={`min-h-dvh pb-[112px] lg:pb-0 ${shellBackground}`}>
+    <div className={`min-h-dvh pb-[96px] md:pb-0 ${shellBackground}`}>
       {header !== "none" ? (
         <header className="sticky top-0 z-40 w-full bg-surface-container-lowest/92 backdrop-blur">
-          <div className="mx-auto flex w-full max-w-[1180px] items-center justify-between px-container-margin py-sm lg:h-[72px] lg:px-lg">
-            <div className="hidden lg:block">
-              <Link
-                href="/"
-                aria-label="YarnMe home"
-                className="inline-flex items-center"
-              >
-                <Logo compact={header === "compact"} />
-              </Link>
-            </div>
-
+          <div className="mx-auto flex h-[66px] w-full max-w-[1180px] items-center justify-start px-container-margin md:h-[76px] md:justify-between md:px-lg">
             <Link
               href="/"
               aria-label="YarnMe home"
-              className="touch-target flex items-center justify-start text-primary lg:hidden"
+              className="touch-target inline-flex items-center justify-start text-primary"
             >
-              <Logo />
+              <Logo compact={header === "compact"} />
             </Link>
 
             <nav
               aria-label="Primary"
-              className="hidden items-center gap-xl text-label-lg font-bold lg:flex"
+              className="hidden items-center gap-md text-label-lg font-bold md:flex lg:gap-xl"
             >
               {[
                 { href: "/", label: "Yarn", icon: MessageSquare, section: "yarn" },
@@ -74,20 +64,12 @@ export function AppShell({
                     ].join(" ")}
                     aria-current={active ? "page" : undefined}
                   >
-                    <Icon aria-hidden="true" size={28} strokeWidth={2.4} />
+                    <Icon aria-hidden="true" size={24} strokeWidth={2.4} />
                     <span>{item.label}</span>
                   </Link>
                 );
               })}
             </nav>
-
-            <Link
-              href="/history"
-              aria-label="History"
-              className="touch-target flex items-center justify-end text-primary"
-            >
-              <FileText aria-hidden="true" size={32} strokeWidth={2.4} />
-            </Link>
           </div>
         </header>
       ) : null}

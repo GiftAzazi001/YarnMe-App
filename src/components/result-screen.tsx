@@ -20,6 +20,8 @@ import {
   Loader2,
   MessageSquarePlus,
   Pause,
+  Play,
+  RotateCcw,
   Send,
   ShieldCheck,
   Sparkles,
@@ -32,7 +34,6 @@ import { Button } from "@/components/ui";
 import { type LanguageCode } from "@/lib/analysis";
 import { type NormalizedAnalysis } from "@/lib/analysis-normalization";
 import { useYarnContext } from "@/lib/yarn-context";
-import { devTestInputs } from "@/lib/dev-test-inputs";
 
 const languageLabels: Record<LanguageCode, string> = {
   "simple-english": "Simple English",
@@ -40,56 +41,74 @@ const languageLabels: Record<LanguageCode, string> = {
   hausa: "Hausa",
 };
 
-const copy: Record<
-  LanguageCode,
-  {
-    languageName: string;
-    resultTitle: string;
-    listen: string;
-    stop: string;
-    meaning: string;
-    audience: string;
-    eligibility: string;
-    importantDate: string;
-    warnings: string;
-    actions: string;
-    documents: string;
-    legacyRequirements: string;
-    payments: string;
-    paymentAmount: string;
-    paymentPurpose: string;
-    paymentWhen: string;
-    paymentWho: string;
-    notStated: string;
-    timeline: string;
-    cost: string;
-    reliability: string;
-    noPayments: string;
-    sourceClear: string;
-    clear: string;
-    clearBody: string;
-    needsReview: string;
-    understood: string;
-    reviewTitle: string;
-    reviewBody: string;
-    reviewCta: string;
-    sourceLimitations: string;
-    incompleteWarning: string;
-    original: string;
-    copyBtn: string;
-    questionTitle: string;
-    questionBody: string;
-    questionPlaceholder: string;
-    questionOne: string;
-    questionTwo: string;
-    newYarn: string;
-  }
-> = {
+type ResultCopy = {
+  languageName: string;
+  resultTitle: string;
+  listen: string;
+  loadingAudio: string;
+  pause: string;
+  resume: string;
+  replay: string;
+  audioUnavailable: string;
+  meaning: string;
+  audience: string;
+  eligibility: string;
+  importantDate: string;
+  warnings: string;
+  actions: string;
+  documents: string;
+  legacyRequirements: string;
+  payments: string;
+  paymentAmount: string;
+  paymentPurpose: string;
+  paymentWhen: string;
+  paymentWho: string;
+  notStated: string;
+  timeline: string;
+  cost: string;
+  reliability: string;
+  noPayments: string;
+  sourceClear: string;
+  clear: string;
+  clearBody: string;
+  needsReview: string;
+  understood: string;
+  reviewTitle: string;
+  reviewBody: string;
+  reviewCta: string;
+  sourceLimitations: string;
+  incompleteWarning: string;
+  original: string;
+  copyBtn: string;
+  questionTitle: string;
+  questionBody: string;
+  questionPlaceholder: string;
+  questionOne: string;
+  questionTwo: string;
+  newYarn: string;
+};
+
+type AudioPlaybackState = "idle" | "loading" | "playing" | "paused" | "ended";
+type AudioLanguage = "english" | "pidgin" | "hausa";
+
+const audioLanguageMap: Record<LanguageCode, AudioLanguage> = {
+  "simple-english": "english",
+  pidgin: "pidgin",
+  hausa: "hausa",
+};
+
+const audioTranscriptMaxChars = 5500;
+
+const copy: Record<LanguageCode, ResultCopy> = {
   "simple-english": {
     languageName: "Simple English",
     resultTitle: "Here is what this notice says",
     listen: "Listen",
-    stop: "Stop",
+    loadingAudio: "Preparing audio",
+    pause: "Pause",
+    resume: "Resume",
+    replay: "Replay",
+    audioUnavailable: "Audio isn't available right now.",
     meaning: "Main meaning",
     audience: "Who this concerns",
     eligibility: "Who can apply",
@@ -132,7 +151,11 @@ const copy: Record<
     languageName: "Pidgin",
     resultTitle: "Here’s wetin this notice dey talk",
     listen: "Listen",
-    stop: "Stop",
+    loadingAudio: "Preparing audio",
+    pause: "Pause",
+    resume: "Continue",
+    replay: "Play again",
+    audioUnavailable: "Audio isn't available right now.",
     meaning: "Main meaning",
     audience: "Who e concern",
     eligibility: "Who fit apply",
@@ -175,7 +198,11 @@ const copy: Record<
     languageName: "Hausa",
     resultTitle: "Ga abin da wannan sanarwa take nufi",
     listen: "Saurara",
-    stop: "Dakata",
+    loadingAudio: "Ana shirya sauti",
+    pause: "Dakata",
+    resume: "Ci gaba",
+    replay: "Sake saurara",
+    audioUnavailable: "Audio isn't available right now.",
     meaning: "Babban bayani",
     audience: "Wanda abin ya shafa",
     eligibility: "Wanda zai iya nema",
@@ -228,6 +255,90 @@ function displayPaymentValue(value: string, fallback: string) {
   return cleanDisplayItem(value) || fallback;
 }
 
+function appendAudioSection(
+  sections: string[],
+  title: string,
+  body: string | string[],
+) {
+  const lines = Array.isArray(body)
+    ? body.map(cleanDisplayItem).filter(Boolean)
+    : [cleanDisplayItem(body)];
+  if (lines.length === 0 || !lines.some((line) => line.length > 0)) return;
+
+  sections.push(`${title}:\n${lines.join("\n")}`);
+}
+
+function fitAudioTranscript(sections: string[]) {
+  const selected: string[] = [];
+  let currentLength = 0;
+
+  for (const section of sections) {
+    const separatorLength = selected.length > 0 ? 2 : 0;
+    if (currentLength + separatorLength + section.length <= audioTranscriptMaxChars) {
+      selected.push(section);
+      currentLength += separatorLength + section.length;
+      continue;
+    }
+
+    if (selected.length === 0) {
+      selected.push(`${section.slice(0, audioTranscriptMaxChars - 3).trim()}...`);
+    }
+    break;
+  }
+
+  return selected.join("\n\n");
+}
+
+function buildAudioTranscript(
+  analysis: NormalizedAnalysis,
+  activeCopy: ResultCopy,
+) {
+  const sections: string[] = [];
+
+  appendAudioSection(sections, activeCopy.meaning, analysis.meaning);
+  appendAudioSection(sections, activeCopy.audience, analysis.audience);
+  appendAudioSection(sections, activeCopy.eligibility, analysis.eligibility);
+  appendAudioSection(
+    sections,
+    activeCopy.actions,
+    analysis.actions.map((item, index) => `${index + 1}. ${cleanDisplayItem(item)}`),
+  );
+  appendAudioSection(sections, activeCopy.documents, analysis.documents);
+  appendAudioSection(sections, activeCopy.legacyRequirements, analysis.legacyRequirements);
+  appendAudioSection(
+    sections,
+    activeCopy.payments,
+    analysis.payments.map((payment, index) =>
+      [
+        `${index + 1}.`,
+        `${activeCopy.paymentAmount}: ${displayPaymentValue(payment.amount, activeCopy.notStated)}.`,
+        `${activeCopy.paymentPurpose}: ${displayPaymentValue(payment.purpose, activeCopy.notStated)}.`,
+        `${activeCopy.paymentWhen}: ${displayPaymentValue(payment.when, activeCopy.notStated)}.`,
+        `${activeCopy.paymentWho}: ${displayPaymentValue(payment.who, activeCopy.notStated)}.`,
+      ].join(" "),
+    ),
+  );
+  appendAudioSection(
+    sections,
+    activeCopy.importantDate,
+    analysis.dates.map(
+      (item, index) =>
+        `${index + 1}. ${cleanDisplayItem(item.date)}: ${cleanDisplayItem(item.context)}`,
+    ),
+  );
+  appendAudioSection(sections, activeCopy.warnings, analysis.warnings);
+  appendAudioSection(
+    sections,
+    activeCopy.reviewTitle,
+    analysis.uncertainties.map(
+      (item) => `${cleanDisplayItem(item.text)}. ${cleanDisplayItem(item.reason)}`,
+    ),
+  );
+  appendAudioSection(sections, activeCopy.sourceLimitations, analysis.sourceLimitations);
+
+  return fitAudioTranscript(sections);
+}
+
 function sourceAppearsIncomplete(analysis: NormalizedAnalysis) {
   const text = [
     ...analysis.sourceLimitations,
@@ -250,39 +361,80 @@ export function ResultScreen() {
     switchLanguage,
     askQuestion,
     qaHistory,
-    runAnalysis,
     resetAll,
     loadSample,
   } = useYarnContext();
 
   const [copied, setCopied] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [audioState, setAudioState] = useState<AudioPlaybackState>("idle");
+  const [audioError, setAudioError] = useState("");
+  const [audioProgress, setAudioProgress] = useState(0);
   const [followUpQuery, setFollowUpQuery] = useState("");
   const [isAsking, setIsAsking] = useState(false);
   const [qaError, setQaError] = useState("");
   const [isSwitchingLang, setIsSwitchingLang] = useState(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const router = useRouter();
-  const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
+  const audioCacheKeyRef = useRef<string | null>(null);
+  const audioAbortRef = useRef<AbortController | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, []);
+  function clearAudioPlayback(options: { updateState?: boolean } = {}) {
+    const { updateState = true } = options;
+    audioAbortRef.current?.abort();
+    audioAbortRef.current = null;
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
+      audioRef.current.onpause = null;
+      audioRef.current.onplay = null;
+      audioRef.current.ontimeupdate = null;
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
+
+    if (audioUrlRef.current && typeof URL !== "undefined") {
+      URL.revokeObjectURL(audioUrlRef.current);
+      audioUrlRef.current = null;
+    }
+
+    audioCacheKeyRef.current = null;
+
+    if (updateState) {
+      setAudioState("idle");
+      setAudioError("");
+      setAudioProgress(0);
+    }
+  }
 
   const currentLang = analysisResult?.language ?? "simple-english";
   const activeCopy = copy[currentLang];
+  const audioCacheKey = analysisResult
+    ? [
+        analysisResult.createdAt,
+        analysisResult.language,
+        analysisResult.model ?? "",
+        analysisResult.analysis.meaning.slice(0, 160),
+      ].join("|")
+    : "";
+
+  useEffect(() => {
+    return () => {
+      clearAudioPlayback({ updateState: false });
+    };
+  }, []);
+
+  useEffect(() => {
+    clearAudioPlayback();
+  }, [audioCacheKey]);
 
   async function handleLanguageSwitch(newLang: LanguageCode) {
     if (!analysisResult || analysisResult.language === newLang || isSwitchingLang) return;
 
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-    }
+    clearAudioPlayback();
 
     setLanguageMenuOpen(false);
     setIsSwitchingLang(true);
@@ -293,39 +445,144 @@ export function ResultScreen() {
     }
   }
 
-  function toggleSpeech() {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+  function getAudioButtonLabel() {
+    if (audioState === "loading") return activeCopy.loadingAudio;
+    if (audioState === "playing") return activeCopy.pause;
+    if (audioState === "paused") return activeCopy.resume;
+    if (audioState === "ended") return activeCopy.replay;
+    return activeCopy.listen;
+  }
+
+  function renderAudioIcon() {
+    if (audioState === "loading") {
+      return <Loader2 aria-hidden="true" className="animate-spin" size={22} />;
+    }
+    if (audioState === "playing") {
+      return <Pause aria-hidden="true" size={22} />;
+    }
+    if (audioState === "paused") {
+      return <Play aria-hidden="true" size={22} />;
+    }
+    if (audioState === "ended") {
+      return <RotateCcw aria-hidden="true" size={21} />;
+    }
+    return <Volume2 aria-hidden="true" size={22} />;
+  }
+
+  async function playPreparedAudio(audio: HTMLAudioElement) {
+    try {
+      await audio.play();
+      setAudioError("");
+      setAudioState("playing");
+    } catch {
+      setAudioState("paused");
+    }
+  }
+
+  async function toggleAudio() {
+    if (!analysisResult || audioState === "loading") {
       return;
     }
 
-    if (isSpeaking) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
+    const existingAudio = audioRef.current;
+    const hasCachedAudio =
+      existingAudio &&
+      audioUrlRef.current &&
+      audioCacheKeyRef.current === audioCacheKey;
+
+    if (audioState === "playing" && hasCachedAudio) {
+      existingAudio.pause();
+      setAudioState("paused");
       return;
     }
 
-    if (!analysisResult) return;
+    if ((audioState === "paused" || audioState === "ended") && hasCachedAudio) {
+      if (audioState === "ended") {
+        existingAudio.currentTime = 0;
+        setAudioProgress(0);
+      }
+      await playPreparedAudio(existingAudio);
+      return;
+    }
 
-    window.speechSynthesis.cancel();
+    const text = buildAudioTranscript(
+      analysisResult.analysis,
+      activeCopy,
+    );
 
-    const textToSpeak = [
-      analysisResult.analysis.meaning,
-      analysisResult.analysis.actions.length > 0
-        ? `${activeCopy.actions}: ${analysisResult.analysis.actions.join(". ")}`
-        : "",
-    ]
-      .filter(Boolean)
-      .join(". ");
+    if (!text.trim()) {
+      setAudioError(activeCopy.audioUnavailable);
+      return;
+    }
 
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    synthRef.current = utterance;
-    utterance.lang = analysisResult.language === "hausa" ? "ha-NG" : "en-NG";
-    utterance.rate = 0.95;
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    clearAudioPlayback();
+    setAudioState("loading");
 
-    setIsSpeaking(true);
-    window.speechSynthesis.speak(utterance);
+    const controller = new AbortController();
+    audioAbortRef.current = controller;
+
+    try {
+      const response = await fetch("/api/audio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text,
+          language: audioLanguageMap[analysisResult.language],
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error("Audio request failed");
+      }
+
+      const blob = await response.blob();
+      if (blob.size === 0) {
+        throw new Error("Empty audio response");
+      }
+
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.preload = "auto";
+      audio.onplay = () => setAudioState("playing");
+      audio.onpause = () => {
+        if (!audio.ended) {
+          setAudioState("paused");
+        }
+      };
+      audio.onended = () => {
+        setAudioState("ended");
+        setAudioProgress(1);
+      };
+      audio.ontimeupdate = () => {
+        if (Number.isFinite(audio.duration) && audio.duration > 0) {
+          setAudioProgress(Math.min(audio.currentTime / audio.duration, 1));
+        }
+      };
+      audio.onerror = () => {
+        setAudioError(activeCopy.audioUnavailable);
+        setAudioState("idle");
+      };
+
+      audioRef.current = audio;
+      audioUrlRef.current = url;
+      audioCacheKeyRef.current = audioCacheKey;
+      audioAbortRef.current = null;
+
+      await playPreparedAudio(audio);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+      setAudioError(activeCopy.audioUnavailable);
+      setAudioState("idle");
+    } finally {
+      if (audioAbortRef.current === controller) {
+        audioAbortRef.current = null;
+      }
+    }
   }
 
   function handleCopy() {
@@ -380,14 +637,14 @@ export function ResultScreen() {
     }
   }
 
-  async function handleLoadSample(index: number) {
+  function handleLoadSample(index: number) {
+    clearAudioPlayback();
     loadSample(index);
     router.push("/processing");
-    await runAnalysis(devTestInputs[index].text, "simple-english");
-    router.push("/result");
   }
 
   function handleStartNewYarn() {
+    clearAudioPlayback();
     resetAll();
     router.push("/");
   }
@@ -410,7 +667,7 @@ export function ResultScreen() {
             </Button>
             <Button
               variant="secondary"
-              onClick={() => void handleLoadSample(0)}
+              onClick={() => handleLoadSample(0)}
               className="h-14 text-label-lg"
             >
               Try sample notice
@@ -603,22 +860,38 @@ export function ResultScreen() {
                 </h1>
                 <button
                   type="button"
-                  onClick={toggleSpeech}
-                  aria-label={isSpeaking ? activeCopy.stop : activeCopy.listen}
+                  onClick={() => void toggleAudio()}
+                  disabled={audioState === "loading"}
+                  aria-label={getAudioButtonLabel()}
                   className={[
-                    "touch-target flex shrink-0 items-center justify-center rounded-full shadow-soft transition active:scale-95",
-                    isSpeaking
+                    "touch-target flex shrink-0 items-center justify-center rounded-full shadow-soft transition active:scale-95 disabled:cursor-wait",
+                    audioState === "playing" || audioState === "loading"
                       ? "bg-secondary-container text-on-secondary-container"
                       : "bg-surface-container-high text-primary hover:bg-primary hover:text-on-primary",
                   ].join(" ")}
                 >
-                  {isSpeaking ? <Pause aria-hidden="true" size={22} /> : <Volume2 aria-hidden="true" size={22} />}
+                  {renderAudioIcon()}
                 </button>
               </div>
 
               <p className="mt-md max-w-[700px] whitespace-pre-wrap text-body-lg leading-relaxed text-on-surface">
                 {analysis.meaning}
               </p>
+
+              {audioState !== "idle" && audioState !== "loading" ? (
+                <div className="mt-sm h-1 max-w-[700px] overflow-hidden rounded-full bg-surface-container-high">
+                  <div
+                    className="h-full rounded-full bg-primary transition-[width]"
+                    style={{ width: `${Math.round(audioProgress * 100)}%` }}
+                  />
+                </div>
+              ) : null}
+
+              {audioError ? (
+                <p className="mt-sm max-w-[700px] text-label-md text-error">
+                  {activeCopy.audioUnavailable}
+                </p>
+              ) : null}
             </section>
 
             <section className="mt-xl grid gap-xs rounded-2xl bg-surface-container-lowest p-md shadow-card sm:grid-cols-3">

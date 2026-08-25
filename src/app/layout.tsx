@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "@/index.css";
+import { SettingsProvider } from "@/lib/settings";
 import { YarnProvider } from "@/lib/yarn-context";
 
 export const metadata: Metadata = {
@@ -24,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-dvh bg-background text-on-surface antialiased">
-        <YarnProvider>{children}</YarnProvider>
+        <SettingsProvider>
+          <YarnProvider>{children}</YarnProvider>
+        </SettingsProvider>
       </body>
     </html>
   );

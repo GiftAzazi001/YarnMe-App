@@ -1,28 +1,36 @@
 "use client";
 
-import { useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { type LanguageCode } from "@/lib/analysis";
-import { useYarnContext } from "@/lib/yarn-context";
+import {
+  type TextSizePreference,
+  useYarnSettings,
+} from "@/lib/settings";
 
 const languageOptions: Array<{
   label: string;
   value: LanguageCode;
 }> = [
-  { label: "English", value: "simple-english" },
+  { label: "Simple English", value: "simple-english" },
   { label: "Pidgin", value: "pidgin" },
   { label: "Hausa", value: "hausa" },
 ];
 
-const textSizes = [
+const textSizes: Array<{
+  label: string;
+  value: TextSizePreference;
+}> = [
   { label: "Small", value: "small" },
-  { label: "Medium", value: "default" },
+  { label: "Medium", value: "medium" },
   { label: "Large", value: "large" },
 ];
 
 export function SettingsScreen() {
-  const { language, setLanguage } = useYarnContext();
-  const [textSize, setTextSize] = useState("default");
+  const {
+    settings,
+    setDefaultLanguage,
+    setTextSize,
+  } = useYarnSettings();
 
   return (
     <AppShell header="brand" className="lg:bg-result-background">
@@ -36,16 +44,16 @@ export function SettingsScreen() {
             <h2 className="text-headline-sm text-on-surface">Default Language</h2>
             <div className="mt-lg flex flex-wrap gap-md">
               {languageOptions.map((option) => {
-                const checked = language === option.value;
+                const checked = settings.language === option.value;
 
                 return (
                   <button
                     key={option.value}
                     type="button"
-                    onClick={() => setLanguage(option.value)}
+                    onClick={() => setDefaultLanguage(option.value)}
                     aria-pressed={checked}
                     className={[
-                      "touch-target rounded-full px-lg text-label-lg font-bold transition active:scale-95",
+                      "touch-target rounded-full px-lg text-label-lg font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95",
                       checked
                         ? "bg-primary text-on-primary shadow-button"
                         : "bg-surface-container-high text-primary hover:bg-primary-fixed/40",
@@ -62,7 +70,7 @@ export function SettingsScreen() {
             <h2 className="text-headline-sm text-on-surface">Text Size</h2>
             <div className="mt-lg grid grid-cols-3 gap-md">
               {textSizes.map((size) => {
-                const active = textSize === size.value;
+                const active = settings.textSize === size.value;
 
                 return (
                   <button
@@ -71,7 +79,7 @@ export function SettingsScreen() {
                     onClick={() => setTextSize(size.value)}
                     aria-pressed={active}
                     className={[
-                      "touch-target rounded-full px-sm text-label-lg font-bold transition active:scale-95",
+                      "touch-target rounded-full px-sm text-label-lg font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95",
                       active
                         ? "bg-primary text-on-primary shadow-button"
                         : "bg-surface-container-high text-primary hover:bg-primary-fixed/40",

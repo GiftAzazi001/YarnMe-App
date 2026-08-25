@@ -2,6 +2,24 @@ import { z } from "zod";
 
 export const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
 
+export const IMAGE_UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
+export const PDF_UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
+export const PDF_UPLOAD_MAX_PAGES = 15;
+export const supportedImageMimeTypes = [
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+] as const;
+export const supportedPdfMimeTypes = ["application/pdf"] as const;
+export const supportedUploadMimeTypes = [
+  ...supportedImageMimeTypes,
+  ...supportedPdfMimeTypes,
+] as const;
+
+export type SupportedImageMimeType = (typeof supportedImageMimeTypes)[number];
+export type SupportedPdfMimeType = (typeof supportedPdfMimeTypes)[number];
+export type SupportedUploadMimeType = (typeof supportedUploadMimeTypes)[number];
+
 export const languageSchema = z.enum(["simple-english", "pidgin", "hausa"]);
 export type LanguageCode = z.infer<typeof languageSchema>;
 

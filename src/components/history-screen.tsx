@@ -15,31 +15,35 @@ import {
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui";
 import { useYarnContext } from "@/lib/yarn-context";
-import { devTestInputs } from "@/lib/dev-test-inputs";
 
 const langBadges = {
-  "simple-english": { label: "English" },
+  "simple-english": { label: "Simple English" },
   pidgin: { label: "Pidgin" },
   hausa: { label: "Hausa" },
 };
 
 export function HistoryScreen() {
-  const { historyList, setAnalysisResult, setSourceText, setLanguage, runAnalysis } =
-    useYarnContext();
+  const {
+    historyList,
+    setAnalysisResult,
+    setSourceText,
+    setSourceImage,
+    setLanguage,
+    loadSample,
+  } = useYarnContext();
   const router = useRouter();
 
   function handleOpenHistoryItem(item: (typeof historyList)[0]) {
     setAnalysisResult(item);
     setSourceText(item.sourceText);
+    setSourceImage(null);
     setLanguage(item.language);
     router.push("/result");
   }
 
-  async function handleLoadSample(index: number) {
-    const sample = devTestInputs[index];
+  function handleLoadSample(index: number) {
+    loadSample(index);
     router.push("/processing");
-    await runAnalysis(sample.text, "simple-english");
-    router.push("/result");
   }
 
   if (historyList.length === 0) {
@@ -60,7 +64,7 @@ export function HistoryScreen() {
             </Button>
             <Button
               variant="secondary"
-              onClick={() => void handleLoadSample(0)}
+              onClick={() => handleLoadSample(0)}
               className="text-label-lg"
             >
               <BriefcaseBusiness aria-hidden="true" size={18} />
@@ -110,7 +114,7 @@ export function HistoryScreen() {
                 </span>
 
                 <span className="min-w-0 flex-1">
-                  <span className="line-clamp-2 text-headline-md text-on-surface">
+                  <span className="yarnme-reading-title line-clamp-2 text-headline-md text-on-surface">
                     {item.analysis.meaning || "YarnMe explanation"}
                   </span>
                   <span className="mt-xs flex flex-wrap items-center gap-sm">
