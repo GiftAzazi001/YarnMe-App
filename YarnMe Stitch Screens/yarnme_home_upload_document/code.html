@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YarnMe - Upload Document</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#131e17",
+                        "surface-tint": "#106b4f",
+                        "on-surface": "#121c2a",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#0f6b4f",
+                        "inverse-surface": "#27313f",
+                        "outline": "#6f7a73",
+                        "on-surface-variant": "#3f4944",
+                        "on-secondary-container": "#6f5100",
+                        "on-tertiary-container": "#cfdbd0",
+                        "secondary-fixed-dim": "#f9bd22",
+                        "secondary-fixed": "#ffdf9f",
+                        "on-primary-fixed": "#002115",
+                        "primary": "#00513a",
+                        "surface-dim": "#d0dbed",
+                        "on-primary-fixed-variant": "#00513a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#261a00",
+                        "tertiary-container": "#556158",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#ffc329",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9ff",
+                        "inverse-primary": "#86d6b4",
+                        "primary-fixed-dim": "#86d6b4",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bec9c2",
+                        "surface-variant": "#d9e3f6",
+                        "surface-container": "#e6eeff",
+                        "tertiary": "#3e4941",
+                        "on-tertiary-fixed-variant": "#3e4a41",
+                        "on-primary-container": "#97e8c5",
+                        "on-background": "#121c2a",
+                        "surface-container-high": "#dee9fc",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed": "#d9e6da",
+                        "surface-bright": "#f8f9ff",
+                        "primary-fixed": "#a1f3cf",
+                        "surface-container-highest": "#d9e3f6",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "tertiary-fixed-dim": "#bdcabe",
+                        "secondary": "#795900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "xl": "48px",
+                        "lg": "32px",
+                        "base": "8px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "container-margin": "20px",
+                        "md": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-xl-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["26px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-xl-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col antialiased">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-on-tertiary-fixed flex justify-between items-center w-full px-container-margin py-base max-w-7xl mx-auto top-0 z-40 sticky">
+<button aria-label="Menu" class="text-on-surface-variant dark:text-outline-variant hover:opacity-80 transition-opacity w-12 h-12 flex items-center justify-center rounded-full">
+<span class="material-symbols-outlined">forum</span>
+</button>
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary dark:text-primary-fixed">YarnMe</h1>
+<button aria-label="Documents" class="text-on-surface-variant dark:text-outline-variant hover:opacity-80 transition-opacity w-12 h-12 flex items-center justify-center rounded-full">
+<span class="material-symbols-outlined">description</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col px-container-margin pt-lg pb-32 max-w-3xl mx-auto w-full gap-xl">
+<!-- Header Context -->
+<div class="text-center">
+<h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-on-surface mb-xs">What are we reviewing?</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Upload a document for intelligent analysis.</p>
+</div>
+<!-- Mode Switcher (Tabs) -->
+<div class="flex p-1 bg-surface-container-high rounded-full w-full max-w-md mx-auto shadow-sm">
+<button class="flex-1 py-3 text-label-lg font-label-lg rounded-full text-on-surface-variant transition-colors hover:bg-surface-variant/50">Paste Text</button>
+<button class="flex-1 py-3 text-label-lg font-label-lg rounded-full bg-primary text-on-primary shadow-md transition-colors">Upload Document</button>
+</div>
+<!-- Upload Dropzone -->
+<div class="border-2 border-dashed border-primary-fixed-dim bg-surface rounded-[16px] p-lg flex flex-col items-center justify-center text-center transition-all hover:bg-surface-container-low min-h-[280px] shadow-[0_4px_20px_rgba(15,107,79,0.02)]">
+<div class="w-16 h-16 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center mb-md shadow-sm">
+<span class="material-symbols-outlined text-[32px]">cloud_upload</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-xs">Drop your document here</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-lg">PDF, JPG or PNG up to 10MB</p>
+<button class="bg-primary text-on-primary text-label-lg font-label-lg px-8 py-4 rounded-full hover:bg-primary-container hover:text-on-primary-container hover:shadow-lg transition-all duration-300 shadow-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">folder_open</span>
+                Browse files
+            </button>
+</div>
+<!-- Selected File State -->
+<div class="bg-surface shadow-[0_4px_20px_rgba(15,107,79,0.05)] rounded-[16px] p-md flex items-center justify-between border border-surface-container-highest transition-all hover:shadow-[0_8px_30px_rgba(15,107,79,0.08)]">
+<div class="flex items-center gap-md overflow-hidden">
+<div class="w-12 h-12 rounded-xl bg-error-container text-on-error-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</div>
+<div class="overflow-hidden flex-1">
+<p class="text-label-lg font-label-lg text-on-surface truncate">Notice_of_Registration.pdf</p>
+<p class="text-body-md font-body-md text-on-surface-variant text-[14px]">2.4MB</p>
+</div>
+</div>
+<button aria-label="Remove file" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-error transition-colors flex-shrink-0 ml-4">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<!-- Primary Action -->
+<div class="mt-auto pt-lg">
+<button class="w-full bg-primary text-on-primary text-label-lg font-label-lg py-5 rounded-full shadow-lg hover:shadow-xl hover:opacity-95 transition-all duration-300 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">auto_awesome</span>
+                Start Yarning
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface-container-lowest dark:bg-inverse-surface shadow-[0_-4px_20px_rgba(15,107,79,0.05)] rounded-t-xl md:hidden">
+<!-- Yarn (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-6 py-1 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="text-label-sm font-label-sm mt-1 text-primary font-bold">Yarn</span>
+</a>
+<!-- History -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-label-sm font-label-sm mt-1">History</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-sm font-label-sm mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

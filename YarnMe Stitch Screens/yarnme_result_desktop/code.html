@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YarnMe - Result</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#131e17",
+                        "surface-tint": "#106b4f",
+                        "on-surface": "#121c2a",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#0f6b4f",
+                        "inverse-surface": "#27313f",
+                        "outline": "#6f7a73",
+                        "on-surface-variant": "#3f4944",
+                        "on-secondary-container": "#6f5100",
+                        "on-tertiary-container": "#cfdbd0",
+                        "secondary-fixed-dim": "#f9bd22",
+                        "secondary-fixed": "#ffdf9f",
+                        "on-primary-fixed": "#002115",
+                        "primary": "#00513a",
+                        "surface-dim": "#d0dbed",
+                        "on-primary-fixed-variant": "#00513a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#261a00",
+                        "tertiary-container": "#556158",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#ffc329",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9ff",
+                        "inverse-primary": "#86d6b4",
+                        "primary-fixed-dim": "#86d6b4",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bec9c2",
+                        "surface-variant": "#d9e3f6",
+                        "surface-container": "#e6eeff",
+                        "tertiary": "#3e4941",
+                        "on-tertiary-fixed-variant": "#3e4a41",
+                        "on-primary-container": "#97e8c5",
+                        "on-background": "#121c2a",
+                        "surface-container-high": "#dee9fc",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed": "#d9e6da",
+                        "surface-bright": "#f8f9ff",
+                        "primary-fixed": "#a1f3cf",
+                        "surface-container-highest": "#d9e3f6",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "tertiary-fixed-dim": "#bdcabe",
+                        "secondary": "#795900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "xl": "48px",
+                        "lg": "32px",
+                        "base": "8px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "container-margin": "20px",
+                        "md": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-xl-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["26px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-xl-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .ai-glow {
+            box-shadow: 0 0 15px rgba(249, 189, 34, 0.4);
+        }
+        
+        .primary-shadow {
+            box-shadow: 0 4px 20px rgba(15, 107, 79, 0.05);
+        }
+
+        .bubble-tail {
+            border-bottom-left-radius: 4px !important;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation (Desktop) -->
+<header class="bg-background dark:bg-on-tertiary-fixed w-full z-40 sticky top-0 transition-all duration-300">
+<div class="flex justify-between items-center w-full px-container-margin py-base max-w-7xl mx-auto">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="forum" data-weight="fill">forum</span>
+<span class="text-headline-md font-headline-md font-extrabold text-primary dark:text-primary-fixed tracking-tight">YarnMe</span>
+</div>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-on-surface-variant dark:text-outline-variant hover:opacity-80 transition-opacity text-label-lg font-label-lg" href="#">Yarn</a>
+<a class="text-primary dark:text-primary-fixed font-bold hover:opacity-80 transition-opacity text-label-lg font-label-lg flex items-center gap-xs" href="#">
+                    History
+                    <span class="w-2 h-2 rounded-full bg-secondary-fixed-dim inline-block"></span>
+</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:opacity-80 transition-opacity text-label-lg font-label-lg" href="#">Settings</a>
+</nav>
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-150 p-2 rounded-full hover:bg-surface-variant/50">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="description">description</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow w-full max-w-7xl mx-auto px-container-margin py-xl flex flex-col md:flex-row gap-xl">
+<!-- Main Reading Column -->
+<article class="flex-grow md:w-2/3 flex flex-col gap-lg">
+<!-- Context Header -->
+<div class="flex flex-col gap-sm">
+<div class="flex items-center gap-sm text-on-surface-variant text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+<span>Yesterday, 2:45 PM</span>
+<span class="px-2 py-1 bg-surface-container rounded-full text-primary">Financial Advice</span>
+</div>
+<h1 class="text-headline-xl font-headline-xl text-on-surface">Understanding Treasury Bills in Nigeria</h1>
+</div>
+<!-- AI Response Bubble -->
+<div class="bg-primary text-on-primary p-lg rounded-[16px] bubble-tail shadow-lg relative overflow-hidden">
+<!-- Subtle background pattern -->
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
+<div class="relative z-10 flex flex-col gap-md">
+<p class="text-body-lg font-body-lg leading-relaxed">
+                        Treasury Bills (T-Bills) are short-term government debt instruments issued by the Central Bank of Nigeria (CBN). They are considered one of the safest investments because they are backed by the full faith and credit of the Federal Government.
+                    </p>
+<h3 class="text-headline-sm font-headline-sm text-secondary-fixed mt-sm">Key Benefits for You:</h3>
+<ul class="list-none flex flex-col gap-sm">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary-fixed" data-icon="check_circle">check_circle</span>
+<span><strong>Capital Preservation:</strong> Zero risk of losing your principal if held to maturity.</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary-fixed" data-icon="check_circle">check_circle</span>
+<span><strong>Tax Free:</strong> Interest earned on T-Bills in Nigeria is exempt from withholding tax.</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary-fixed" data-icon="check_circle">check_circle</span>
+<span><strong>Liquidity:</strong> They can be easily sold in the secondary market before maturity if you need cash urgently.</span>
+</li>
+</ul>
+<p class="text-body-md font-body-md mt-sm opacity-90">
+                        Currently, yields are relatively high, hovering around 14-16% for the 364-day tenor, making them an attractive option to hedge against inflation compared to standard savings accounts.
+                    </p>
+</div>
+</div>
+<!-- Follow-up Prompts -->
+<div class="flex flex-col gap-sm mt-md">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Suggested Follow-ups</span>
+<div class="flex flex-wrap gap-sm">
+<button class="px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-full text-primary hover:bg-surface-variant/50 transition-colors text-label-lg font-label-lg flex items-center gap-xs">
+                        How do I buy them via my bank?
+                        <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<button class="px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-full text-primary hover:bg-surface-variant/50 transition-colors text-label-lg font-label-lg flex items-center gap-xs">
+                        Compare with Fixed Deposits
+                        <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Action Area -->
+<div class="flex items-center gap-md mt-xl pt-lg border-t border-surface-variant">
+<div class="relative flex-grow">
+<input class="w-full bg-surface-container-lowest border border-surface-variant text-on-surface text-body-md font-body-md rounded-full py-4 pl-md pr-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary ai-glow transition-all" placeholder="Ask another question..." type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary text-on-primary rounded-full hover:opacity-90 transition-opacity flex items-center justify-center h-10 w-10">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Side Column (Sources & Transparency) -->
+<aside class="w-full md:w-1/3 flex flex-col gap-lg">
+<!-- Transparency Card -->
+<div class="bg-surface-container-lowest rounded-[16px] p-lg primary-shadow flex flex-col gap-md">
+<div class="flex items-center gap-sm pb-sm border-b border-surface-variant">
+<span class="material-symbols-outlined text-secondary" data-icon="policy">policy</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">Insight Source</h2>
+</div>
+<p class="text-body-sm font-body-md text-on-surface-variant">
+                    This response was generated using up-to-date financial data from verified Nigerian economic monitors.
+                </p>
+<div class="flex flex-col gap-sm">
+<a class="flex items-center justify-between p-sm rounded-lg hover:bg-surface-variant/50 transition-colors group" href="#">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-[16px]" data-icon="account_balance">account_balance</span>
+</div>
+<span class="text-label-lg font-label-lg text-on-surface group-hover:text-primary transition-colors">CBN Directives (Q3)</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" data-icon="open_in_new">open_in_new</span>
+</a>
+<a class="flex items-center justify-between p-sm rounded-lg hover:bg-surface-variant/50 transition-colors group" href="#">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[16px]" data-icon="show_chart">show_chart</span>
+</div>
+<span class="text-label-lg font-label-lg text-on-surface group-hover:text-primary transition-colors">Nairametrics Yield Report</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[18px]" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Image/Visual Context -->
+<div class="rounded-[16px] overflow-hidden primary-shadow relative aspect-video">
+<img class="w-full h-full object-cover" data-alt="A sophisticated, high-end abstract digital visualization of financial growth in a modern Nigerian context. The image features soft, glowing amber and deep green geometric lines rising upwards against a pristine, light ivory background. The lighting is clean and minimal, conveying a sense of secure, intelligent fintech wealth management." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcdsx4_wdVK1d7a9PCu6PxJtF9qZAC7enls72TZx9e7bsglBLIYiXOwG1l4-hO1bSr97QV7vgJok98LljiHMcVxZwZTYJtKcIFEn8yOx4J0Fr6exjfg_4cLcUYAmWEe1wuq4UvEzLAuist7zWjm_jRHrekQQ0mtJ0NbgU1IFlP8v-kgpcoXLFT_yfmFBIwm6SJWr1XLrWgOr-qi3rVehxbD1NIZWqyJlKbjW96td5xYb1LuRNrtO4i3g"/>
+<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-sm">
+<span class="text-white text-label-sm font-label-sm">Yield Curve Visualization</span>
+</div>
+</div>
+</aside>
+</main>
+</body></html>

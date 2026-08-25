@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>YarnMe - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#131e17",
+                    "surface-tint": "#106b4f",
+                    "on-surface": "#121c2a",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-container": "#0f6b4f",
+                    "inverse-surface": "#27313f",
+                    "outline": "#6f7a73",
+                    "on-surface-variant": "#3f4944",
+                    "on-secondary-container": "#6f5100",
+                    "on-tertiary-container": "#cfdbd0",
+                    "secondary-fixed-dim": "#f9bd22",
+                    "secondary-fixed": "#ffdf9f",
+                    "on-primary-fixed": "#002115",
+                    "primary": "#00513a",
+                    "surface-dim": "#d0dbed",
+                    "on-primary-fixed-variant": "#00513a",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#261a00",
+                    "tertiary-container": "#556158",
+                    "on-tertiary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-error": "#ffffff",
+                    "surface": "#f8f9ff",
+                    "secondary-container": "#ffc329",
+                    "on-error-container": "#93000a",
+                    "background": "#f8f9ff",
+                    "inverse-primary": "#86d6b4",
+                    "primary-fixed-dim": "#86d6b4",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#bec9c2",
+                    "surface-variant": "#d9e3f6",
+                    "surface-container": "#e6eeff",
+                    "tertiary": "#3e4941",
+                    "on-tertiary-fixed-variant": "#3e4a41",
+                    "on-primary-container": "#97e8c5",
+                    "on-background": "#121c2a",
+                    "surface-container-high": "#dee9fc",
+                    "inverse-on-surface": "#eaf1ff",
+                    "tertiary-fixed": "#d9e6da",
+                    "surface-bright": "#f8f9ff",
+                    "primary-fixed": "#a1f3cf",
+                    "surface-container-highest": "#d9e3f6",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary-fixed-variant": "#5c4300",
+                    "tertiary-fixed-dim": "#bdcabe",
+                    "secondary": "#795900"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "12px",
+                    "xl": "48px",
+                    "lg": "32px",
+                    "base": "8px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "container-margin": "20px",
+                    "md": "20px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "headline-sm": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "headline-xl-mobile": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "headline-xl": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "label-sm": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["26px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-xl-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen relative font-sans overflow-x-hidden antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-on-tertiary-fixed docked full-width top-0 sticky z-40 transition-shadow duration-300" id="top-app-bar">
+<div class="flex justify-between items-center w-full px-container-margin py-base max-w-7xl mx-auto">
+<button class="hover:opacity-80 transition-opacity p-2 -ml-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="forum" style="font-variation-settings: 'FILL' 1;">forum</span>
+</button>
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary dark:text-primary-fixed tracking-tight">YarnMe</h1>
+<button class="hover:opacity-80 transition-opacity p-2 -mr-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="description">description</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="px-container-margin pt-sm pb-[120px] max-w-3xl mx-auto w-full flex flex-col md:hidden">
+<!-- Hero Section -->
+<section class="mt-sm mb-lg animate-fade-in-up">
+<h2 class="text-headline-xl-mobile font-headline-xl-mobile text-on-surface mb-xs leading-tight">Wetin you no understand?</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Drop am here. YarnMe go break am down.</p>
+</section>
+<!-- Input Surface (Premium Glassmorphism/Bento feel) -->
+<section class="bg-surface-container-lowest rounded-[16px] shadow-[0_4px_20px_rgba(15,107,79,0.05)] p-container-margin mb-xl relative overflow-hidden transition-all duration-300 focus-within:shadow-[0_8px_30px_rgba(15,107,79,0.1)] border border-surface-variant/50">
+<!-- Ambient Glow for "AI Listening" State readiness -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<!-- Tabs -->
+<div class="flex gap-gutter mb-gutter border-b border-surface-variant pb-2 relative z-10">
+<button class="text-label-lg font-label-lg text-primary border-b-2 border-primary pb-2 font-bold px-1 transition-colors">Paste text</button>
+<button class="text-label-lg font-label-lg text-outline-variant pb-2 px-1 hover:text-on-surface-variant transition-colors">Upload document</button>
+</div>
+<!-- Textarea -->
+<div class="relative group z-10">
+<textarea class="w-full bg-surface-bright border border-outline-variant/60 rounded-xl p-sm min-h-[160px] text-body-md font-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none resize-none mb-gutter placeholder:text-outline/70 transition-all duration-200" placeholder="Paste the information you want YarnMe to explain…"></textarea>
+</div>
+<!-- Language Controls -->
+<div class="mb-lg z-10 relative">
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-sm tracking-wide">Make am clear in</p>
+<div class="flex flex-wrap gap-xs">
+<button class="bg-surface text-on-surface-variant text-label-sm font-label-sm px-4 py-2 rounded-full border border-outline-variant/60 hover:bg-surface-variant transition-colors focus:ring-2 focus:ring-primary/20 outline-none">Simple English</button>
+<button class="bg-primary-container text-on-primary-container text-label-sm font-label-sm px-4 py-2 rounded-full border border-primary-container font-semibold shadow-[0_2px_8px_rgba(15,107,79,0.15)] transform transition-transform active:scale-95">Pidgin</button>
+<button class="bg-surface text-on-surface-variant text-label-sm font-label-sm px-4 py-2 rounded-full border border-outline-variant/60 hover:bg-surface-variant transition-colors focus:ring-2 focus:ring-primary/20 outline-none">Hausa</button>
+</div>
+</div>
+<!-- CTA Button -->
+<button class="w-full bg-primary text-on-primary text-label-lg font-label-lg h-[56px] rounded-full flex items-center justify-center gap-2 hover:bg-on-primary-fixed hover:shadow-lg transition-all duration-200 shadow-md active:scale-[0.98] z-10 relative group">
+<span>Yarn am</span>
+<span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</section>
+<!-- Examples Section (Bento Grid Style) -->
+<section class="mb-xl">
+<h3 class="text-label-sm font-label-sm text-outline tracking-wider uppercase mb-gutter ml-1">Try one</h3>
+<div class="grid grid-cols-1 gap-sm">
+<button class="bg-surface-container-low rounded-[16px] p-4 flex items-center gap-4 border border-transparent hover:border-outline-variant/30 hover:bg-surface-container transition-all duration-200 text-left group shadow-sm">
+<div class="w-10 h-10 rounded-full bg-primary-fixed/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary-fixed/30 transition-colors">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="school" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<div class="flex-1">
+<p class="text-label-lg font-label-lg text-on-surface group-hover:text-primary transition-colors">Scholarship notice</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[20px] opacity-0 group-hover:opacity-100 transition-opacity group-hover:-translate-x-1">arrow_forward</span>
+</button>
+<button class="bg-surface-container-low rounded-[16px] p-4 flex items-center gap-4 border border-transparent hover:border-outline-variant/30 hover:bg-surface-container transition-all duration-200 text-left group shadow-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center flex-shrink-0 group-hover:bg-secondary-container/30 transition-colors">
+<span class="material-symbols-outlined text-on-secondary-container text-[20px]" data-icon="gavel" style="font-variation-settings: 'FILL' 1;">gavel</span>
+</div>
+<div class="flex-1">
+<p class="text-label-lg font-label-lg text-on-surface group-hover:text-on-secondary-container transition-colors">Government application</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[20px] opacity-0 group-hover:opacity-100 transition-opacity group-hover:-translate-x-1">arrow_forward</span>
+</button>
+<button class="bg-surface-container-low rounded-[16px] p-4 flex items-center gap-4 border border-transparent hover:border-outline-variant/30 hover:bg-surface-container transition-all duration-200 text-left group shadow-sm">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed/40 flex items-center justify-center flex-shrink-0 group-hover:bg-tertiary-fixed/60 transition-colors">
+<span class="material-symbols-outlined text-tertiary text-[20px]" data-icon="campaign" style="font-variation-settings: 'FILL' 1;">campaign</span>
+</div>
+<div class="flex-1">
+<p class="text-label-lg font-label-lg text-on-surface group-hover:text-tertiary transition-colors">School announcement</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[20px] opacity-0 group-hover:opacity-100 transition-opacity group-hover:-translate-x-1">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Privacy Note -->
+<div class="flex items-center gap-2 justify-center pb-sm opacity-80 mt-auto">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="lock">lock</span>
+<p class="text-label-sm font-label-sm text-outline text-center">Your information is only used to explain what you send.</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden bg-surface-container-lowest dark:bg-inverse-surface docked full-width bottom-0 rounded-t-xl shadow-[0_-4px_20px_rgba(15,107,79,0.05)] shadow-lg fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2">
+<!-- Yarn (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-6 py-1 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1" data-icon="chat_bubble" data-weight="fill" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="text-label-sm font-label-sm text-on-primary-container dark:text-on-primary">Yarn</span>
+</a>
+<!-- History (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1" data-icon="history">history</span>
+<span class="text-label-sm font-label-sm">History</span>
+</a>
+<!-- Settings (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1" data-icon="settings">settings</span>
+<span class="text-label-sm font-label-sm">Settings</span>
+</a>
+</nav>
+<!-- Desktop Fallback Message (Since design is mobile-first per instructions and JSON layout) -->
+<div class="hidden md:flex flex-col items-center justify-center min-h-screen p-xl bg-surface text-center">
+<div class="w-16 h-16 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mb-sm">
+<span class="material-symbols-outlined text-[32px]">smartphone</span>
+</div>
+<h2 class="text-headline-md font-headline-md text-on-surface mb-xs">Mobile Experience Only</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-md">YarnMe is designed as a focused mobile companion. Please resize your browser window to simulate a mobile device or access this prototype on your phone.</p>
+</div>
+<style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        
+        /* Subtle scroll shadow logic for TopAppBar */
+        body.scrolled #top-app-bar {
+            box-shadow: 0 4px 20px rgba(15,107,79,0.05);
+        }
+    </style>
+<script>
+        // Add subtle shadow to header on scroll
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                document.body.classList.add('scrolled');
+            } else {
+                document.body.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body></html>

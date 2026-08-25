@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#131e17",
+                      "surface-tint": "#106b4f",
+                      "on-surface": "#121c2a",
+                      "on-primary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "primary-container": "#0f6b4f",
+                      "inverse-surface": "#27313f",
+                      "outline": "#6f7a73",
+                      "on-surface-variant": "#3f4944",
+                      "on-secondary-container": "#6f5100",
+                      "on-tertiary-container": "#cfdbd0",
+                      "secondary-fixed-dim": "#f9bd22",
+                      "secondary-fixed": "#ffdf9f",
+                      "on-primary-fixed": "#002115",
+                      "primary": "#00513a",
+                      "surface-dim": "#d0dbed",
+                      "on-primary-fixed-variant": "#00513a",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed": "#261a00",
+                      "tertiary-container": "#556158",
+                      "on-tertiary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-error": "#ffffff",
+                      "surface": "#f8f9ff",
+                      "secondary-container": "#ffc329",
+                      "on-error-container": "#93000a",
+                      "background": "#f8f9ff",
+                      "inverse-primary": "#86d6b4",
+                      "primary-fixed-dim": "#86d6b4",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#bec9c2",
+                      "surface-variant": "#d9e3f6",
+                      "surface-container": "#e6eeff",
+                      "tertiary": "#3e4941",
+                      "on-tertiary-fixed-variant": "#3e4a41",
+                      "on-primary-container": "#97e8c5",
+                      "on-background": "#121c2a",
+                      "surface-container-high": "#dee9fc",
+                      "inverse-on-surface": "#eaf1ff",
+                      "tertiary-fixed": "#d9e6da",
+                      "surface-bright": "#f8f9ff",
+                      "primary-fixed": "#a1f3cf",
+                      "surface-container-highest": "#d9e3f6",
+                      "surface-container-low": "#eff4ff",
+                      "on-secondary-fixed-variant": "#5c4300",
+                      "tertiary-fixed-dim": "#bdcabe",
+                      "secondary": "#795900"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "12px",
+                      "xl": "48px",
+                      "lg": "32px",
+                      "base": "8px",
+                      "gutter": "16px",
+                      "xs": "4px",
+                      "container-margin": "20px",
+                      "md": "20px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Plus Jakarta Sans"],
+                      "label-lg": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "headline-sm": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "headline-xl-mobile": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "headline-xl": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "label-sm": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["26px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-xl-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #FFF8E7; /* Ivory Base Layer */
+            color: #121c2a;
+        }
+        .pill-active {
+            background-color: #00513a; /* Primary */
+            color: #ffffff;
+        }
+        .pill-inactive {
+            background-color: #d9e3f6; /* surface-variant / light mint proxy */
+            color: #00513a;
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #00513a;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #00513a;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-40 bg-surface-container-lowest dark:bg-on-tertiary-fixed bg-opacity-90 backdrop-blur-md">
+<div class="flex justify-between items-center w-full px-container-margin py-base max-w-7xl mx-auto">
+<button aria-label="Menu" class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="forum" style="font-size: 28px;">forum</span>
+</button>
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary dark:text-primary-fixed">YarnMe</h1>
+<button aria-label="Description" class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="description" style="font-size: 28px;">description</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-24 px-container-margin max-w-3xl mx-auto w-full space-y-xl">
+<div>
+<h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg mb-8 text-primary">Settings</h2>
+<!-- Default Language -->
+<section class="mb-lg bg-surface-container-lowest p-6 rounded-2xl shadow-[0_4px_20px_rgba(15,107,79,0.05)]">
+<h3 class="text-headline-sm font-headline-sm mb-4">Default Language</h3>
+<div class="flex flex-wrap gap-4">
+<button class="px-6 py-3 rounded-full text-label-lg font-label-lg pill-active shadow-md transition-transform active:scale-95">English</button>
+<button class="px-6 py-3 rounded-full text-label-lg font-label-lg pill-inactive hover:bg-surface-dim transition-colors">Pidgin</button>
+<button class="px-6 py-3 rounded-full text-label-lg font-label-lg pill-inactive hover:bg-surface-dim transition-colors">Hausa</button>
+<button class="px-6 py-3 rounded-full text-label-lg font-label-lg pill-inactive hover:bg-surface-dim transition-colors">Yoruba</button>
+<button class="px-6 py-3 rounded-full text-label-lg font-label-lg pill-inactive hover:bg-surface-dim transition-colors">Igbo</button>
+</div>
+</section>
+<!-- Text Size -->
+<section class="mb-lg bg-surface-container-lowest p-6 rounded-2xl shadow-[0_4px_20px_rgba(15,107,79,0.05)]">
+<h3 class="text-headline-sm font-headline-sm mb-4">Text Size</h3>
+<div class="flex gap-4">
+<button class="px-6 py-3 rounded-full text-label-lg font-label-lg pill-inactive hover:bg-surface-dim transition-colors">Small</button>
+<button class="px-6 py-3 rounded-full text-label-lg font-label-lg pill-active shadow-md transition-transform active:scale-95">Medium</button>
+<button class="px-6 py-3 rounded-full text-label-lg font-label-lg pill-inactive hover:bg-surface-dim transition-colors">Large</button>
+</div>
+</section>
+<!-- Audio -->
+<section class="mb-lg bg-surface-container-lowest p-6 rounded-2xl shadow-[0_4px_20px_rgba(15,107,79,0.05)] flex items-center justify-between">
+<div>
+<h3 class="text-headline-sm font-headline-sm mb-1">Audio</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Play explanations automatically</p>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-transform duration-200" id="toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-dim cursor-pointer transition-colors duration-200" for="toggle"></label>
+</div>
+</section>
+<!-- Links -->
+<section class="mb-lg bg-surface-container-lowest p-6 rounded-2xl shadow-[0_4px_20px_rgba(15,107,79,0.05)] flex flex-col gap-4">
+<a class="flex justify-between items-center py-2 hover:opacity-80 transition-opacity" href="#">
+<span class="text-body-lg font-body-lg">Privacy Policy</span>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+<div class="w-full h-px bg-outline-variant opacity-50"></div>
+<a class="flex justify-between items-center py-2 hover:opacity-80 transition-opacity" href="#">
+<span class="text-body-lg font-body-lg">About YarnMe</span>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface-container-lowest dark:bg-inverse-surface shadow-[0_-4px_20px_rgba(15,107,79,0.05)] rounded-t-xl shadow-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="chat_bubble">chat_bubble</span>
+<span class="text-label-sm font-label-sm">Yarn</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="history">history</span>
+<span class="text-label-sm font-label-sm">History</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-6 py-1 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings" data-weight="fill" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="text-label-sm font-label-sm text-primary font-bold">Settings</span>
+</a>
+</nav>
+<!-- Desktop Nav Cluster (Hidden on Mobile) -->
+<nav class="hidden md:flex fixed top-0 right-container-margin h-20 items-center gap-6 z-50">
+<a class="text-body-md font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Yarn</a>
+<a class="text-body-md font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">History</a>
+<a class="text-body-md font-body-md text-primary font-bold border-b-2 border-primary pb-1" href="#">Settings</a>
+</nav>
+</body></html>

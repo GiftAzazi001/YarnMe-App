@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YarnMe - Processing</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#131e17",
+                        "surface-tint": "#106b4f",
+                        "on-surface": "#121c2a",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#0f6b4f",
+                        "inverse-surface": "#27313f",
+                        "outline": "#6f7a73",
+                        "on-surface-variant": "#3f4944",
+                        "on-secondary-container": "#6f5100",
+                        "on-tertiary-container": "#cfdbd0",
+                        "secondary-fixed-dim": "#f9bd22",
+                        "secondary-fixed": "#ffdf9f",
+                        "on-primary-fixed": "#002115",
+                        "primary": "#00513a",
+                        "surface-dim": "#d0dbed",
+                        "on-primary-fixed-variant": "#00513a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#261a00",
+                        "tertiary-container": "#556158",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#ffc329",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9ff",
+                        "inverse-primary": "#86d6b4",
+                        "primary-fixed-dim": "#86d6b4",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bec9c2",
+                        "surface-variant": "#d9e3f6",
+                        "surface-container": "#e6eeff",
+                        "tertiary": "#3e4941",
+                        "on-tertiary-fixed-variant": "#3e4a41",
+                        "on-primary-container": "#97e8c5",
+                        "on-background": "#121c2a",
+                        "surface-container-high": "#dee9fc",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed": "#d9e6da",
+                        "surface-bright": "#f8f9ff",
+                        "primary-fixed": "#a1f3cf",
+                        "surface-container-highest": "#d9e3f6",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "tertiary-fixed-dim": "#bdcabe",
+                        "secondary": "#795900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "xl": "48px",
+                        "lg": "32px",
+                        "base": "8px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "container-margin": "20px",
+                        "md": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+                        "label-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-xl-mobile": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-xl": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "label-sm": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["26px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-xl-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        /* Custom Animations for Premium Vibe */
+        @keyframes gentle-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 20px rgba(255, 195, 41, 0.4)); }
+            50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 35px rgba(255, 195, 41, 0.8)); }
+        }
+        
+        @keyframes float-icon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes indeterminate-progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+
+        @keyframes text-fade {
+            0% { opacity: 0; transform: translateY(5px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-5px); }
+        }
+
+        @keyframes slide-up-fade {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-ai-glow {
+            animation: gentle-pulse 4s ease-in-out infinite;
+        }
+
+        .animate-float {
+            animation: float-icon 6s ease-in-out infinite;
+        }
+
+        .animate-progress-bar {
+            animation: indeterminate-progress 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+        }
+
+        .text-cycle-item {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(10px);
+        }
+
+        .text-cycle-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .text-cycle-item.exit {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .animate-slide-up {
+            animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        /* Subtle background ambient glow */
+        .ambient-bg {
+            background: radial-gradient(circle at 50% 40%, rgba(15, 107, 79, 0.05) 0%, rgba(248, 249, 255, 0) 60%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col overflow-hidden relative ambient-bg">
+<!-- Atmospheric Background Elements (Very Subtle) -->
+<div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+<div class="absolute top-1/4 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-50 mix-blend-multiply"></div>
+<div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-secondary-container/10 rounded-full blur-3xl opacity-30 mix-blend-multiply"></div>
+</div>
+<!-- Note: TopAppBar and BottomNavBar are intentionally suppressed per instructions for task-focused/linear wait screens -->
+<!-- Main Processing Canvas -->
+<main class="flex-1 flex flex-col items-center justify-center w-full max-w-lg mx-auto px-container-margin relative z-10">
+<!-- Center Stage: AI Icon & Text -->
+<div class="flex flex-col items-center justify-center w-full mb-xl">
+<!-- Animated Icon Cluster -->
+<div class="relative w-32 h-32 flex items-center justify-center mb-lg">
+<!-- Outer AI Glow (Amber Accent for processing) -->
+<div class="absolute inset-0 bg-secondary-container rounded-full blur-2xl opacity-20 animate-ai-glow"></div>
+<!-- Inner Surface Ring -->
+<div class="absolute inset-2 bg-surface-container-lowest rounded-full shadow-[0_4px_20px_rgba(15,107,79,0.1)] flex items-center justify-center border border-surface-variant/50 animate-float">
+<!-- YarnMe Leading Icon (forum) -->
+<span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">
+                        forum
+                    </span>
+</div>
+<!-- Orbiting subtle dot (indicating activity) -->
+<div class="absolute w-full h-full animate-[spin_4s_linear_infinite]">
+<div class="w-3 h-3 bg-secondary-container rounded-full absolute -top-1 left-1/2 -translate-x-1/2 shadow-sm"></div>
+</div>
+</div>
+<!-- Cycling Text Area -->
+<div class="relative h-12 w-full text-center mt-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface text-cycle-item active" id="cycle-text-1">Reading your information...</h2>
+<h2 class="text-headline-sm font-headline-sm text-on-surface text-cycle-item" id="cycle-text-2">Analyzing financial context...</h2>
+<h2 class="text-headline-sm font-headline-sm text-on-surface text-cycle-item" id="cycle-text-3">Synthesizing insights...</h2>
+</div>
+<!-- Subtle Indeterminate Progress Bar -->
+<div class="w-48 h-1 bg-surface-variant rounded-full mt-lg overflow-hidden relative">
+<div class="absolute top-0 left-0 h-full w-1/2 bg-primary rounded-full animate-progress-bar opacity-80"></div>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-sm opacity-60 uppercase tracking-widest">Processing</p>
+</div>
+<!-- Bottom Anchored Document Preview (Truncated) -->
+<div class="absolute bottom-xl w-full px-container-margin max-w-sm left-1/2 -translate-x-1/2 animate-slide-up" style="animation-delay: 0.5s;">
+<div class="bg-surface-container-lowest/80 backdrop-blur-md rounded-2xl p-4 shadow-[0_8px_30px_rgba(15,107,79,0.08)] border border-surface-variant flex items-center gap-sm">
+<!-- Document Icon Area -->
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">
+                        description
+                    </span>
+</div>
+<!-- Truncated Document Details -->
+<div class="flex-1 min-w-0 flex flex-col justify-center">
+<p class="text-label-lg font-label-lg text-on-surface truncate">
+                        Q3_Financial_Statement_Final_v2.pdf
+                    </p>
+<div class="flex items-center gap-1 mt-xs">
+<span class="material-symbols-outlined text-secondary text-[14px]">
+                            lock
+                        </span>
+<p class="text-label-sm font-label-sm text-on-surface-variant">
+                            Securely encrypted
+                        </p>
+</div>
+</div>
+<!-- Success Check (Subtle) -->
+<span class="material-symbols-outlined text-primary/40 text-xl shrink-0">
+                    check_circle
+                </span>
+</div>
+</div>
+</main>
+<!-- JavaScript for Text Cycling -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const texts = document.querySelectorAll('.text-cycle-item');
+            let currentIndex = 0;
+            const cycleDuration = 3000; // 3 seconds per text
+
+            function cycleText() {
+                const currentElement = texts[currentIndex];
+                
+                // Calculate next index
+                const nextIndex = (currentIndex + 1) % texts.length;
+                const nextElement = texts[nextIndex];
+
+                // Animate current out
+                currentElement.classList.remove('active');
+                currentElement.classList.add('exit');
+
+                // Prepare next element (remove exit if it has it)
+                nextElement.classList.remove('exit');
+                
+                // Slight delay before animating next element in to prevent overlap visual glitch
+                setTimeout(() => {
+                    nextElement.classList.add('active');
+                }, 100);
+
+                currentIndex = nextIndex;
+            }
+
+            // Start cycling
+            if (texts.length > 1) {
+                setInterval(cycleText, cycleDuration);
+            }
+        });
+    </script>
+</body></html>

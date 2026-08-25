@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html lang="ha"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YarnMe - Sakamako</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#131e17",
+                        "surface-tint": "#106b4f",
+                        "on-surface": "#121c2a",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#0f6b4f",
+                        "inverse-surface": "#27313f",
+                        "outline": "#6f7a73",
+                        "on-surface-variant": "#3f4944",
+                        "on-secondary-container": "#6f5100",
+                        "on-tertiary-container": "#cfdbd0",
+                        "secondary-fixed-dim": "#f9bd22",
+                        "secondary-fixed": "#ffdf9f",
+                        "on-primary-fixed": "#002115",
+                        "primary": "#00513a",
+                        "surface-dim": "#d0dbed",
+                        "on-primary-fixed-variant": "#00513a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#261a00",
+                        "tertiary-container": "#556158",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#ffc329",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9ff",
+                        "inverse-primary": "#86d6b4",
+                        "primary-fixed-dim": "#86d6b4",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bec9c2",
+                        "surface-variant": "#d9e3f6",
+                        "surface-container": "#e6eeff",
+                        "tertiary": "#3e4941",
+                        "on-tertiary-fixed-variant": "#3e4a41",
+                        "on-primary-container": "#97e8c5",
+                        "on-background": "#121c2a",
+                        "surface-container-high": "#dee9fc",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed": "#d9e6da",
+                        "surface-bright": "#f8f9ff",
+                        "primary-fixed": "#a1f3cf",
+                        "surface-container-highest": "#d9e3f6",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "tertiary-fixed-dim": "#bdcabe",
+                        "secondary": "#795900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "xl": "48px",
+                        "lg": "32px",
+                        "base": "8px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "container-margin": "20px",
+                        "md": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-xl-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["26px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-xl-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen relative font-sans antialiased">
+<!-- Top Navigation / Context Area -->
+<header class="px-container-margin py-gutter sticky top-0 z-40 bg-background/90 backdrop-blur-md flex items-center justify-between">
+<button aria-label="Go back" class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-lowest shadow-[0_4px_20px_rgba(15,107,79,0.05)] text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="bg-surface-container-low border border-outline-variant/30 px-4 py-2 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">translate</span>
+<span class="font-label-lg text-label-lg text-primary">Hausa</span>
+</div>
+<div class="w-12"></div> <!-- Spacer for perfect centering -->
+</header>
+<!-- Main Content Canvas -->
+<main class="pb-[120px]"> <!-- Padding bottom for fixed navbar -->
+<!-- Status & Warning Header -->
+<section class="px-container-margin space-y-md mt-sm">
+<!-- Amber Status Pill -->
+<div class="inline-flex items-center gap-xs bg-secondary-fixed border border-secondary-fixed-dim px-3 py-1.5 rounded-full">
+<span class="material-symbols-outlined text-[16px] text-on-secondary-fixed-variant">pending</span>
+<span class="font-label-sm text-label-sm text-on-secondary-fixed-variant">Bayanai ba su cika ba</span>
+</div>
+<!-- Prominent Warning Panel -->
+<div class="bg-secondary-container rounded-xl p-md flex items-start gap-sm shadow-[0_4px_20px_rgba(255,195,41,0.15)] relative overflow-hidden">
+<!-- Subtle decorative background element for "Intelligent Warmth" -->
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-secondary-fixed rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+<span class="material-symbols-outlined text-[24px] text-on-secondary-container mt-0.5 relative z-10">warning</span>
+<div class="relative z-10">
+<p class="font-body-md text-body-md text-on-secondary-container">
+                        Wasu bayanai ba su fito sarai ba daga ainihin rubutun/maganar. Mun yi alama a inda muke bukatar karin haske don tabbatar da komai ya yi daidai.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Uncertainty Focus Section -->
+<section class="px-container-margin mt-xl space-y-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Wannan bangaren bai bayyana ba</h2>
+<div class="bg-surface-container-lowest rounded-[16px] p-gutter border-l-4 border-secondary-container shadow-[0_4px_20px_rgba(15,107,79,0.05)] space-y-md relative">
+<!-- AI Processing Indicator glow -->
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-secondary-container shadow-[0_0_10px_#ffc329] rounded-r-full blur-[2px]"></div>
+<!-- Original Phrase Snippet -->
+<div class="bg-surface p-sm rounded-lg border border-outline-variant/50">
+<p class="font-body-md text-body-md text-on-surface-variant italic relative pl-6">
+<span class="material-symbols-outlined text-[16px] text-outline absolute left-0 top-1">format_quote</span>
+                        "...amma idan zai yiwu a kawo kudin kafin a cika yarjejeniyar..."
+                    </p>
+</div>
+<!-- Why it's unclear -->
+<div class="flex gap-3 items-start">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed/50 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px] text-on-secondary-fixed-variant">help_outline</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface pt-1">
+                        Ba a fayyace <strong>lokacin da ya kamata a kawo kuɗin</strong> ba. Wannan zai iya haifar da rashin fahimta tsakanin bangarorin biyu a nan gaba.
+                    </p>
+</div>
+<!-- Action: Suggest Better Explanation -->
+<button class="w-full mt-sm py-4 rounded-full bg-surface-container-lowest border border-primary text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-primary-container/10 active:scale-[0.98] transition-all duration-200">
+<span class="material-symbols-outlined text-[20px]">edit_square</span>
+                    Ba da shawarar cikakken bayani
+                </button>
+</div>
+</section>
+<!-- Extracted Data Bento Grid -->
+<section class="px-container-margin mt-xl space-y-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Abubuwan Da Aka Fahimta</h2>
+<!-- Actions (Ayyuka) -->
+<div class="bg-surface-container-lowest rounded-[16px] p-gutter shadow-[0_4px_20px_rgba(15,107,79,0.05)]">
+<div class="flex items-center gap-2 mb-md">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-[18px]">task_alt</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface">Ayyuka (Actions)</h3>
+</div>
+<ul class="space-y-4">
+<li class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center shrink-0 mt-0.5">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Mika takardar yarjejeniya ga mai gida don sakawa hannu.</p>
+</li>
+<li class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center shrink-0 mt-0.5">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Gyara famfon ruwa da ke zuba a kicin cikin kwana biyu.</p>
+</li>
+</ul>
+</div>
+<!-- Asymmetric Grid for Payments and Dates -->
+<div class="grid grid-cols-2 gap-sm">
+<!-- Payments (Biyan Kudi) -->
+<div class="bg-surface-container-lowest rounded-[16px] p-gutter shadow-[0_4px_20px_rgba(15,107,79,0.05)] flex flex-col justify-between aspect-[4/3]">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 text-primary flex items-center justify-center mb-sm">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Biyan Kuɗi</p>
+<p class="font-headline-sm text-headline-sm text-on-surface">₦150,000</p>
+<p class="font-label-sm text-label-sm text-primary mt-1 truncate">Kudin haya</p>
+</div>
+</div>
+<!-- Dates (Ranakun) -->
+<div class="bg-surface-container-lowest rounded-[16px] p-gutter shadow-[0_4px_20px_rgba(15,107,79,0.05)] flex flex-col justify-between aspect-[4/3]">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 text-primary flex items-center justify-center mb-sm">
+<span class="material-symbols-outlined">calendar_month</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Rana ta Karshe</p>
+<p class="font-headline-sm text-headline-sm text-on-surface">15 Okt</p>
+<p class="font-label-sm text-label-sm text-outline mt-1">2024</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Shared Component Executed) -->
+<!-- Applying exact styles from JSON for structure and states -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 shadow-[0_-4px_20px_rgba(15,107,79,0.05)] bg-surface-container-lowest dark:bg-inverse-surface rounded-t-xl">
+<!-- Active Tab: Yarn (Semantic Match for Result of a Chat/Yarn) -->
+<!-- Applying style_active_navigation and scale-90 from style_interactions -->
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-6 py-1 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="font-label-sm text-label-sm">Yarn</span>
+</a>
+<!-- Inactive Tab: History -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-sm text-label-sm">History</span>
+</a>
+<!-- Inactive Tab: Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+</body></html>

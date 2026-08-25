@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Result Screen - Complete</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#131e17",
+                        "surface-tint": "#106b4f",
+                        "on-surface": "#121c2a",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#0f6b4f",
+                        "inverse-surface": "#27313f",
+                        "outline": "#6f7a73",
+                        "on-surface-variant": "#3f4944",
+                        "on-secondary-container": "#6f5100",
+                        "on-tertiary-container": "#cfdbd0",
+                        "secondary-fixed-dim": "#f9bd22",
+                        "secondary-fixed": "#ffdf9f",
+                        "on-primary-fixed": "#002115",
+                        "primary": "#00513a",
+                        "surface-dim": "#d0dbed",
+                        "on-primary-fixed-variant": "#00513a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#261a00",
+                        "tertiary-container": "#556158",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#ffc329",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9ff",
+                        "inverse-primary": "#86d6b4",
+                        "primary-fixed-dim": "#86d6b4",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bec9c2",
+                        "surface-variant": "#d9e3f6",
+                        "surface-container": "#e6eeff",
+                        "tertiary": "#3e4941",
+                        "on-tertiary-fixed-variant": "#3e4a41",
+                        "on-primary-container": "#97e8c5",
+                        "on-background": "#121c2a",
+                        "surface-container-high": "#dee9fc",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary-fixed": "#d9e6da",
+                        "surface-bright": "#f8f9ff",
+                        "primary-fixed": "#a1f3cf",
+                        "surface-container-highest": "#d9e3f6",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary-fixed-variant": "#5c4300",
+                        "tertiary-fixed-dim": "#bdcabe",
+                        "secondary": "#795900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "xl": "48px",
+                        "lg": "32px",
+                        "base": "8px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "container-margin": "20px",
+                        "md": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-xl-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["26px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-xl-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FFF8E7; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#FFF8E7] text-on-surface min-h-screen pb-32">
+<!-- Top Navigation Area -->
+<header class="flex items-center justify-between px-container-margin py-lg max-w-7xl mx-auto w-full">
+<button class="flex items-center text-primary hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-3xl">arrow_back</span>
+</button>
+<div class="flex items-center space-x-3">
+<div class="px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-lg text-label-lg shadow-sm border border-outline-variant/30 flex items-center">
+<span class="material-symbols-outlined text-lg mr-1.5 text-primary">translate</span>
+                Pidgin
+            </div>
+<div class="px-4 py-1.5 rounded-full bg-primary/10 text-primary font-label-lg text-label-lg shadow-sm border border-primary/20 flex items-center">
+<span class="material-symbols-outlined text-lg mr-1.5 text-primary">verified</span>
+                Source clear
+            </div>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-container-margin md:px-xl flex flex-col gap-xl">
+<!-- Main Explanation -->
+<section class="mt-4 flex flex-col md:flex-row md:items-start gap-6">
+<div class="flex-1">
+<div class="flex items-center justify-between mb-4">
+<h1 class="font-headline-xl-mobile text-headline-xl-mobile md:font-headline-xl md:text-headline-xl text-primary font-extrabold tracking-tight">Here’s wetin this notice dey talk</h1>
+<button class="md:hidden flex items-center justify-center w-12 h-12 rounded-full bg-surface-container-highest text-primary shadow-[0_4px_20px_rgba(15,107,79,0.05)] hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">volume_up</span>
+</button>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed mt-2 text-xl md:text-2xl font-medium max-w-3xl">
+                    Government dey plan to start one new road project for your area wey go affect some houses. Dem dey give am warning now so that everybody fit prepare. You need to register your name if your house dey close to the main road before next month end so you fit get compensation.
+                </p>
+<!-- Listen Button (Desktop) -->
+<button class="hidden md:inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-full bg-surface-container-highest text-primary font-label-lg text-label-lg shadow-[0_4px_20px_rgba(15,107,79,0.05)] hover:bg-surface-variant transition-colors border border-outline-variant/30">
+<span class="material-symbols-outlined">volume_up</span>
+                    Listen to translation
+                </button>
+</div>
+</section>
+<!-- Source Summary Bar -->
+<section class="glass-card rounded-xl p-4 md:p-6 shadow-[0_4px_20px_rgba(15,107,79,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-4 border border-outline-variant/20 relative overflow-hidden">
+<!-- Amber Glow Effect -->
+<div class="absolute -right-20 -top-20 w-40 h-40 bg-secondary-container/20 rounded-full blur-3xl"></div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">calendar_month</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Timeline</p>
+<p class="font-label-lg text-label-lg text-on-surface">3 important dates</p>
+</div>
+</div>
+<div class="hidden md:block w-px h-10 bg-outline-variant/30"></div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Cost</p>
+<p class="font-label-lg text-label-lg text-on-surface">No payments needed</p>
+</div>
+</div>
+<div class="hidden md:block w-px h-10 bg-outline-variant/30"></div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Reliability</p>
+<p class="font-label-lg text-label-lg text-on-surface">Source clear</p>
+</div>
+</div>
+</section>
+<!-- Actions Section (Bento Grid) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Wetin you go do (Left Col) -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container">task_alt</span>
+                    Wetin you go do
+                </h2>
+<div class="flex flex-col gap-4 relative">
+<!-- Connecting line -->
+<div class="absolute left-[23px] top-[40px] bottom-[40px] w-0.5 bg-outline-variant/30 z-0"></div>
+<!-- Step 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_20px_rgba(15,107,79,0.05)] flex items-start gap-4 relative z-10 border border-outline-variant/20 hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 shrink-0 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-headline-sm text-headline-sm shadow-sm ring-4 ring-[#FFF8E7]">
+                            1
+                        </div>
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface text-lg mb-1">Check if e affect you</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Look the map or ask local chairman if your house dey the road expansion area.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_20px_rgba(15,107,79,0.05)] flex items-start gap-4 relative z-10 border border-outline-variant/20 hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 shrink-0 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-headline-sm text-headline-sm shadow-sm ring-4 ring-[#FFF8E7]">
+                            2
+                        </div>
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface text-lg mb-1">Gather your papers</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Make sure say you hold your house receipt or any paper wey show say you own the place.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_20px_rgba(15,107,79,0.05)] flex items-start gap-4 relative z-10 border border-outline-variant/20 hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 shrink-0 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-headline-sm text-headline-sm shadow-sm ring-4 ring-[#FFF8E7]">
+                            3
+                        </div>
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface text-lg mb-1">Go register for local gov</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Carry all your papers go local government office go write your name down for compensation.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Col (Dates & Eligibility) -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Dates wey matter -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_20px_rgba(15,107,79,0.05)] border border-outline-variant/20">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container">event</span>
+                        Dates wey matter
+                    </h2>
+<div class="flex flex-col gap-5">
+<div class="flex items-center gap-4">
+<div class="w-16 text-center">
+<p class="font-headline-sm text-headline-sm text-primary">15</p>
+<p class="font-label-sm text-label-sm text-outline uppercase">Nov</p>
+</div>
+<div class="w-px h-12 bg-outline-variant/50"></div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">Registration Start</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Local gov office open for name</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-16 text-center">
+<p class="font-headline-sm text-headline-sm text-primary">30</p>
+<p class="font-label-sm text-label-sm text-outline uppercase">Nov</p>
+</div>
+<div class="w-px h-12 bg-outline-variant/50"></div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">Last Day to Register</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Dem no go gree take name again</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-16 text-center">
+<p class="font-headline-sm text-headline-sm text-primary">10</p>
+<p class="font-label-sm text-label-sm text-outline uppercase">Dec</p>
+</div>
+<div class="w-px h-12 bg-outline-variant/50"></div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">Meeting for Area</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Town hall meeting to talk amount</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Who fit apply & Docs -->
+<div class="bg-[#e6eeff] rounded-xl p-6 shadow-[0_4px_20px_rgba(15,107,79,0.05)] border border-[#d9e3f6]">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-4">Who fit apply</h2>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-3 py-1.5 bg-[#FFF8E7] text-primary font-label-lg text-label-lg rounded-full shadow-sm border border-outline-variant/20">House Owners</span>
+<span class="px-3 py-1.5 bg-[#FFF8E7] text-primary font-label-lg text-label-lg rounded-full shadow-sm border border-outline-variant/20">Shop Owners</span>
+<span class="px-3 py-1.5 bg-[#FFF8E7] text-primary font-label-lg text-label-lg rounded-full shadow-sm border border-outline-variant/20">Landlords</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-4 mt-6">Wetin you need</h2>
+<ul class="flex flex-col gap-3">
+<li class="flex items-center gap-3 font-body-md text-body-md text-on-surface">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+                             Valid ID Card (NIN or Voter Card)
+                         </li>
+<li class="flex items-center gap-3 font-body-md text-body-md text-on-surface">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+                             Proof of Ownership (C of O or Receipt)
+                         </li>
+<li class="flex items-center gap-3 font-body-md text-body-md text-on-surface">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+                             Two passport photograph
+                         </li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Original Info Collapsible -->
+<section class="border border-outline-variant/30 rounded-xl bg-surface-container-lowest overflow-hidden">
+<details class="group">
+<summary class="flex justify-between items-center font-headline-sm text-headline-sm text-on-surface cursor-pointer list-none p-6 hover:bg-surface-variant/30 transition-colors">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">description</span>
+                        See original information
+                    </span>
+<span class="transition group-open:rotate-180 material-symbols-outlined text-outline">
+                        expand_more
+                    </span>
+</summary>
+<div class="text-on-surface-variant font-body-md text-body-md p-6 pt-0 border-t border-outline-variant/20 bg-surface-container-lowest">
+<p class="mb-4 text-sm italic">Original source text (English):</p>
+<p class="leading-relaxed bg-surface p-4 rounded-lg border border-outline-variant/10 text-sm">
+                        Notice is hereby given to all residents and property owners along the proposed municipal highway expansion corridor. The regional government intends to commence surveying and preliminary land acquisition processes. Affected parties are required to submit their claims for compensation along with valid proof of ownership to the municipal planning office no later than November 30th. Failure to register within the stipulated timeframe may result in forfeiture of compensation rights.
+                    </p>
+</div>
+</details>
+</section>
+<!-- Follow-up Input -->
+<section class="glass-card rounded-2xl p-6 shadow-lg border border-primary/20 flex flex-col items-center justify-center text-center mt-4">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Still get question?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Ask me anything about this notice, I go try explain am better.</p>
+<div class="w-full max-w-2xl relative">
+<input class="w-full pl-6 pr-14 py-4 rounded-full bg-surface border border-outline-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none font-body-md text-body-md text-on-surface shadow-inner placeholder:text-outline transition-all" placeholder="Type your question here..." type="text"/>
+<button class="absolute right-2 top-2 bottom-2 w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center hover:opacity-90 transition-opacity shadow-md">
+<span class="material-symbols-outlined text-lg">arrow_upward</span>
+</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden shadow-[0_-4px_20px_rgba(15,107,79,0.05)] bg-surface-container-lowest dark:bg-inverse-surface fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 rounded-t-xl">
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-6 py-1 scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="font-label-sm text-label-sm mt-1">Yarn</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-sm text-label-sm mt-1">History</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 hover:bg-surface-variant/50 dark:hover:bg-surface-variant/10 rounded-full">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm mt-1">Settings</span>
+</button>
+</nav>
+</body></html>
