@@ -1,53 +1,64 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #fcf9f8;
-  --color-surface: #fcf9f8;
-  --color-surface-dim: #dcd9d9;
-  --color-surface-bright: #fcf9f8;
+  --color-background: #f8f9ff;
+  --color-result-background: #fff8e7;
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #d0dbed;
+  --color-surface-bright: #f8f9ff;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f6f3f2;
-  --color-surface-container: #f0eded;
-  --color-surface-container-high: #eae7e7;
-  --color-surface-container-highest: #e5e2e1;
-  --color-surface-variant: #e5e2e1;
-  --color-on-background: #1c1b1b;
-  --color-on-surface: #1c1b1b;
-  --color-on-surface-variant: #3f4945;
-  --color-outline: #707975;
-  --color-outline-variant: #bfc9c4;
-  --color-primary: #00342b;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e6eeff;
+  --color-surface-container-high: #dee9fc;
+  --color-surface-container-highest: #d9e3f6;
+  --color-surface-variant: #d9e3f6;
+  --color-on-background: #121c2a;
+  --color-on-surface: #121c2a;
+  --color-on-surface-variant: #3f4944;
+  --color-outline: #6f7a73;
+  --color-outline-variant: #bec9c2;
+  --color-primary: #00513a;
   --color-on-primary: #ffffff;
-  --color-primary-container: #004d40;
-  --color-on-primary-container: #7ebdac;
-  --color-secondary: #7e5700;
-  --color-secondary-container: #feb300;
-  --color-secondary-fixed: #ffdeac;
-  --color-secondary-fixed-dim: #ffba38;
-  --color-on-secondary-fixed: #281900;
-  --color-on-secondary-fixed-variant: #604100;
-  --color-tertiary: #630006;
-  --color-tertiary-container: #8d000d;
+  --color-primary-container: #0f6b4f;
+  --color-on-primary-container: #97e8c5;
+  --color-primary-fixed: #a1f3cf;
+  --color-primary-fixed-dim: #86d6b4;
+  --color-on-primary-fixed: #002115;
+  --color-on-primary-fixed-variant: #00513a;
+  --color-secondary: #795900;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #ffc329;
+  --color-on-secondary-container: #6f5100;
+  --color-secondary-fixed: #ffdf9f;
+  --color-secondary-fixed-dim: #f9bd22;
+  --color-on-secondary-fixed: #261a00;
+  --color-on-secondary-fixed-variant: #5c4300;
+  --color-tertiary: #3e4941;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #556158;
+  --color-on-tertiary-container: #cfdbd0;
   --color-error: #ba1a1a;
   --color-on-error: #ffffff;
   --color-error-container: #ffdad6;
   --color-on-error-container: #93000a;
 
-  --shadow-soft: 0 4px 12px rgb(0 0 0 / 0.05);
+  --shadow-soft: 0 4px 20px rgb(15 107 79 / 0.08);
+  --shadow-card: 0 18px 50px rgb(15 107 79 / 0.08);
+  --shadow-button: 0 10px 20px rgb(0 81 58 / 0.22);
 
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   --spacing-xs: 4px;
   --spacing-sm: 12px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  --spacing-md: 20px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
   --spacing-container-margin: 20px;
 }
 
 :root {
   color-scheme: light;
-  background: #fcf9f8;
+  background: #f8f9ff;
 }
 
 * {
@@ -56,14 +67,15 @@
 
 html {
   min-width: 320px;
-  background: #fcf9f8;
+  background: #f8f9ff;
+  scroll-behavior: smooth;
 }
 
 body {
   min-height: 100dvh;
   margin: 0;
-  background: #fcf9f8;
-  color: #1c1b1b;
+  background: #f8f9ff;
+  color: #121c2a;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -81,27 +93,45 @@ button {
 }
 
 .text-display {
-  font-size: 40px;
-  line-height: 48px;
+  font-size: 32px;
+  line-height: 40px;
   font-weight: 800;
+  letter-spacing: 0;
+}
+
+@media (min-width: 768px) {
+  .text-display {
+    font-size: 40px;
+    line-height: 48px;
+  }
 }
 
 .text-headline-lg {
   font-size: 32px;
   line-height: 40px;
   font-weight: 700;
+  letter-spacing: 0;
 }
 
 .text-headline-lg-mobile {
-  font-size: 28px;
-  line-height: 36px;
+  font-size: 26px;
+  line-height: 32px;
   font-weight: 700;
+  letter-spacing: 0;
 }
 
 .text-headline-md {
   font-size: 24px;
   line-height: 32px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.text-headline-sm {
+  font-size: 20px;
+  line-height: 28px;
   font-weight: 600;
+  letter-spacing: 0;
 }
 
 .text-body-lg {
@@ -120,16 +150,27 @@ button {
   font-size: 14px;
   line-height: 20px;
   font-weight: 600;
+  letter-spacing: 0;
+}
+
+.text-label-md {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .text-label-sm {
   font-size: 12px;
   line-height: 16px;
   font-weight: 500;
+  letter-spacing: 0;
 }
 
-.safe-bottom {
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
+.text-body-sm {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
 }
 
 .touch-target {
@@ -137,35 +178,65 @@ button {
   min-width: 48px;
 }
 
+.safe-bottom {
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
 .yarn-card {
-  border: 1px solid rgb(112 121 117 / 0.2);
-  background: #fcf9f8;
+  border: 1px solid rgb(190 201 194 / 0.7);
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgb(15 107 79 / 0.08);
+}
+
+.yarn-input {
+  border: 1.5px solid rgb(190 201 194 / 0.78);
+  background: #f8f9ff;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.yarn-input:focus {
+  border-color: #00513a;
+  box-shadow: 0 0 0 4px rgb(255 195 41 / 0.18);
+  outline: none;
+}
+
+.result-paper {
+  background:
+    radial-gradient(circle at top right, rgb(255 195 41 / 0.12), transparent 32rem),
+    #fff8e7;
 }
 
 .ambient-pulse {
-  animation: ambient-pulse 8s ease-in-out infinite alternate;
+  animation: ambient-pulse 7s ease-in-out infinite alternate;
 }
 
 @keyframes ambient-pulse {
   0% {
-    background-color: #fcf9f8;
+    background-color: #f8f9ff;
   }
   50% {
-    background-color: #f6f3f2;
+    background-color: #eff4ff;
   }
   100% {
-    background-color: #fcf9f8;
+    background-color: #fff8e7;
   }
 }
 
 .progress-ring-circle {
   stroke-dasharray: 283;
   stroke-dashoffset: 283;
-  animation: progress-fill 5s ease-out forwards;
+  animation: progress-fill 3.8s ease-in-out infinite;
 }
 
 @keyframes progress-fill {
-  to {
+  0% {
+    stroke-dashoffset: 283;
+  }
+  70%,
+  100% {
     stroke-dashoffset: 0;
   }
 }

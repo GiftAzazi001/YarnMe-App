@@ -1,34 +1,95 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { BottomNav } from "@/components/bottom-nav";
 import { Logo } from "@/components/logo";
+import { FileText, History, MessageSquare, Settings } from "lucide-react";
+import { Link, usePathname } from "@/lib/navigation";
 
 type AppShellProps = {
   children: ReactNode;
   header?: "brand" | "compact" | "none";
   className?: string;
+  mainClassName?: string;
 };
 
 export function AppShell({
   children,
   header = "brand",
   className = "",
+  mainClassName = "",
 }: AppShellProps) {
+  const pathname = usePathname();
+  const activeSection = pathname.startsWith("/history")
+    ? "history"
+    : pathname.startsWith("/settings")
+      ? "settings"
+      : "yarn";
+
   return (
-    <div className={`min-h-dvh bg-background pb-[104px] ${className}`}>
+    <div className={`min-h-dvh bg-background pb-[112px] lg:pb-0 ${className}`}>
       {header !== "none" ? (
-        <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur">
-          <div
-            className={[
-              "mx-auto flex w-full max-w-[720px] items-center px-container-margin py-md",
-              header === "brand" ? "justify-center" : "justify-start",
-            ].join(" ")}
-          >
-            <Logo compact={header === "compact"} centered={header === "brand"} />
+        <header className="sticky top-0 z-40 w-full bg-surface-container-lowest/92 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-[1180px] items-center justify-between px-container-margin py-sm lg:h-[72px] lg:px-lg">
+            <div className="hidden lg:block">
+              <Logo compact={header === "compact"} />
+            </div>
+
+            <Link
+              href="/"
+              aria-label="YarnMe"
+              className="touch-target flex items-center justify-start text-primary lg:hidden"
+            >
+              <MessageSquare aria-hidden="true" size={32} strokeWidth={2.4} />
+            </Link>
+
+            <div className="lg:hidden">
+              <Logo centered />
+            </div>
+
+            <nav
+              aria-label="Primary"
+              className="hidden items-center gap-xl text-label-lg font-bold lg:flex"
+            >
+              {[
+                { href: "/", label: "Yarn", icon: MessageSquare, section: "yarn" },
+                { href: "/history", label: "History", icon: History, section: "history" },
+                { href: "/settings", label: "Settings", icon: Settings, section: "settings" },
+              ].map((item) => {
+                const Icon = item.icon;
+                const active = item.section === activeSection;
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={[
+                      "inline-flex items-center gap-xs rounded-full px-sm py-xs transition",
+                      active
+                        ? "text-primary"
+                        : "text-on-surface-variant hover:text-primary",
+                    ].join(" ")}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    <Icon aria-hidden="true" size={28} strokeWidth={2.4} />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <Link
+              href="/history"
+              aria-label="History"
+              className="touch-target flex items-center justify-end text-primary"
+            >
+              <FileText aria-hidden="true" size={32} strokeWidth={2.4} />
+            </Link>
           </div>
         </header>
       ) : null}
 
-      <main className="mx-auto w-full max-w-[720px] px-container-margin">
+      <main className={`mx-auto w-full max-w-[720px] px-container-margin ${mainClassName}`}>
         {children}
       </main>
 

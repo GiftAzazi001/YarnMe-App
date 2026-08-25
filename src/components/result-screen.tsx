@@ -4,25 +4,31 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "@/lib/navigation";
 import {
   AlertTriangle,
-  Building2,
+  ArrowLeft,
   CalendarDays,
   Check,
   CheckCircle2,
   ChevronDown,
+  ClipboardCheck,
   Copy,
+  FileBadge,
   FileText,
-  GraduationCap,
+  HelpCircle,
+  Languages,
   Lightbulb,
+  ListChecks,
   Loader2,
   MessageSquarePlus,
   Pause,
   Send,
+  ShieldCheck,
   Sparkles,
   UsersRound,
   Volume2,
+  WalletCards,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
-import { AccentCard, Button } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { type LanguageCode } from "@/lib/analysis";
 import { type NormalizedAnalysis } from "@/lib/analysis-normalization";
 import { useYarnContext } from "@/lib/yarn-context";
@@ -38,9 +44,8 @@ const copy: Record<
   LanguageCode,
   {
     languageName: string;
-    title: string;
+    resultTitle: string;
     listen: string;
-    listening: string;
     stop: string;
     meaning: string;
     audience: string;
@@ -56,36 +61,42 @@ const copy: Record<
     paymentWhen: string;
     paymentWho: string;
     notStated: string;
+    timeline: string;
+    cost: string;
+    reliability: string;
+    noPayments: string;
+    sourceClear: string;
+    clear: string;
+    clearBody: string;
+    needsReview: string;
+    understood: string;
+    reviewTitle: string;
+    reviewBody: string;
+    reviewCta: string;
     sourceLimitations: string;
     incompleteWarning: string;
     original: string;
     copyBtn: string;
-    copiedBtn: string;
     questionTitle: string;
     questionBody: string;
     questionPlaceholder: string;
     questionOne: string;
     questionTwo: string;
-    clear: string;
-    clearBody: string;
-    needsReview: string;
-    switching: string;
     newYarn: string;
   }
 > = {
   "simple-english": {
     languageName: "Simple English",
-    title: "YarnMe explained it",
+    resultTitle: "Here is what this notice says",
     listen: "Listen",
-    listening: "Playing audio...",
-    stop: "Stop listening",
-    meaning: "What it means",
+    stop: "Stop",
+    meaning: "Main meaning",
     audience: "Who this concerns",
     eligibility: "Who can apply",
-    importantDate: "Important date",
+    importantDate: "Dates that matter",
     warnings: "Important things to know",
     actions: "What to do",
-    documents: "Documents you need",
+    documents: "What you need",
     legacyRequirements: "Other requirements",
     payments: "Payments",
     paymentAmount: "Amount",
@@ -93,36 +104,42 @@ const copy: Record<
     paymentWhen: "When",
     paymentWho: "Who",
     notStated: "Not stated",
-    sourceLimitations: "What is not clear from the source",
-    incompleteWarning:
-      "Some parts of this information appear to be missing or cut off. YarnMe will not guess the missing details.",
-    original: "See original text",
-    copyBtn: "Copy explanation",
-    copiedBtn: "Copied!",
-    questionTitle: "Question?",
-    questionBody: "Still confused? Ask YarnMe.",
-    questionPlaceholder: "Ask YarnMe here...",
-    questionOne: "What is the deadline?",
-    questionTwo: "What should I do next?",
+    timeline: "Timeline",
+    cost: "Cost",
+    reliability: "Reliability",
+    noPayments: "No payments needed",
+    sourceClear: "Source clear",
     clear: "Clear",
     clearBody: "YarnMe did not find any unclear part that needs review.",
     needsReview: "Needs Review",
-    switching: "Explaining in Simple English...",
+    understood: "What YarnMe understood",
+    reviewTitle: "This part is not clear",
+    reviewBody: "YarnMe found wording that may need a person to check before you act.",
+    reviewCta: "Suggest clearer information",
+    sourceLimitations: "What is not clear from the source",
+    incompleteWarning:
+      "Some parts of this information appear to be missing or cut off. YarnMe will not guess the missing details.",
+    original: "See original information",
+    copyBtn: "Copy explanation",
+    questionTitle: "Still get question?",
+    questionBody: "Ask YarnMe anything about this notice.",
+    questionPlaceholder: "Type your question here...",
+    questionOne: "What is the deadline?",
+    questionTwo: "What should I do next?",
     newYarn: "Start new yarn",
   },
   pidgin: {
     languageName: "Pidgin",
-    title: "YarnMe don explain am",
+    resultTitle: "Here’s wetin this notice dey talk",
     listen: "Listen",
-    listening: "YarnMe dey talk...",
-    stop: "Stop audio",
-    meaning: "Wetin e mean",
+    stop: "Stop",
+    meaning: "Main meaning",
     audience: "Who e concern",
     eligibility: "Who fit apply",
-    importantDate: "Important date",
+    importantDate: "Dates wey matter",
     warnings: "Important thing to know",
     actions: "Wetin you go do",
-    documents: "Documents wey you need",
+    documents: "Wetin you need",
     legacyRequirements: "Other things wey the source require",
     payments: "Payment",
     paymentAmount: "Amount",
@@ -130,36 +147,42 @@ const copy: Record<
     paymentWhen: "When",
     paymentWho: "Who",
     notStated: "No dey stated",
-    sourceLimitations: "Wetin the source no clear about",
-    incompleteWarning:
-      "Some parts of this information look like say dem cut off. YarnMe no go guess the missing details.",
-    original: "See original text",
-    copyBtn: "Copy explanation",
-    copiedBtn: "Copied!",
-    questionTitle: "Question?",
-    questionBody: "You still no clear? Ask YarnMe.",
-    questionPlaceholder: "Ask YarnMe here...",
-    questionOne: "When be deadline?",
-    questionTwo: "Wetin I go do next?",
+    timeline: "Timeline",
+    cost: "Cost",
+    reliability: "Reliability",
+    noPayments: "No payments needed",
+    sourceClear: "Source clear",
     clear: "Clear",
     clearBody: "YarnMe no see any unclear part wey need review.",
     needsReview: "Needs Review",
-    switching: "YarnMe dey translate to Pidgin...",
+    understood: "Wetin YarnMe understand",
+    reviewTitle: "This part no clear",
+    reviewBody: "YarnMe see wording wey fit need person to check before you act.",
+    reviewCta: "Suggest clearer information",
+    sourceLimitations: "Wetin the source no clear about",
+    incompleteWarning:
+      "Some parts of this information look like say dem cut off. YarnMe no go guess the missing details.",
+    original: "See original information",
+    copyBtn: "Copy explanation",
+    questionTitle: "Still get question?",
+    questionBody: "Ask me anything about this notice. I go try explain am better.",
+    questionPlaceholder: "Type your question here...",
+    questionOne: "When be deadline?",
+    questionTwo: "Wetin I go do next?",
     newYarn: "Start new yarn",
   },
   hausa: {
     languageName: "Hausa",
-    title: "YarnMe ya yi bayani",
+    resultTitle: "Ga abin da wannan sanarwa take nufi",
     listen: "Saurara",
-    listening: "Ana karantawa...",
     stop: "Dakata",
-    meaning: "Ma'anar sa",
+    meaning: "Babban bayani",
     audience: "Wanda abin ya shafa",
     eligibility: "Wanda zai iya nema",
-    importantDate: "Ranar mahimmanci",
+    importantDate: "Ranaku masu muhimmanci",
     warnings: "Abin lura",
     actions: "Abin da za ka yi",
-    documents: "Takardun da kake bukata",
+    documents: "Abin da kake bukata",
     legacyRequirements: "Sauran bukatu",
     payments: "Biyan kudi",
     paymentAmount: "Adadi",
@@ -167,21 +190,28 @@ const copy: Record<
     paymentWhen: "Lokaci",
     paymentWho: "Waye",
     notStated: "Ba a bayyana ba",
+    timeline: "Jadawali",
+    cost: "Kudi",
+    reliability: "Tabbaci",
+    noPayments: "Ba a bukatar kudi",
+    sourceClear: "Asali ya bayyana",
+    clear: "Ya bayyana",
+    clearBody: "YarnMe bai ga wani sashe da ke bukatar dubawa ba.",
+    needsReview: "A duba",
+    understood: "Abubuwan da aka fahimta",
+    reviewTitle: "Wannan bangaren bai bayyana ba",
+    reviewBody: "YarnMe ya ga wani rubutu da zai iya bukatar mutum ya tabbatar kafin ka dauki mataki.",
+    reviewCta: "Ba da shawarar cikakken bayani",
     sourceLimitations: "Abin da asalin bai bayyana ba",
     incompleteWarning:
       "Wasu sassan wannan bayani suna kama da sun bata ko sun yanke. YarnMe ba zai hasashen bayanan da suka bata ba.",
-    original: "Duba asali (See original text)",
+    original: "Duba asalin bayani",
     copyBtn: "Kwafi bayani",
-    copiedBtn: "An kwafa!",
-    questionTitle: "Tambaya?",
-    questionBody: "Har yanzu akwai rudani? Tambayi YarnMe.",
-    questionPlaceholder: "Tambayi YarnMe anan...",
+    questionTitle: "Kana da tambaya?",
+    questionBody: "Tambayi YarnMe game da wannan sanarwa.",
+    questionPlaceholder: "Rubuta tambayarka a nan...",
     questionOne: "Yaushe ne ranar karshe?",
     questionTwo: "Me zan yi yanzu?",
-    clear: "Clear",
-    clearBody: "YarnMe bai ga wani sashe mai bukatar dubawa ba.",
-    needsReview: "Needs Review",
-    switching: "YarnMe yana fassara zuwa Hausa...",
     newYarn: "Fara sabon bayani",
   },
 };
@@ -231,10 +261,10 @@ export function ResultScreen() {
   const [isAsking, setIsAsking] = useState(false);
   const [qaError, setQaError] = useState("");
   const [isSwitchingLang, setIsSwitchingLang] = useState(false);
+  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const router = useRouter();
   const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  // Clean up speech on unmount
   useEffect(() => {
     return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -254,6 +284,7 @@ export function ResultScreen() {
       setIsSpeaking(false);
     }
 
+    setLanguageMenuOpen(false);
     setIsSwitchingLang(true);
     try {
       await switchLanguage(newLang);
@@ -277,11 +308,10 @@ export function ResultScreen() {
 
     window.speechSynthesis.cancel();
 
-    // Spoken text formulation
     const textToSpeak = [
       analysisResult.analysis.meaning,
       analysisResult.analysis.actions.length > 0
-        ? `Actions: ${analysisResult.analysis.actions.join(". ")}`
+        ? `${activeCopy.actions}: ${analysisResult.analysis.actions.join(". ")}`
         : "",
     ]
       .filter(Boolean)
@@ -289,13 +319,7 @@ export function ResultScreen() {
 
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     synthRef.current = utterance;
-
-    if (analysisResult.language === "hausa") {
-      utterance.lang = "ha-NG";
-    } else {
-      utterance.lang = "en-NG";
-    }
-
+    utterance.lang = analysisResult.language === "hausa" ? "ha-NG" : "en-NG";
     utterance.rate = 0.95;
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
@@ -307,20 +331,23 @@ export function ResultScreen() {
   function handleCopy() {
     if (!analysisResult) return;
 
+    const { analysis } = analysisResult;
     const sections = [
-      `--- ${activeCopy.title} (${languageLabels[analysisResult.language]}) ---`,
-      `\n${activeCopy.meaning.toUpperCase()}:\n${analysisResult.analysis.meaning}`,
-      analysisResult.analysis.audience
-        ? `\n${activeCopy.audience.toUpperCase()}:\n${analysisResult.analysis.audience}`
+      `${activeCopy.resultTitle} (${languageLabels[analysisResult.language]})`,
+      `\n${activeCopy.meaning}:\n${analysis.meaning}`,
+      analysis.audience ? `\n${activeCopy.audience}:\n${analysis.audience}` : "",
+      analysis.actions.length > 0
+        ? `\n${activeCopy.actions}:\n${analysis.actions.map((a, i) => `${i + 1}. ${cleanDisplayItem(a)}`).join("\n")}`
         : "",
-      analysisResult.analysis.actions.length > 0
-        ? `\n${activeCopy.actions.toUpperCase()}:\n${analysisResult.analysis.actions.map((a, i) => `${i + 1}. ${a}`).join("\n")}`
+      analysis.dates.length > 0
+        ? `\n${activeCopy.importantDate}:\n${analysis.dates
+            .map((d) => `${cleanDisplayItem(d.date)}: ${cleanDisplayItem(d.context)}`)
+            .join("\n")}`
         : "",
-      analysisResult.analysis.dates.length > 0
-        ? `\n${activeCopy.importantDate.toUpperCase()}:\n${analysisResult.analysis.dates.map((d) => `${d.date}: ${d.context}`).join("\n")}`
-        : "",
-      analysisResult.analysis.payments.length > 0
-        ? `\n${activeCopy.payments.toUpperCase()}:\n${analysisResult.analysis.payments.map((p) => `${p.amount} - ${p.purpose} (${p.when})`).join("\n")}`
+      analysis.payments.length > 0
+        ? `\n${activeCopy.payments}:\n${analysis.payments
+            .map((p) => `${displayPaymentValue(p.amount, activeCopy.notStated)} - ${displayPaymentValue(p.purpose, activeCopy.notStated)}`)
+            .join("\n")}`
         : "",
     ]
       .filter(Boolean)
@@ -365,44 +392,28 @@ export function ResultScreen() {
     router.push("/");
   }
 
-  // If no analysis is loaded (e.g. accessed directly or refreshed without prior session)
   if (!analysisResult) {
     return (
       <AppShell header="brand">
-        <section className="flex flex-col items-center justify-center py-xl text-center">
-          <div className="mb-md flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Lightbulb size={32} />
+        <section className="flex min-h-[calc(100dvh-220px)] flex-col items-center justify-center py-xl text-center">
+          <div className="mb-md flex h-20 w-20 items-center justify-center rounded-full bg-primary-fixed text-primary">
+            <Lightbulb aria-hidden="true" size={38} />
           </div>
-          <h1 className="text-headline-lg-mobile font-bold text-primary">
-            No notice explained yet
-          </h1>
+          <h1 className="text-headline-lg-mobile text-primary">No notice explained yet</h1>
           <p className="mt-xs max-w-[320px] text-body-md text-on-surface-variant">
             Paste an official notice or pick an example below to see YarnMe in action.
           </p>
-
-          <div className="mt-xl flex flex-col gap-sm w-full max-w-sm">
-            <Button
-              onClick={handleStartNewYarn}
-              className="h-14 rounded-full text-label-lg font-bold"
-            >
-              <MessageSquarePlus size={20} />
+          <div className="mt-xl grid w-full max-w-sm gap-sm">
+            <Button onClick={handleStartNewYarn} className="h-14 text-label-lg">
+              <MessageSquarePlus aria-hidden="true" size={20} />
               <span>Paste a new notice</span>
             </Button>
             <Button
               variant="secondary"
               onClick={() => void handleLoadSample(0)}
-              className="h-14 rounded-full text-label-lg font-semibold"
+              className="h-14 text-label-lg"
             >
-              <Building2 size={20} />
-              <span>Try FRSC Public Service notice</span>
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => void handleLoadSample(1)}
-              className="h-14 rounded-full text-label-lg font-semibold"
-            >
-              <GraduationCap size={20} />
-              <span>Try JAMB Education notice</span>
+              Try sample notice
             </Button>
           </div>
         </section>
@@ -414,475 +425,500 @@ export function ResultScreen() {
   const hasUncertainties = analysis.uncertainties.length > 0;
   const hasAudience = analysis.audience.trim().length > 0;
   const hasIncompleteSource = sourceAppearsIncomplete(analysis);
+  const hasPayments = analysis.payments.length > 0;
+  const statusText = hasUncertainties ? activeCopy.needsReview : activeCopy.sourceClear;
+  const costSummary = hasPayments
+    ? analysis.payments
+        .map((payment) => displayPaymentValue(payment.amount, activeCopy.notStated))
+        .join(", ")
+    : activeCopy.noPayments;
+  const followUpPanel = (
+    <section className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-md shadow-card">
+      <div className="text-center">
+        <h2 className="text-headline-sm text-primary">{activeCopy.questionTitle}</h2>
+        <p className="mx-auto mt-xs max-w-[300px] text-label-lg text-on-surface-variant">
+          {activeCopy.questionBody}
+        </p>
+      </div>
+
+      {qaHistory.length > 0 ? (
+        <div className="mt-md space-y-sm">
+          {qaHistory.map((item) => (
+            <div key={item.id} className="space-y-xs">
+              <div className="ml-auto max-w-[86%] rounded-2xl rounded-br-sm bg-primary px-md py-sm text-body-md text-on-primary">
+                {item.question}
+              </div>
+              <div className="mr-auto max-w-[92%] rounded-2xl rounded-bl-sm border border-outline-variant/30 bg-surface p-sm text-body-md leading-relaxed text-on-surface shadow-soft">
+                {item.answer}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {qaError ? <p className="mt-sm text-label-md text-error">{qaError}</p> : null}
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleAsk(followUpQuery);
+        }}
+        className="relative mt-md"
+      >
+        <label className="sr-only" htmlFor="follow-up">
+          {activeCopy.questionTitle}
+        </label>
+        <input
+          id="follow-up"
+          value={followUpQuery}
+          onChange={(e) => setFollowUpQuery(e.target.value)}
+          disabled={isAsking}
+          className="yarn-input h-14 w-full rounded-full px-md pr-14 text-body-md"
+          placeholder={activeCopy.questionPlaceholder}
+          type="text"
+        />
+        <button
+          type="submit"
+          disabled={isAsking || !followUpQuery.trim()}
+          aria-label="Send question"
+          className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary transition hover:bg-primary-container disabled:opacity-50"
+        >
+          {isAsking ? <Loader2 className="animate-spin" size={18} /> : <Send aria-hidden="true" size={20} />}
+        </button>
+      </form>
+
+      <div className="mt-sm flex flex-wrap gap-xs">
+        {[activeCopy.questionOne, activeCopy.questionTwo].map((question) => (
+          <button
+            key={question}
+            type="button"
+            onClick={() => void handleAsk(question)}
+            disabled={isAsking}
+            className="touch-target rounded-full border border-outline-variant bg-surface-container-lowest px-sm text-label-sm font-semibold text-primary transition hover:bg-primary/5 disabled:opacity-50"
+          >
+            {question}
+          </button>
+        ))}
+      </div>
+    </section>
+  );
 
   return (
-    <AppShell header="brand">
-      {/* Language Selector Chips */}
-      <section className="pt-sm pb-xs">
-        <div className="flex items-center justify-center gap-2 rounded-2xl bg-surface-container p-1.5 shadow-sm border border-outline-variant/30">
-          {(["simple-english", "pidgin", "hausa"] as const).map((lang) => {
-            const isSelected = analysisResult.language === lang;
-            return (
-              <button
-                key={lang}
-                type="button"
-                onClick={() => void handleLanguageSwitch(lang)}
-                disabled={isSwitchingLang || isAnalyzing}
-                className={`touch-target flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-label-md font-semibold transition ${
-                  isSelected
-                    ? "bg-primary text-on-primary shadow-soft"
-                    : "text-on-surface hover:bg-surface-variant/50"
-                }`}
-              >
-                {isSwitchingLang && isSelected ? (
-                  <Loader2 className="animate-spin" size={16} />
-                ) : null}
-                <span>{languageLabels[lang]}</span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Main Header & Audio Action */}
-      <section className="space-y-sm pt-md text-center">
-        <h1 className="text-headline-lg-mobile font-bold text-primary">
-          {activeCopy.title}
-        </h1>
-
-        <div className="flex items-center justify-center gap-sm pt-xs">
+    <AppShell
+      header="none"
+      className="result-paper"
+      mainClassName="max-w-none px-0"
+    >
+      <div className="mx-auto w-full max-w-[1180px] px-container-margin pb-xl pt-md lg:px-lg lg:pt-lg">
+        <header className="mb-lg flex items-center justify-between gap-sm">
           <button
             type="button"
-            onClick={toggleSpeech}
-            className={`touch-target flex h-14 min-w-[200px] items-center justify-center gap-sm rounded-full px-6 text-[17px] font-semibold transition active:scale-95 ${
-              isSpeaking
-                ? "bg-secondary text-on-secondary shadow-soft animate-pulse"
-                : "bg-primary text-on-primary shadow-soft hover:bg-primary-container"
-            }`}
+            aria-label="Back to Yarn"
+            onClick={handleStartNewYarn}
+            className="touch-target flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface shadow-soft transition hover:text-primary"
           >
-            {isSpeaking ? (
-              <>
-                <Pause aria-hidden="true" size={24} />
-                <span>{activeCopy.stop}</span>
-              </>
-            ) : (
-              <>
-                <Volume2 aria-hidden="true" size={24} />
-                <span>{activeCopy.listen}</span>
-              </>
-            )}
+            <ArrowLeft aria-hidden="true" size={25} />
           </button>
+
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setLanguageMenuOpen((open) => !open)}
+              disabled={isSwitchingLang || isAnalyzing}
+              className="touch-target inline-flex items-center gap-xs rounded-full border border-surface-container-high bg-surface-container-low px-md text-label-lg font-bold text-primary shadow-sm"
+            >
+              {isSwitchingLang ? (
+                <Loader2 className="animate-spin" size={17} />
+              ) : (
+                <Languages aria-hidden="true" size={18} />
+              )}
+              <span>{activeCopy.languageName}</span>
+              <ChevronDown aria-hidden="true" size={16} />
+            </button>
+
+            {languageMenuOpen ? (
+              <div className="absolute left-1/2 top-[calc(100%+8px)] z-30 w-56 -translate-x-1/2 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-xs shadow-card">
+                {(["simple-english", "pidgin", "hausa"] as const).map((lang) => (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => void handleLanguageSwitch(lang)}
+                    className="flex min-h-[46px] w-full items-center justify-between rounded-xl px-sm text-left text-label-lg font-semibold text-on-surface transition hover:bg-surface-container-low"
+                  >
+                    <span>{languageLabels[lang]}</span>
+                    {analysisResult.language === lang ? (
+                      <Check aria-hidden="true" className="text-primary" size={18} />
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
 
           <button
             type="button"
             onClick={handleCopy}
             title={activeCopy.copyBtn}
-            className="touch-target flex h-14 w-14 items-center justify-center rounded-full border border-outline/20 bg-surface text-primary transition hover:bg-primary/5 active:scale-95 shadow-soft"
+            className="touch-target flex items-center justify-center rounded-full bg-surface-container-lowest text-primary shadow-soft transition hover:bg-primary/5 active:scale-95"
           >
-            {copied ? (
-              <Check aria-hidden="true" className="text-primary" size={22} />
-            ) : (
-              <Copy aria-hidden="true" size={22} />
-            )}
+            {copied ? <Check aria-hidden="true" size={22} /> : <Copy aria-hidden="true" size={22} />}
           </button>
-        </div>
-      </section>
+        </header>
 
-      {/* Incomplete source warning */}
-      {hasIncompleteSource ? (
-        <section className="mt-lg flex items-start gap-sm rounded-xl border border-secondary/20 bg-secondary-fixed/40 p-md text-on-secondary-fixed shadow-soft">
-          <AlertTriangle
-            aria-hidden="true"
-            className="mt-0.5 shrink-0 text-secondary"
-            size={22}
-          />
-          <div>
-            <h2 className="text-label-lg font-semibold text-secondary">
-              {activeCopy.incompleteWarning}
-            </h2>
-          </div>
-        </section>
-      ) : null}
+        <div className="grid gap-xl lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+          <main className="min-w-0">
+            <div className="mb-lg flex flex-wrap items-center gap-sm">
+              <span
+                className={[
+                  "inline-flex items-center gap-xs rounded-full border px-sm py-xs text-label-sm font-bold",
+                  hasUncertainties
+                    ? "border-secondary-container bg-secondary-container/70 text-on-secondary-container"
+                    : "border-primary-fixed-dim bg-primary-fixed/35 text-primary",
+                ].join(" ")}
+              >
+                {hasUncertainties ? (
+                  <HelpCircle aria-hidden="true" size={16} />
+                ) : (
+                  <ShieldCheck aria-hidden="true" size={16} />
+                )}
+                {statusText}
+              </span>
+            </div>
 
-      {/* Meaning */}
-      <section className="mt-xl">
-        <AccentCard tone="primary" className="p-md">
-          <div className="flex items-start gap-sm pl-sm">
-            <Lightbulb
-              aria-hidden="true"
-              className="mt-0.5 shrink-0 text-primary"
-              size={24}
-            />
-            <div>
-              <h2 className="text-label-sm font-semibold uppercase tracking-wide text-primary">
-                {activeCopy.meaning}
-              </h2>
-              <p className="mt-xs text-headline-md font-bold leading-relaxed text-on-surface">
+            {hasIncompleteSource ? (
+              <section className="mb-xl rounded-2xl bg-secondary-container p-lg text-on-secondary-container shadow-card">
+                <div className="flex items-start gap-md">
+                  <AlertTriangle aria-hidden="true" className="mt-1 shrink-0" size={28} />
+                  <p className="text-body-lg font-semibold leading-relaxed">
+                    {activeCopy.incompleteWarning}
+                  </p>
+                </div>
+              </section>
+            ) : null}
+
+            <section className="relative">
+              <div className="flex items-start justify-between gap-md">
+                <h1 className="max-w-[560px] text-headline-lg-mobile text-primary lg:text-headline-lg">
+                  {activeCopy.resultTitle}
+                </h1>
+                <button
+                  type="button"
+                  onClick={toggleSpeech}
+                  aria-label={isSpeaking ? activeCopy.stop : activeCopy.listen}
+                  className={[
+                    "touch-target flex shrink-0 items-center justify-center rounded-full shadow-soft transition active:scale-95",
+                    isSpeaking
+                      ? "bg-secondary-container text-on-secondary-container"
+                      : "bg-surface-container-high text-primary hover:bg-primary hover:text-on-primary",
+                  ].join(" ")}
+                >
+                  {isSpeaking ? <Pause aria-hidden="true" size={22} /> : <Volume2 aria-hidden="true" size={22} />}
+                </button>
+              </div>
+
+              <p className="mt-md max-w-[700px] whitespace-pre-wrap text-body-lg leading-relaxed text-on-surface">
                 {analysis.meaning}
               </p>
-            </div>
-          </div>
-        </AccentCard>
-      </section>
+            </section>
 
-      {/* Audience */}
-      {hasAudience ? (
-        <section className="mt-md">
-          <AccentCard tone="secondary" className="p-md">
-            <div className="flex items-start gap-sm pl-sm">
-              <UsersRound
-                aria-hidden="true"
-                className="mt-0.5 shrink-0 text-secondary-fixed-variant"
-                size={24}
-              />
-              <div>
-                <h2 className="text-label-sm font-semibold uppercase tracking-wide text-secondary-fixed-variant">
-                  {activeCopy.audience}
-                </h2>
-                <p className="mt-xs text-headline-md font-bold leading-snug text-on-surface">
-                  {analysis.audience}
-                </p>
-              </div>
-            </div>
-          </AccentCard>
-        </section>
-      ) : null}
-
-      {/* Important Dates */}
-      {analysis.dates.length > 0 ? (
-        <section className="mt-lg space-y-md">
-          <h2 className="text-headline-md font-semibold text-primary">
-            {activeCopy.importantDate}
-          </h2>
-          <div className="space-y-3">
-            {analysis.dates.map((item) => (
-              <div
-                key={`${item.date}-${item.context}`}
-                className="flex items-start gap-3 rounded-xl border border-outline/10 bg-surface p-3.5 shadow-sm"
-              >
-                <CalendarDays
-                  aria-hidden="true"
-                  className="mt-0.5 text-primary shrink-0"
-                  size={22}
-                />
-                <div className="space-y-1">
-                  <p className="text-label-lg font-bold text-primary">
-                    {cleanDisplayItem(item.date)}
-                  </p>
-                  <p className="text-body-md text-on-surface-variant">
-                    {cleanDisplayItem(item.context)}
+            <section className="mt-xl grid gap-xs rounded-2xl bg-surface-container-lowest p-md shadow-card sm:grid-cols-3">
+              <div className="flex gap-sm">
+                <CalendarDays aria-hidden="true" className="shrink-0 text-primary" size={22} />
+                <div>
+                  <p className="text-label-sm uppercase text-on-surface-variant">{activeCopy.timeline}</p>
+                  <p className="text-label-md text-on-surface">
+                    {analysis.dates.length} {analysis.dates.length === 1 ? "important date" : "important dates"}
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* Actions */}
-      {analysis.actions.length > 0 ? (
-        <section className="mt-xl space-y-md">
-          <h2 className="text-headline-md font-semibold text-primary">
-            {activeCopy.actions}
-          </h2>
-          <ol className="list-none space-y-3 text-body-md text-on-surface-variant">
-            {analysis.actions.map((item, index) => (
-              <li
-                key={item}
-                className="flex items-start gap-3 rounded-xl border border-outline/10 bg-surface p-3.5 shadow-sm"
-              >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-label-sm font-bold text-primary">
-                  {index + 1}
-                </span>
-                <span className="text-on-surface leading-relaxed">
-                  {cleanDisplayItem(item)}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </section>
-      ) : null}
-
-      {/* Eligibility */}
-      {analysis.eligibility.length > 0 ? (
-        <section className="mt-xl space-y-md">
-          <h2 className="text-headline-md font-semibold text-primary">
-            {activeCopy.eligibility}
-          </h2>
-          <ul className="space-y-3 text-body-md text-on-surface-variant">
-            {analysis.eligibility.map((item) => {
-              const cleanItem = cleanDisplayItem(item);
-              return (
-                <li
-                  key={item}
-                  className="flex items-start gap-3 rounded-xl border border-outline/10 bg-surface p-3.5 shadow-sm"
-                >
-                  <CheckCircle2
-                    aria-hidden="true"
-                    className="mt-0.5 text-primary shrink-0"
-                    size={20}
-                  />
-                  <span className="text-on-surface">{cleanItem}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ) : null}
-
-      {/* Documents */}
-      {analysis.documents.length > 0 ? (
-        <section className="mt-lg space-y-md">
-          <h2 className="text-headline-md font-semibold text-primary">
-            {activeCopy.documents}
-          </h2>
-          <ul className="space-y-3 text-body-md text-on-surface-variant">
-            {analysis.documents.map((item) => {
-              const cleanItem = cleanDisplayItem(item);
-              return (
-                <li
-                  key={item}
-                  className="flex items-start gap-3 rounded-xl border border-outline/10 bg-surface p-3.5 shadow-sm"
-                >
-                  <CheckCircle2
-                    aria-hidden="true"
-                    className="mt-0.5 text-primary shrink-0"
-                    size={20}
-                  />
-                  <span className="text-on-surface">{cleanItem}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ) : null}
-
-      {/* Payments */}
-      {analysis.payments.length > 0 ? (
-        <section className="mt-lg space-y-md">
-          <h2 className="text-headline-md font-semibold text-primary">
-            {activeCopy.payments}
-          </h2>
-          <div className="space-y-3">
-            {analysis.payments.map((payment) => (
-              <div
-                key={`${payment.amount}-${payment.purpose}-${payment.when}-${payment.who}`}
-                className="rounded-xl border border-outline/10 bg-surface p-md text-body-md text-on-surface-variant shadow-sm"
-              >
-                <p className="text-label-sm font-semibold uppercase text-on-surface-variant">
-                  {activeCopy.paymentAmount}
-                </p>
-                <p className="text-headline-md font-bold text-primary">
-                  {displayPaymentValue(payment.amount, activeCopy.notStated)}
-                </p>
-                <dl className="mt-sm grid grid-cols-1 gap-xs pt-xs border-t border-outline-variant/30">
-                  <div>
-                    <dt className="text-label-sm font-semibold uppercase text-on-surface-variant">
-                      {activeCopy.paymentPurpose}
-                    </dt>
-                    <dd className="text-body-md font-medium text-on-surface">
-                      {displayPaymentValue(payment.purpose, activeCopy.notStated)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-label-sm font-semibold uppercase text-on-surface-variant">
-                      {activeCopy.paymentWhen}
-                    </dt>
-                    <dd className="text-body-md font-medium text-on-surface">
-                      {displayPaymentValue(payment.when, activeCopy.notStated)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-label-sm font-semibold uppercase text-on-surface-variant">
-                      {activeCopy.paymentWho}
-                    </dt>
-                    <dd className="text-body-md font-medium text-on-surface">
-                      {displayPaymentValue(payment.who, activeCopy.notStated)}
-                    </dd>
-                  </div>
-                </dl>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* Warnings */}
-      {analysis.warnings.length > 0 ? (
-        <section className="mt-lg space-y-md">
-          <h2 className="text-headline-md font-semibold text-primary">
-            {activeCopy.warnings}
-          </h2>
-          <ul className="space-y-3 text-body-md text-on-surface-variant">
-            {analysis.warnings.map((item) => {
-              const cleanItem = cleanDisplayItem(item);
-              return (
-                <li
-                  key={item}
-                  className="flex items-start gap-3 rounded-xl border border-error/20 bg-error/5 p-3.5 text-on-surface"
-                >
-                  <AlertTriangle
-                    aria-hidden="true"
-                    className="mt-0.5 text-error shrink-0"
-                    size={20}
-                  />
-                  <span>{cleanItem}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ) : null}
-
-      {/* Source Limitations */}
-      {analysis.sourceLimitations.length > 0 ? (
-        <section className="mt-lg rounded-xl bg-surface-container-low p-md border border-outline-variant/30">
-          <h2 className="mb-sm text-label-lg font-semibold text-primary">
-            {activeCopy.sourceLimitations}
-          </h2>
-          <ul className="space-y-2 text-body-md text-on-surface-variant">
-            {analysis.sourceLimitations.map((item) => (
-              <li key={item} className="flex items-start gap-2">
-                <span className="text-primary mt-1">•</span>
-                <span>{cleanDisplayItem(item)}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      {/* Original Text Drawer */}
-      <section className="mt-xl border-y border-outline/10 py-md">
-        <details className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-between text-label-lg font-semibold text-primary">
-            <span className="flex items-center gap-sm">
-              <FileText aria-hidden="true" size={22} />
-              {activeCopy.original}
-            </span>
-            <ChevronDown
-              aria-hidden="true"
-              className="transition group-open:rotate-180"
-              size={22}
-            />
-          </summary>
-          <div className="mt-sm border-t border-outline/10 pt-sm">
-            <p className="rounded-lg bg-surface-container-low p-sm text-body-md italic text-on-surface-variant whitespace-pre-wrap">
-              &quot;{analysisResult.sourceText}&quot;
-            </p>
-          </div>
-        </details>
-      </section>
-
-      {/* Ask YarnMe Section */}
-      <section className="mt-xl rounded-xl bg-surface-container-low p-md border border-outline-variant/30">
-        <div className="flex items-center gap-2 mb-sm">
-          <Sparkles className="text-primary" size={20} />
-          <h2 className="text-headline-md font-semibold text-primary">
-            {activeCopy.questionTitle}
-          </h2>
-        </div>
-        <p className="mb-md text-body-md text-on-surface-variant">
-          {activeCopy.questionBody}
-        </p>
-
-        {/* Q&A Chat bubbles */}
-        {qaHistory.length > 0 ? (
-          <div className="mb-md space-y-3">
-            {qaHistory.map((item) => (
-              <div key={item.id} className="space-y-1.5">
-                <div className="ml-auto max-w-[85%] rounded-2xl rounded-tr-sm bg-primary px-4 py-2.5 text-body-md text-on-primary">
-                  {item.question}
-                </div>
-                <div className="mr-auto max-w-[90%] rounded-2xl rounded-tl-sm bg-surface p-3.5 text-body-md text-on-surface shadow-sm border border-outline-variant/30 leading-relaxed">
-                  {item.answer}
+              <div className="flex gap-sm">
+                <WalletCards aria-hidden="true" className="shrink-0 text-primary" size={22} />
+                <div>
+                  <p className="text-label-sm uppercase text-on-surface-variant">{activeCopy.cost}</p>
+                  <p className="text-label-md text-on-surface">{costSummary}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : null}
+              <div className="flex gap-sm">
+                <ShieldCheck aria-hidden="true" className="shrink-0 text-primary" size={22} />
+                <div>
+                  <p className="text-label-sm uppercase text-on-surface-variant">{activeCopy.reliability}</p>
+                  <p className="text-label-md text-on-surface">{statusText}</p>
+                </div>
+              </div>
+            </section>
 
-        {qaError ? (
-          <p className="mb-sm text-label-md text-error">{qaError}</p>
-        ) : null}
+            {hasUncertainties ? (
+              <section className="mt-xl">
+                <h2 className="text-headline-md text-on-surface">{activeCopy.reviewTitle}</h2>
+                <div className="mt-md rounded-2xl border-l-4 border-secondary-container bg-surface-container-lowest p-md shadow-card">
+                  <blockquote className="rounded-xl border border-outline-variant/35 bg-surface p-md text-body-lg italic text-on-surface-variant">
+                    &quot;{analysis.uncertainties[0].text}&quot;
+                  </blockquote>
+                  <div className="mt-md flex items-start gap-sm">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary-fixed text-on-secondary-fixed">
+                      <HelpCircle aria-hidden="true" size={21} />
+                    </span>
+                    <p className="text-body-lg leading-relaxed text-on-surface">
+                      {activeCopy.reviewBody}{" "}
+                      <strong>{analysis.uncertainties[0].reason}</strong>
+                    </p>
+                  </div>
+                  <Link
+                    href="/review"
+                    className="touch-target mt-lg inline-flex w-full items-center justify-center gap-sm rounded-full border border-primary bg-surface-container-lowest px-lg text-label-lg font-bold text-primary transition hover:bg-primary/5"
+                  >
+                    <FileBadge aria-hidden="true" size={20} />
+                    {activeCopy.reviewCta}
+                  </Link>
+                </div>
+              </section>
+            ) : null}
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void handleAsk(followUpQuery);
-          }}
-          className="relative mb-md"
-        >
-          <label className="sr-only" htmlFor="follow-up">
-            {activeCopy.questionTitle}
-          </label>
-          <input
-            id="follow-up"
-            value={followUpQuery}
-            onChange={(e) => setFollowUpQuery(e.target.value)}
-            disabled={isAsking}
-            className="h-14 w-full rounded-xl border border-outline/20 bg-surface px-4 py-2 pr-14 text-body-md text-on-surface outline-none transition focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-60"
-            placeholder={activeCopy.questionPlaceholder}
-            type="text"
-          />
-          <button
-            type="submit"
-            disabled={isAsking || !followUpQuery.trim()}
-            aria-label="Send question"
-            className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-on-primary transition hover:bg-primary-container disabled:opacity-50"
-          >
-            {isAsking ? (
-              <Loader2 className="animate-spin" size={18} />
-            ) : (
-              <Send aria-hidden="true" size={20} />
+            <section className="mt-xl">
+              <h2 className="text-headline-md text-on-surface">{activeCopy.understood}</h2>
+
+              {analysis.actions.length > 0 ? (
+                <div className="mt-md rounded-2xl bg-surface-container-lowest p-md shadow-card">
+                  <h3 className="mb-md flex items-center gap-sm text-headline-sm text-on-surface">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary">
+                      <ListChecks aria-hidden="true" size={21} />
+                    </span>
+                    {activeCopy.actions}
+                  </h3>
+                  <ol className="grid gap-sm">
+                    {analysis.actions.map((item, index) => (
+                      <li key={`${item}-${index}`} className="flex items-start gap-sm">
+                        <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary-container text-label-sm font-bold text-on-secondary-container">
+                          {index + 1}
+                        </span>
+                        <span className="text-body-lg leading-relaxed text-on-surface">
+                          {cleanDisplayItem(item)}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ) : null}
+
+              {analysis.payments.length > 0 || analysis.dates.length > 0 ? (
+                <div className="mt-md grid gap-md sm:grid-cols-2">
+                  {analysis.payments.map((payment, index) => (
+                    <div
+                      key={`${payment.amount}-${payment.purpose}-${index}`}
+                      className="rounded-2xl bg-surface-container-lowest p-md shadow-card"
+                    >
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-fixed text-primary">
+                        <WalletCards aria-hidden="true" size={24} />
+                      </span>
+                      <p className="mt-md text-label-lg text-on-surface">{activeCopy.payments}</p>
+                      <p className="mt-xs text-headline-md text-on-surface">
+                        {displayPaymentValue(payment.amount, activeCopy.notStated)}
+                      </p>
+                      <dl className="mt-sm grid gap-xs text-body-sm text-on-surface-variant">
+                        <div>
+                          <dt className="font-semibold text-on-surface">{activeCopy.paymentPurpose}</dt>
+                          <dd>{displayPaymentValue(payment.purpose, activeCopy.notStated)}</dd>
+                        </div>
+                        <div>
+                          <dt className="font-semibold text-on-surface">{activeCopy.paymentWhen}</dt>
+                          <dd>{displayPaymentValue(payment.when, activeCopy.notStated)}</dd>
+                        </div>
+                        <div>
+                          <dt className="font-semibold text-on-surface">{activeCopy.paymentWho}</dt>
+                          <dd>{displayPaymentValue(payment.who, activeCopy.notStated)}</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  ))}
+
+                  {analysis.dates.map((item, index) => (
+                    <div
+                      key={`${item.date}-${item.context}-${index}`}
+                      className="rounded-2xl bg-surface-container-lowest p-md shadow-card"
+                    >
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-fixed text-primary">
+                        <CalendarDays aria-hidden="true" size={24} />
+                      </span>
+                      <p className="mt-md text-label-lg text-on-surface">{activeCopy.importantDate}</p>
+                      <p className="mt-xs text-headline-md text-on-surface">
+                        {cleanDisplayItem(item.date)}
+                      </p>
+                      <p className="mt-xs text-body-sm text-on-surface-variant">
+                        {cleanDisplayItem(item.context)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+
+              {(hasAudience ||
+                analysis.eligibility.length > 0 ||
+                analysis.documents.length > 0 ||
+                analysis.legacyRequirements.length > 0) ? (
+                <div className="mt-md rounded-2xl bg-surface-container-high p-md shadow-card">
+                  {hasAudience ? (
+                    <div>
+                      <h3 className="flex items-center gap-sm text-headline-sm text-on-surface">
+                        <UsersRound aria-hidden="true" className="text-primary" size={22} />
+                        {activeCopy.audience}
+                      </h3>
+                      <p className="mt-sm text-body-lg text-on-surface">{analysis.audience}</p>
+                    </div>
+                  ) : null}
+
+                  {analysis.eligibility.length > 0 ? (
+                    <div className={hasAudience ? "mt-lg" : ""}>
+                      <h3 className="text-headline-sm text-on-surface">{activeCopy.eligibility}</h3>
+                      <div className="mt-sm flex flex-wrap gap-xs">
+                        {analysis.eligibility.map((item, index) => (
+                          <span
+                            key={`${item}-${index}`}
+                            className="rounded-full bg-result-background px-sm py-xs text-label-sm font-semibold text-primary"
+                          >
+                            {cleanDisplayItem(item)}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {analysis.documents.length > 0 ? (
+                    <div className={hasAudience || analysis.eligibility.length > 0 ? "mt-lg" : ""}>
+                      <h3 className="text-headline-sm text-on-surface">{activeCopy.documents}</h3>
+                      <ul className="mt-sm grid gap-xs">
+                        {analysis.documents.map((item, index) => (
+                          <li key={`${item}-${index}`} className="flex items-start gap-xs text-body-md text-on-surface">
+                            <CheckCircle2 aria-hidden="true" className="mt-1 shrink-0 text-primary" size={18} />
+                            <span>{cleanDisplayItem(item)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+
+                  {analysis.legacyRequirements.length > 0 ? (
+                    <div
+                      className={
+                        hasAudience || analysis.eligibility.length > 0 || analysis.documents.length > 0
+                          ? "mt-lg"
+                          : ""
+                      }
+                    >
+                      <h3 className="text-headline-sm text-on-surface">
+                        {activeCopy.legacyRequirements}
+                      </h3>
+                      <ul className="mt-sm grid gap-xs">
+                        {analysis.legacyRequirements.map((item, index) => (
+                          <li
+                            key={`${item}-${index}`}
+                            className="flex items-start gap-xs text-body-md text-on-surface"
+                          >
+                            <ClipboardCheck
+                              aria-hidden="true"
+                              className="mt-1 shrink-0 text-primary"
+                              size={18}
+                            />
+                            <span>{cleanDisplayItem(item)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {analysis.warnings.length > 0 ? (
+                <div className="mt-md rounded-2xl border border-error/20 bg-error-container/70 p-md">
+                  <h3 className="mb-sm flex items-center gap-sm text-headline-sm text-on-error-container">
+                    <AlertTriangle aria-hidden="true" size={22} />
+                    {activeCopy.warnings}
+                  </h3>
+                  <ul className="grid gap-xs text-body-md text-on-error-container">
+                    {analysis.warnings.map((item, index) => (
+                      <li key={`${item}-${index}`} className="flex gap-xs">
+                        <span aria-hidden="true">-</span>
+                        <span>{cleanDisplayItem(item)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {analysis.sourceLimitations.length > 0 ? (
+                <div className="mt-md rounded-2xl bg-surface-container-lowest p-md shadow-card">
+                  <h3 className="mb-sm flex items-center gap-sm text-headline-sm text-primary">
+                    <AlertTriangle aria-hidden="true" size={22} />
+                    {activeCopy.sourceLimitations}
+                  </h3>
+                  <ul className="grid gap-xs text-body-md text-on-surface-variant">
+                    {analysis.sourceLimitations.map((item, index) => (
+                      <li key={`${item}-${index}`} className="flex gap-xs">
+                        <span aria-hidden="true">-</span>
+                        <span>{cleanDisplayItem(item)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </section>
+
+            <section className="mt-xl rounded-2xl border border-outline-variant/40 bg-surface-container-lowest shadow-soft">
+              <details className="group">
+                <summary className="flex cursor-pointer list-none items-center justify-between px-md py-md text-label-lg font-bold text-on-surface">
+                  <span className="flex items-center gap-sm">
+                    <FileText aria-hidden="true" size={20} />
+                    {activeCopy.original}
+                  </span>
+                  <ChevronDown aria-hidden="true" className="transition group-open:rotate-180" size={22} />
+                </summary>
+                <div className="border-t border-outline-variant/30 p-md">
+                  <p className="whitespace-pre-wrap rounded-xl bg-surface p-sm text-body-md italic text-on-surface-variant">
+                    &quot;{analysisResult.sourceText}&quot;
+                  </p>
+                </div>
+              </details>
+            </section>
+
+            <div className="mt-xl lg:hidden">{followUpPanel}</div>
+
+            {hasUncertainties ? null : (
+              <section className="mt-lg flex items-start gap-sm rounded-2xl border border-primary-fixed-dim bg-primary-fixed/30 p-md text-primary">
+                <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0" size={22} />
+                <div>
+                  <h2 className="text-label-lg font-bold">{activeCopy.clear}</h2>
+                  <p className="mt-1 text-body-md text-on-surface-variant">{activeCopy.clearBody}</p>
+                </div>
+              </section>
             )}
-          </button>
-        </form>
 
-        <div className="flex flex-wrap gap-2">
-          {[activeCopy.questionOne, activeCopy.questionTwo].map((question) => (
-            <button
-              key={question}
-              type="button"
-              onClick={() => void handleAsk(question)}
-              disabled={isAsking}
-              className="touch-target rounded-full border border-outline/20 bg-surface px-3.5 py-1.5 text-label-sm font-medium text-on-surface transition hover:border-primary hover:bg-primary/5 active:scale-95 disabled:opacity-50"
-            >
-              {question}
-            </button>
-          ))}
+            <div className="mt-lg">
+              <Button
+                variant="secondary"
+                onClick={handleStartNewYarn}
+                className="h-14 w-full text-label-lg font-bold"
+              >
+                <MessageSquarePlus aria-hidden="true" size={20} />
+                <span>{activeCopy.newYarn}</span>
+              </Button>
+            </div>
+          </main>
+
+          <aside className="hidden lg:sticky lg:top-24 lg:block">
+            <div className="space-y-md">
+              <section className="rounded-2xl bg-surface-container-lowest p-lg shadow-card">
+                <h2 className="mb-md flex items-center gap-sm text-headline-sm text-on-surface">
+                  <ClipboardCheck aria-hidden="true" className="text-secondary" size={24} />
+                  Insight Source
+                </h2>
+                <div className="grid gap-sm border-t border-surface-container-high pt-md text-body-md text-on-surface-variant">
+                  <p>{statusText}</p>
+                  <p>{analysisResult.model ? `Model: ${analysisResult.model}` : "Generated by YarnMe"}</p>
+                </div>
+              </section>
+              {followUpPanel}
+            </div>
+          </aside>
         </div>
-      </section>
-
-      {/* Review / Status Action */}
-      {hasUncertainties ? (
-        <Link
-          href="/review"
-          className="touch-target mt-lg inline-flex h-14 w-full items-center justify-center rounded-full border-2 border-primary bg-transparent px-lg text-label-lg font-semibold text-primary transition hover:bg-primary/5 active:scale-[0.98]"
-        >
-          {activeCopy.needsReview}
-        </Link>
-      ) : (
-        <section className="mt-lg flex items-start gap-sm rounded-xl border border-primary/15 bg-primary/5 p-md text-primary">
-          <CheckCircle2 aria-hidden="true" className="mt-0.5 shrink-0" size={22} />
-          <div>
-            <h2 className="text-label-lg font-semibold">{activeCopy.clear}</h2>
-            <p className="mt-1 text-body-md text-on-surface-variant">
-              {activeCopy.clearBody}
-            </p>
-          </div>
-        </section>
-      )}
-
-      {/* Start New Yarn CTA */}
-      <div className="mt-lg mb-xl">
-        <Button
-          variant="secondary"
-          onClick={handleStartNewYarn}
-          className="h-14 w-full rounded-full text-label-lg font-bold"
-        >
-          <MessageSquarePlus size={20} />
-          <span>{activeCopy.newYarn}</span>
-        </Button>
       </div>
     </AppShell>
   );

@@ -4,16 +4,19 @@ import { useRef, useState } from "react";
 import { useRouter } from "@/lib/navigation";
 import {
   ArrowRight,
-  Building2,
+  BookOpenCheck,
+  BriefcaseBusiness,
   Check,
+  CloudUpload,
   FileCheck,
+  FolderOpen,
   GraduationCap,
-  Languages,
   Loader2,
   Lock,
+  Megaphone,
   Sparkles,
+  Trash2,
   Upload,
-  UsersRound,
   X,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
@@ -24,22 +27,17 @@ import { devTestInputs } from "@/lib/dev-test-inputs";
 
 const languages: Array<{
   label: string;
-  hint: string;
   value: LanguageCode;
 }> = [
-  {
-    label: "Simple English",
-    hint: "Easy English",
-    value: "simple-english",
-  },
-  { label: "Pidgin", hint: "No big grammar", value: "pidgin" },
-  { label: "Hausa", hint: "Bayani cikin Hausa", value: "hausa" },
+  { label: "Simple English", value: "simple-english" },
+  { label: "Pidgin", value: "pidgin" },
+  { label: "Hausa", value: "hausa" },
 ];
 
 const examples = [
-  { label: "Public Service", icon: Building2, index: 0 },
-  { label: "Education", icon: GraduationCap, index: 1 },
-  { label: "Community", icon: UsersRound, index: 2 },
+  { label: "Scholarship notice", icon: GraduationCap, index: 1, tone: "mint" },
+  { label: "Government application", icon: BriefcaseBusiness, index: 0, tone: "amber" },
+  { label: "School announcement", icon: Megaphone, index: 2, tone: "blue" },
 ];
 
 export function HomeScreen() {
@@ -68,9 +66,7 @@ export function HomeScreen() {
     setUploadedFileName(null);
     setMode("paste");
     setError(null);
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
+    window.setTimeout(() => textareaRef.current?.focus(), 0);
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -100,7 +96,6 @@ export function HomeScreen() {
       };
       reader.readAsText(file);
     } else {
-      // For binary files (PDF / images), read file info and notify
       const reader = new FileReader();
       reader.onload = () => {
         setSourceText(
@@ -121,14 +116,12 @@ export function HomeScreen() {
     const trimmed = sourceText.trim();
     if (!trimmed) {
       setError("Please paste your notice first, or tap one of the examples below.");
-      if (textareaRef.current) {
-        textareaRef.current.focus();
-      }
+      if (mode !== "paste") setMode("paste");
+      window.setTimeout(() => textareaRef.current?.focus(), 0);
       return;
     }
 
     setError(null);
-    // Navigate to processing screen immediately so user sees the progress ring
     router.push("/processing");
     const success = await runAnalysis(trimmed, language);
     if (success) {
@@ -143,257 +136,288 @@ export function HomeScreen() {
     }
   }
 
-  return (
-    <AppShell header="none">
-      <header className="flex items-center justify-between py-md">
-        <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-white text-[11px] font-extrabold text-primary shadow-sm">
-          YarnMe
+  const uploadCard = (
+    <div className="space-y-md">
+      <div
+        onClick={() => fileInputRef.current?.click()}
+        className="flex min-h-[330px] cursor-pointer flex-col items-center justify-center gap-md rounded-2xl border-2 border-dashed border-primary-fixed-dim bg-surface/55 px-lg py-xl text-center transition hover:bg-primary-fixed/15"
+      >
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept=".txt,.pdf,.png,.jpg,.jpeg,.doc,.docx"
+          className="hidden"
+        />
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary text-on-primary shadow-button">
+          {isReadingFile ? (
+            <Loader2 className="animate-spin" size={42} />
+          ) : (
+            <CloudUpload aria-hidden="true" size={44} />
+          )}
         </div>
-        <button
-          type="button"
-          aria-label="Choose language"
-          onClick={() => {
-            const nextLangMap: Record<LanguageCode, LanguageCode> = {
-              "simple-english": "pidgin",
-              pidgin: "hausa",
-              hausa: "simple-english",
-            };
-            setLanguage(nextLangMap[language]);
-          }}
-          title={`Switch language (current: ${language})`}
-          className="touch-target flex items-center justify-center rounded-full text-primary transition hover:bg-surface-container active:scale-95"
+        <div>
+          <p className="text-headline-md text-on-surface">Drop your document here</p>
+          <p className="mt-xs text-body-lg text-on-surface-variant">
+            PDF, JPG or PNG up to 10MB
+          </p>
+        </div>
+        <Button
+          variant="primary"
+          className="h-14 px-xl text-label-lg"
+          disabled={isReadingFile}
         >
-          <Languages aria-hidden="true" size={31} strokeWidth={2.3} />
-        </button>
-      </header>
+          <FolderOpen aria-hidden="true" size={22} />
+          <span>{isReadingFile ? "Reading..." : "Browse files"}</span>
+        </Button>
+      </div>
 
-      <section className="flex flex-col gap-sm pt-xl">
-        <h1 className="text-display font-extrabold text-primary">
-          If you no understand am, YarnMe go explain am.
-        </h1>
-        <p className="text-body-lg text-on-surface-variant">
-          Upload a notice, document or message. YarnMe will tell you what it
-          means and what to do.
-        </p>
-      </section>
-
-      <section className="relative mt-xl overflow-hidden rounded-xl border border-outline/20 bg-surface p-md shadow-soft">
-        <div className="absolute bottom-0 left-0 top-0 w-1 bg-primary" />
-        <div className="mb-sm flex border-b border-outline-variant/30">
+      {uploadedFileName ? (
+        <div className="flex items-center gap-md rounded-2xl border border-surface-container-high bg-surface-container-lowest p-md shadow-soft">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-error-container text-error">
+            <FileCheck aria-hidden="true" size={28} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-label-lg font-bold text-on-surface">
+              {uploadedFileName}
+            </p>
+            <p className="text-body-md text-on-surface-variant">Ready to review</p>
+          </div>
           <button
             type="button"
-            onClick={() => setMode("paste")}
-            className={`flex-1 border-b-2 py-sm text-center text-label-lg font-semibold transition ${
-              mode === "paste"
-                ? "border-primary text-primary"
-                : "border-transparent text-on-surface-variant"
-            }`}
+            aria-label="Remove uploaded file"
+            onClick={() => {
+              setUploadedFileName(null);
+              setSourceText("");
+              if (fileInputRef.current) fileInputRef.current.value = "";
+            }}
+            className="touch-target flex items-center justify-center rounded-full text-on-surface transition hover:bg-surface-container hover:text-error"
           >
-            Paste text
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("upload")}
-            className={`flex-1 border-b-2 py-sm text-center text-label-lg font-semibold transition ${
-              mode === "upload"
-                ? "border-primary text-primary"
-                : "border-transparent text-on-surface-variant"
-            }`}
-          >
-            Upload
+            <Trash2 aria-hidden="true" size={24} />
           </button>
         </div>
+      ) : null}
+    </div>
+  );
 
-        {mode === "paste" ? (
-          <div className="flex flex-col gap-xs">
-            <label className="sr-only" htmlFor="yarn-input">
-              Paste the information
-            </label>
-            <textarea
-              id="yarn-input"
-              ref={textareaRef}
-              value={sourceText}
-              onChange={(event) => {
-                setSourceText(event.target.value);
-                if (error) setError(null);
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Paste the official notice, message, or memo you want YarnMe to explain..."
-              className={`min-h-[140px] w-full resize-none rounded-lg border-2 bg-white p-sm text-body-md text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none ${
-                error
-                  ? "border-error focus:border-error"
-                  : "border-surface-variant focus:border-primary"
-              }`}
-              aria-invalid={Boolean(error)}
-              aria-describedby={error ? "yarn-input-error" : undefined}
-            />
-            {uploadedFileName && (
-              <div className="mt-xs flex items-center justify-between rounded-md bg-surface-container px-sm py-xs text-label-sm text-on-surface">
-                <span className="flex items-center gap-xs truncate">
-                  <FileCheck size={16} className="text-primary" />
+  return (
+    <AppShell
+      header="brand"
+      className="lg:bg-result-background"
+      mainClassName="lg:max-w-none lg:px-0"
+    >
+      <div className="mx-auto w-full max-w-[720px] pb-xl pt-lg lg:grid lg:min-h-[calc(100dvh-72px)] lg:max-w-[1180px] lg:grid-cols-[1fr_560px] lg:items-center lg:gap-xl lg:px-lg lg:py-xl">
+        <section className="lg:max-w-[560px]">
+          <div className="hidden lg:mb-xl lg:flex lg:items-center">
+            <div className="flex -space-x-3">
+              <span className="h-14 w-14 rounded-full border-4 border-result-background bg-primary-fixed" />
+              <span className="h-14 w-14 rounded-full border-4 border-result-background bg-surface-container-high" />
+              <span className="flex h-14 w-14 items-center justify-center rounded-full border-4 border-result-background bg-surface-container-highest text-label-lg font-bold text-on-surface-variant">
+                +5k
+              </span>
+            </div>
+            <span className="ml-md text-label-lg uppercase text-on-surface-variant">
+              People yarning daily
+            </span>
+          </div>
+
+          <h1 className="text-[40px] font-extrabold leading-[1.08] text-on-surface lg:text-[64px] lg:leading-[1.05] lg:text-primary">
+            {mode === "upload" ? "What are we reviewing?" : "Wetin you no understand?"}
+          </h1>
+          <p className="mt-sm text-body-lg text-on-surface-variant lg:text-[28px] lg:leading-[38px]">
+            {mode === "upload"
+              ? "Upload a document for intelligent analysis."
+              : "Drop am here. YarnMe go break am down."}
+          </p>
+        </section>
+
+        <section className="mt-xl lg:mt-0">
+          <div
+            className={[
+              mode === "paste"
+                ? "rounded-2xl bg-surface-container-lowest p-md shadow-card"
+                : "space-y-xl",
+              "lg:rounded-2xl lg:bg-surface-container-lowest lg:p-xl lg:shadow-card",
+            ].join(" ")}
+          >
+            <div
+              className={[
+                mode === "paste"
+                  ? "mb-md flex border-b border-surface-container-highest"
+                  : "mb-xl grid grid-cols-2 rounded-full bg-surface-container-high p-1",
+                "lg:mb-lg lg:inline-grid lg:grid-cols-2 lg:rounded-xl lg:bg-surface-container-low lg:p-1",
+              ].join(" ")}
+            >
+              <button
+                type="button"
+                onClick={() => setMode("paste")}
+                className={[
+                  mode === "paste"
+                    ? "border-b-2 border-primary text-primary"
+                    : "border-b-2 border-transparent text-on-surface-variant",
+                  "min-h-[52px] px-md text-label-lg font-bold transition lg:rounded-lg lg:border-b-0",
+                  mode === "paste" ? "lg:bg-surface-container-lowest lg:shadow-sm" : "",
+                ].join(" ")}
+              >
+                Paste Text
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("upload")}
+                className={[
+                  mode === "upload"
+                    ? "bg-primary text-on-primary shadow-button"
+                    : "text-on-surface-variant",
+                  "min-h-[52px] rounded-full px-md text-label-lg font-bold transition lg:rounded-lg",
+                ].join(" ")}
+              >
+                Upload document
+              </button>
+            </div>
+
+            {mode === "paste" ? (
+              <>
+                <label className="sr-only" htmlFor="yarn-input">
+                  Paste the information
+                </label>
+                <textarea
+                  id="yarn-input"
+                  ref={textareaRef}
+                  value={sourceText}
+                  onChange={(event) => {
+                    setSourceText(event.target.value);
+                    if (error) setError(null);
+                  }}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Paste the information you want YarnMe to explain..."
+                  className={`yarn-input min-h-[214px] w-full resize-none rounded-xl p-md text-body-lg text-on-surface placeholder:text-on-surface-variant/55 lg:min-h-[310px] ${
+                    error ? "border-error focus:border-error" : ""
+                  }`}
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? "yarn-input-error" : undefined}
+                />
+
+                <div className="mt-lg">
+                  <p className="mb-sm text-label-lg text-on-surface">
+                    Make am clear in
+                  </p>
+                  <div className="flex flex-wrap gap-xs">
+                    {languages.map((item) => {
+                      const isSelected = language === item.value;
+                      return (
+                        <button
+                          key={item.value}
+                          type="button"
+                          onClick={() => setLanguage(item.value)}
+                          aria-pressed={isSelected}
+                          className={[
+                            "touch-target rounded-full border px-md text-label-lg transition active:scale-95",
+                            isSelected
+                              ? "border-primary bg-primary text-on-primary shadow-button"
+                              : "border-outline-variant bg-surface-container-lowest text-on-surface hover:border-primary hover:text-primary",
+                          ].join(" ")}
+                        >
+                          {item.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            ) : (
+              uploadCard
+            )}
+
+            {uploadedFileName && mode === "paste" ? (
+              <div className="mt-sm flex items-center justify-between rounded-xl bg-surface-container-low px-sm py-xs text-label-sm text-on-surface">
+                <span className="flex min-w-0 items-center gap-xs truncate">
+                  <FileCheck aria-hidden="true" size={16} className="shrink-0 text-primary" />
                   Loaded: {uploadedFileName}
                 </span>
                 <button
                   type="button"
+                  aria-label="Clear uploaded text"
                   onClick={() => {
                     setUploadedFileName(null);
                     setSourceText("");
                   }}
-                  className="text-on-surface-variant hover:text-error"
+                  className="rounded-full p-1 text-on-surface-variant hover:bg-error/10 hover:text-error"
                 >
-                  <X size={16} />
+                  <X aria-hidden="true" size={16} />
                 </button>
               </div>
-            )}
-          </div>
-        ) : (
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className="flex cursor-pointer flex-col items-center justify-center gap-sm rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-lg text-center transition hover:bg-primary/10"
-          >
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept=".txt,.pdf,.png,.jpg,.jpeg,.doc,.docx"
-              className="hidden"
-            />
-            {isReadingFile ? (
-              <div className="flex flex-col items-center gap-sm">
-                <Loader2 className="animate-spin text-primary" size={36} />
-                <p className="text-label-md font-semibold text-primary">
-                  Reading document...
+            ) : null}
+
+            {error ? (
+              <div className="mt-md rounded-xl border border-error/20 bg-error-container/70 p-sm">
+                <p id="yarn-input-error" className="text-label-md text-on-error-container">
+                  {error}
                 </p>
               </div>
-            ) : (
-              <>
-                <Upload aria-hidden="true" className="text-primary" size={40} />
-                <p className="text-label-lg font-semibold text-on-surface">
-                  Click to upload a notice or document
-                </p>
-                <p className="text-label-sm text-on-surface-variant">
-                  Text, PDF, JPG or PNG
-                </p>
-                <Button
-                  variant="secondary"
-                  className="mt-xs h-10 rounded-lg pointer-events-none"
+            ) : null}
+
+            <Button
+              onClick={() => void handleStartYarn()}
+              disabled={isAnalyzing || isReadingFile}
+              className="mt-xl h-[74px] w-full text-headline-sm font-bold"
+            >
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="animate-spin" size={26} />
+                  <span>Yarning...</span>
+                </>
+              ) : (
+                <>
+                  <span>{mode === "upload" ? "Start Yarning" : "Yarn am"}</span>
+                  {mode === "upload" ? (
+                    <Sparkles aria-hidden="true" size={24} />
+                  ) : (
+                    <ArrowRight aria-hidden="true" size={30} />
+                  )}
+                </>
+              )}
+            </Button>
+          </div>
+        </section>
+
+        <section className="mt-xl lg:col-span-2 lg:mt-0 lg:max-w-[560px]">
+          <h2 className="mb-md text-label-lg uppercase text-on-surface-variant">
+            Try One
+          </h2>
+          <div className="grid gap-md lg:grid-cols-3">
+            {examples.map((example) => {
+              const Icon = example.icon;
+              const tone =
+                example.tone === "amber"
+                  ? "bg-secondary-fixed text-on-secondary-fixed"
+                  : example.tone === "mint"
+                    ? "bg-primary-fixed text-primary"
+                    : "bg-surface-container-high text-primary";
+
+              return (
+                <button
+                  key={example.label}
+                  type="button"
+                  onClick={() => handleUseExample(example.index)}
+                  className="flex min-h-[100px] items-center gap-md rounded-2xl bg-surface-container-low p-md text-left shadow-soft transition hover:-translate-y-0.5 hover:bg-surface-container active:translate-y-0 lg:min-h-[88px]"
                 >
-                  Choose file
-                </Button>
-              </>
-            )}
-          </div>
-        )}
-
-        <p className="mt-sm flex items-center gap-xs text-label-sm text-on-surface-variant">
-          <Lock aria-hidden="true" size={16} />
-          YarnMe only uses what you send to explain it to you.
-        </p>
-
-        {error ? (
-          <div className="mt-sm rounded-lg bg-error/10 p-sm border border-error/20 flex items-start justify-between gap-sm">
-            <p
-              id="yarn-input-error"
-              className="text-label-md font-semibold text-error"
-            >
-              {error}
-            </p>
-            <button
-              type="button"
-              onClick={() => handleUseExample(0)}
-              className="text-label-sm font-bold text-primary underline shrink-0 hover:text-primary-container"
-            >
-              Use sample notice
-            </button>
-          </div>
-        ) : null}
-      </section>
-
-      <section className="mt-xl flex flex-col gap-md">
-        <h2 className="text-headline-md font-semibold text-on-surface">
-          How do you want YarnMe to explain it?
-        </h2>
-        <div className="flex flex-col gap-sm">
-          {languages.map((item) => {
-            const isSelected = language === item.value;
-            return (
-              <label
-                key={item.value}
-                className={`touch-target flex cursor-pointer items-center justify-between rounded-xl border p-md transition ${
-                  isSelected
-                    ? "border-primary bg-primary/5 shadow-sm"
-                    : "border-outline/20 bg-surface hover:bg-surface-container-low"
-                }`}
-              >
-                <div className="flex items-center gap-md">
-                  <input
-                    type="radio"
-                    name="language"
-                    value={item.value}
-                    checked={isSelected}
-                    onChange={() => setLanguage(item.value)}
-                    className="h-5 w-5 border-outline-variant text-primary focus:ring-primary"
-                  />
-                  <span className="text-body-md font-medium text-on-surface">
-                    {item.label}{" "}
-                    <span className="text-on-surface-variant font-normal">
-                      ({item.hint})
-                    </span>
+                  <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${tone}`}>
+                    <Icon aria-hidden="true" size={24} strokeWidth={2.2} />
                   </span>
-                </div>
-                {isSelected && (
-                  <Check size={18} className="text-primary font-bold" />
-                )}
-              </label>
-            );
-          })}
-        </div>
-      </section>
+                  <span className="text-body-lg font-bold text-on-surface">
+                    {example.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-      <Button
-        onClick={() => void handleStartYarn()}
-        disabled={isAnalyzing}
-        className="mt-xl h-16 w-full rounded-xl text-headline-md font-bold disabled:opacity-75"
-      >
-        {isAnalyzing ? (
-          <>
-            <Loader2 className="animate-spin" size={28} />
-            <span>Yarning...</span>
-          </>
-        ) : (
-          <>
-            <span>Yarn Me</span>
-            <ArrowRight aria-hidden="true" size={32} />
-          </>
-        )}
-      </Button>
-
-      <section className="mt-xl border-t border-surface-variant/40 pt-lg">
-        <div className="flex items-center justify-between">
-          <h3 className="text-label-lg font-semibold text-on-surface">
-            Try an example
-          </h3>
-          <span className="text-label-sm text-on-surface-variant">
-            Tap to load
-          </span>
-        </div>
-        <div className="mt-md flex flex-wrap gap-sm">
-          {examples.map((example) => {
-            const Icon = example.icon;
-            return (
-              <button
-                key={example.label}
-                type="button"
-                onClick={() => handleUseExample(example.index)}
-                className="touch-target flex items-center gap-sm rounded-full border border-primary/30 bg-surface px-lg py-sm text-label-lg font-semibold text-primary transition hover:bg-primary/10 active:scale-95 shadow-xs"
-              >
-                <Icon aria-hidden="true" size={18} />
-                {example.label}
-              </button>
-            );
-          })}
-        </div>
-      </section>
+          <p className="mx-auto mt-xl flex max-w-[380px] items-center justify-center gap-md text-center text-label-lg text-on-surface-variant lg:mx-0 lg:justify-start">
+            <Lock aria-hidden="true" size={18} />
+            <span>Your information is only used to explain what you send.</span>
+          </p>
+        </section>
+      </div>
     </AppShell>
   );
 }

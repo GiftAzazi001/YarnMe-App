@@ -8,7 +8,8 @@ import {
   CheckCircle2,
   Eye,
   FileText,
-  Info,
+  HelpCircle,
+  Languages,
   Pencil,
   X,
 } from "lucide-react";
@@ -20,6 +21,7 @@ import { useYarnContext } from "@/lib/yarn-context";
 const copy: Record<
   LanguageCode,
   {
+    languageName: string;
     title: string;
     heading: string;
     intro: string;
@@ -28,9 +30,11 @@ const copy: Record<
     alertPrefix: string;
     suggest: string;
     original: string;
+    hideOriginal: string;
     sheetTitle: string;
     yarnMeSaid: string;
     correctionLabel: string;
+    correctionPlaceholder: string;
     send: string;
     thanks: string;
     thanksBody: string;
@@ -41,17 +45,20 @@ const copy: Record<
   }
 > = {
   "simple-english": {
+    languageName: "Simple English",
     title: "Review Yarn",
-    heading: "Review this explanation",
-    intro: "We noticed a potential issue in the recent breakdown.",
-    snippet: "Section Snippet",
-    explanation: "YarnMe Explanation:",
+    heading: "This part is not clear",
+    intro: "Some information may be missing or cut off.",
+    snippet: "Section snippet",
+    explanation: "YarnMe explanation",
     alertPrefix: "YarnMe is not fully sure about this part:",
-    suggest: "Suggest a correction",
+    suggest: "Suggest clearer information",
     original: "See original",
+    hideOriginal: "Hide original",
     sheetTitle: "How would you explain this better?",
     yarnMeSaid: "YarnMe said",
     correctionLabel: "Your correction",
+    correctionPlaceholder: "Type the corrected or clearer explanation...",
     send: "Send",
     thanks: "Thank you.",
     thanksBody: "You helped YarnMe improve.",
@@ -61,17 +68,20 @@ const copy: Record<
     backToResult: "Back to result",
   },
   pidgin: {
+    languageName: "Pidgin",
     title: "Review Yarn",
-    heading: "Review this explanation",
-    intro: "YarnMe notice say one part fit need person eye.",
-    snippet: "Section Snippet",
-    explanation: "YarnMe Explanation:",
+    heading: "This part no clear",
+    intro: "Some information fit don miss or cut off.",
+    snippet: "Section snippet",
+    explanation: "Wetin YarnMe explain",
     alertPrefix: "YarnMe no fully sure about this part:",
-    suggest: "Suggest correction",
+    suggest: "Suggest clearer information",
     original: "See original",
+    hideOriginal: "Hide original",
     sheetTitle: "How you go explain this one better?",
     yarnMeSaid: "YarnMe talk say",
     correctionLabel: "Your correction",
+    correctionPlaceholder: "Type the corrected or clearer explanation...",
     send: "Send",
     thanks: "Thank you.",
     thanksBody: "You help YarnMe improve.",
@@ -81,23 +91,26 @@ const copy: Record<
     backToResult: "Back to result",
   },
   hausa: {
-    title: "Review Yarn",
-    heading: "Review this explanation",
-    intro: "We noticed a potential issue in the recent breakdown.",
-    snippet: "Section Snippet",
-    explanation: "YarnMe Explanation:",
+    languageName: "Hausa",
+    title: "A duba bayani",
+    heading: "Wannan bangaren bai bayyana ba",
+    intro: "Wasu bayanai ba su fito sarai daga ainihin rubutun ba.",
+    snippet: "Bangaren rubutu",
+    explanation: "Bayanin YarnMe",
     alertPrefix: "YarnMe bai da cikakken tabbaci game da wannan sashe:",
-    suggest: "Ba da shawara",
+    suggest: "Ba da shawarar cikakken bayani",
     original: "Duba asali",
+    hideOriginal: "Rufe asali",
     sheetTitle: "Yaya za ka bayyana wannan da kyau?",
-    yarnMeSaid: "YarnMe yace",
-    correctionLabel: "Naka fassarar",
+    yarnMeSaid: "YarnMe ya ce",
+    correctionLabel: "Naka gyara",
+    correctionPlaceholder: "Rubuta gyara ko karin bayani...",
     send: "Aika",
     thanks: "Na gode.",
     thanksBody: "Ka taimaka wa YarnMe ya inganta.",
     done: "Kammala",
-    noReview: "Babu buƙatar dubawa",
-    noReviewBody: "YarnMe bai ga wani ɓangare mara kyau ba a cikin sabon bayanin.",
+    noReview: "Babu bukatar dubawa",
+    noReviewBody: "YarnMe bai ga wani bangare mara tabbas a sabon bayanin ba.",
     backToResult: "Koma zuwa sakamako",
   },
 };
@@ -124,18 +137,16 @@ export function ReviewScreen() {
     return (
       <AppShell header="brand">
         <section className="flex min-h-[calc(100dvh-220px)] flex-col items-center justify-center py-xl text-center">
-          <div className="mb-lg flex h-20 w-20 items-center justify-center rounded-full bg-surface-container text-primary">
+          <div className="mb-lg flex h-20 w-20 items-center justify-center rounded-full bg-primary-fixed text-primary">
             <CheckCircle2 aria-hidden="true" size={40} />
           </div>
-          <h2 className="text-headline-lg-mobile font-bold text-primary">
-            {activeCopy.noReview}
-          </h2>
+          <h1 className="text-headline-lg-mobile text-primary">{activeCopy.noReview}</h1>
           <p className="mt-sm max-w-[320px] text-body-md text-on-surface-variant">
             {activeCopy.noReviewBody}
           </p>
           <Link
             href={analysisResult ? "/result" : "/"}
-            className="touch-target mt-xl inline-flex items-center justify-center rounded-full bg-primary px-lg text-label-lg font-semibold text-on-primary shadow-soft transition hover:bg-primary-container active:scale-95"
+            className="touch-target mt-xl inline-flex items-center justify-center rounded-full bg-primary px-lg text-label-lg font-semibold text-on-primary shadow-button transition hover:bg-primary-container active:scale-95"
           >
             {activeCopy.backToResult}
           </Link>
@@ -145,73 +156,75 @@ export function ReviewScreen() {
   }
 
   return (
-    <AppShell header="none">
-      <header className="sticky top-0 z-40 -mx-container-margin flex items-center justify-between bg-background px-container-margin py-md">
+    <AppShell header="none" mainClassName="max-w-[720px]">
+      <header className="sticky top-0 z-40 -mx-container-margin flex items-center justify-between bg-background/95 px-container-margin py-md backdrop-blur">
         <button
           type="button"
           aria-label="Go back"
           onClick={() => router.push("/result")}
-          className="touch-target flex items-center justify-start rounded-full text-on-surface transition hover:text-primary"
+          className="touch-target flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface shadow-soft transition hover:text-primary"
         >
-          <ArrowLeft aria-hidden="true" size={30} />
+          <ArrowLeft aria-hidden="true" size={25} />
         </button>
-        <h1 className="flex-1 pr-12 text-center text-headline-md font-semibold">
-          {activeCopy.title}
-        </h1>
+        <span className="inline-flex min-h-[48px] items-center gap-xs rounded-full border border-surface-container-high bg-surface-container-low px-md text-label-lg font-bold text-primary">
+          <Languages aria-hidden="true" size={18} />
+          {activeCopy.languageName}
+        </span>
+        <span className="touch-target" aria-hidden="true" />
       </header>
 
-      <section className="pt-xl">
-        <h2 className="text-headline-lg-mobile font-bold text-on-surface">
-          {activeCopy.heading}
-        </h2>
-        <p className="mt-xs text-body-md text-on-surface-variant">
-          {activeCopy.intro}
-        </p>
+      <section className="pt-md">
+        <span className="inline-flex items-center gap-xs rounded-full border border-secondary-container bg-secondary-container/75 px-sm py-xs text-label-sm font-bold text-on-secondary-container">
+          <HelpCircle aria-hidden="true" size={16} />
+          {activeCopy.title}
+        </span>
+        <div className="mt-lg rounded-2xl bg-secondary-container p-lg text-on-secondary-container shadow-card">
+          <div className="flex items-start gap-md">
+            <AlertTriangle aria-hidden="true" className="mt-1 shrink-0" size={28} />
+            <p className="text-body-lg font-semibold leading-relaxed">{activeCopy.intro}</p>
+          </div>
+        </div>
       </section>
 
-      <section className="relative mt-xl rounded-xl border border-surface-variant bg-surface p-md shadow-soft">
-        <div className="absolute -top-3 right-4 flex items-center gap-1 rounded-full bg-error px-3 py-1 text-on-error shadow-soft">
-          <AlertTriangle aria-hidden="true" size={14} />
-          <span className="text-label-sm font-semibold">Needs Review</span>
-        </div>
-        <div className="absolute bottom-0 left-0 top-0 w-1 rounded-l-xl bg-error" />
-        <div className="pl-sm">
-          <h3 className="mb-2 flex items-center gap-xs text-label-sm font-medium uppercase text-on-surface-variant">
-            <FileText aria-hidden="true" size={16} />
-            {activeCopy.snippet}
-          </h3>
-          <p className="text-body-lg leading-relaxed text-on-surface font-semibold">
-            &quot;{uncertainty.text}&quot;
-          </p>
-          <div className="mt-md border-t border-surface-variant/50 pt-md">
-            <p className="mb-1 text-label-sm font-medium text-primary">
+      <section className="mt-xl">
+        <h1 className="text-headline-lg-mobile text-on-surface">{activeCopy.heading}</h1>
+        <div className="mt-md rounded-2xl border-l-4 border-secondary-container bg-surface-container-lowest p-md shadow-card">
+          <div className="rounded-xl border border-outline-variant/35 bg-surface p-md">
+            <p className="mb-xs text-label-sm uppercase text-on-surface-variant">
+              {activeCopy.snippet}
+            </p>
+            <p className="text-body-lg italic leading-relaxed text-on-surface">
+              &quot;{uncertainty.text}&quot;
+            </p>
+          </div>
+
+          <div className="mt-md flex items-start gap-sm">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary-fixed text-on-secondary-fixed">
+              <HelpCircle aria-hidden="true" size={21} />
+            </span>
+            <p className="text-body-lg leading-relaxed text-on-surface">
+              {activeCopy.alertPrefix} <strong>{uncertainty.reason}</strong>
+            </p>
+          </div>
+
+          <div className="mt-md border-t border-outline-variant/30 pt-md">
+            <p className="text-label-sm font-bold uppercase text-primary">
               {activeCopy.explanation}
             </p>
-            <p className="text-body-md italic text-on-surface-variant">
+            <p className="mt-xs text-body-md italic text-on-surface-variant">
               &quot;{analysisResult.analysis.meaning}&quot;
             </p>
           </div>
         </div>
       </section>
 
-      <section className="mt-lg flex items-start gap-sm rounded-lg border border-error/10 bg-error/10 p-md text-on-surface shadow-soft">
-        <Info
-          aria-hidden="true"
-          className="mt-0.5 shrink-0 text-error"
-          size={22}
-        />
-        <p className="text-body-md">
-          {activeCopy.alertPrefix} {uncertainty.reason}
-        </p>
-      </section>
-
-      <section className="mt-xl flex flex-col gap-md pb-lg">
+      <section className="mt-xl grid gap-md pb-lg">
         <Button
           onClick={() => {
             setSubmitted(false);
             setSheetOpen(true);
           }}
-          className="h-14 w-full rounded-full"
+          className="h-14 w-full text-label-lg"
         >
           <Pencil aria-hidden="true" size={20} />
           <span>{activeCopy.suggest}</span>
@@ -219,22 +232,23 @@ export function ReviewScreen() {
         <Button
           variant="secondary"
           onClick={() => setShowOriginal((prev) => !prev)}
-          className="h-14 w-full rounded-full"
+          className="h-14 w-full text-label-lg"
         >
           <Eye aria-hidden="true" size={20} />
-          <span>{showOriginal ? "Hide original" : activeCopy.original}</span>
+          <span>{showOriginal ? activeCopy.hideOriginal : activeCopy.original}</span>
         </Button>
 
-        {showOriginal && (
-          <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low p-md">
-            <p className="text-label-sm font-semibold uppercase text-primary mb-xs">
-              Original Notice
+        {showOriginal ? (
+          <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-md shadow-soft">
+            <p className="mb-xs flex items-center gap-xs text-label-sm font-bold uppercase text-primary">
+              <FileText aria-hidden="true" size={16} />
+              {activeCopy.original}
             </p>
-            <p className="text-body-md whitespace-pre-wrap text-on-surface italic">
+            <p className="whitespace-pre-wrap text-body-md italic text-on-surface">
               {analysisResult.sourceText}
             </p>
           </div>
-        )}
+        ) : null}
       </section>
 
       {sheetOpen ? (
@@ -242,54 +256,49 @@ export function ReviewScreen() {
           <button
             type="button"
             aria-label="Close correction sheet"
-            className="absolute inset-0 bg-[#313030]/60"
+            className="absolute inset-0 bg-[#121c2a]/62"
             onClick={closeSheet}
           />
-          <div className="absolute inset-x-0 bottom-0 mx-auto max-h-[90dvh] w-full max-w-[720px] overflow-hidden rounded-t-2xl bg-surface shadow-[0_-4px_24px_rgb(0_0_0_/_0.1)]">
+          <div className="absolute inset-x-0 bottom-0 mx-auto max-h-[90dvh] w-full max-w-[720px] overflow-hidden rounded-t-3xl bg-surface-container-lowest shadow-[0_-18px_50px_rgb(15_107_79_/_0.18)]">
             <div className="flex justify-center pb-2 pt-4">
-              <div className="h-1.5 w-12 rounded-full bg-surface-variant" />
+              <div className="h-1.5 w-12 rounded-full bg-surface-container-highest" />
             </div>
             {!submitted ? (
               <div className="flex max-h-[calc(90dvh-24px)] flex-col gap-lg overflow-y-auto p-container-margin pt-2">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-headline-md font-semibold">
-                    {activeCopy.sheetTitle}
-                  </h2>
+                <div className="flex items-center justify-between gap-md">
+                  <h2 className="text-headline-md text-on-surface">{activeCopy.sheetTitle}</h2>
                   <button
                     type="button"
                     aria-label="Close"
                     onClick={closeSheet}
-                    className="touch-target flex items-center justify-center rounded-full bg-surface-container text-on-surface transition hover:bg-surface-variant"
+                    className="touch-target flex shrink-0 items-center justify-center rounded-full bg-surface-container-low text-on-surface transition hover:bg-surface-container"
                   >
                     <X aria-hidden="true" size={22} />
                   </button>
                 </div>
 
-                <div className="flex flex-col gap-xs">
-                  <p className="text-label-sm font-medium uppercase text-on-surface-variant">
+                <div>
+                  <p className="text-label-sm font-bold uppercase text-on-surface-variant">
                     {activeCopy.yarnMeSaid}
                   </p>
-                  <div className="rounded-lg border border-surface-variant/30 bg-surface-container-low p-sm">
+                  <div className="mt-xs rounded-xl border border-outline-variant/30 bg-surface p-sm">
                     <p className="text-body-md text-on-surface-variant">
                       &quot;{analysisResult.analysis.meaning}&quot;
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-1 flex-col gap-xs">
-                  <label
-                    className="text-label-sm font-medium uppercase text-on-surface"
-                    htmlFor="correction"
-                  >
+                <div className="flex flex-col gap-xs">
+                  <label className="text-label-sm font-bold uppercase text-on-surface" htmlFor="correction">
                     {activeCopy.correctionLabel}
                   </label>
                   <textarea
                     id="correction"
                     value={correction}
                     onChange={(event) => setCorrection(event.target.value)}
-                    className="min-h-[170px] w-full flex-1 resize-none rounded-lg border-2 border-outline-variant bg-surface p-md text-body-lg text-on-surface transition focus:border-primary focus:ring-0"
+                    className="yarn-input min-h-[180px] w-full resize-none rounded-2xl p-md text-body-lg text-on-surface"
                     spellCheck={false}
-                    placeholder="Type the corrected or clearer explanation..."
+                    placeholder={activeCopy.correctionPlaceholder}
                   />
                 </div>
 
@@ -297,7 +306,7 @@ export function ReviewScreen() {
                   onClick={() => {
                     if (correction.trim()) setSubmitted(true);
                   }}
-                  className="h-14 w-full rounded-full"
+                  className="h-14 w-full"
                   disabled={!correction.trim()}
                 >
                   {activeCopy.send}
@@ -305,20 +314,12 @@ export function ReviewScreen() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center px-container-margin py-xl text-center">
-                <div className="mx-auto mb-md flex h-20 w-20 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
+                <div className="mx-auto mb-md flex h-20 w-20 items-center justify-center rounded-full bg-primary-fixed text-primary">
                   <CheckCircle2 aria-hidden="true" size={44} />
                 </div>
-                <h2 className="mb-sm text-headline-md font-semibold">
-                  {activeCopy.thanks}
-                </h2>
-                <p className="text-body-lg text-on-surface-variant">
-                  {activeCopy.thanksBody}
-                </p>
-                <Button
-                  variant="secondary"
-                  onClick={closeSheet}
-                  className="mt-lg h-14 w-full rounded-full border-surface-variant bg-surface-container text-on-surface hover:bg-surface-variant"
-                >
+                <h2 className="mb-sm text-headline-md text-on-surface">{activeCopy.thanks}</h2>
+                <p className="text-body-lg text-on-surface-variant">{activeCopy.thanksBody}</p>
+                <Button variant="secondary" onClick={closeSheet} className="mt-lg h-14 w-full">
                   {activeCopy.done}
                 </Button>
               </div>

@@ -23,9 +23,9 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-outline-variant/20 bg-surface-container-lowest/95 shadow-sm backdrop-blur"
+      className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-surface-container-lowest/95 shadow-[0_-10px_30px_rgb(15_107_79_/_0.08)] backdrop-blur lg:hidden"
     >
-      <div className="safe-bottom mx-auto flex h-[80px] w-full max-w-[720px] items-center justify-around px-4">
+      <div className="safe-bottom mx-auto flex h-[88px] w-full max-w-[720px] items-center justify-around px-4">
         {items.map((item) => {
           const Icon = item.icon;
           const active = item.section === activeSection;
@@ -35,15 +35,15 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={[
-                "touch-target flex flex-col items-center justify-center rounded-xl px-4 py-2 transition active:scale-95",
+                "touch-target flex min-w-[92px] flex-col items-center justify-center rounded-full px-5 py-2 transition active:scale-95",
                 active
-                  ? "bg-primary text-on-primary"
-                  : "text-on-surface-variant hover:text-primary",
+                  ? "bg-primary text-on-primary shadow-button"
+                  : "text-on-surface hover:bg-surface-container-low hover:text-primary",
               ].join(" ")}
               aria-current={active ? "page" : undefined}
             >
               <Icon aria-hidden="true" size={24} strokeWidth={active ? 2.4 : 2} />
-              <span className="mt-1 text-label-sm font-medium">{item.label}</span>
+              <span className="mt-1 text-label-sm font-semibold">{item.label}</span>
             </Link>
           );
         })}

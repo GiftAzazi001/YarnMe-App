@@ -2,17 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "@/lib/navigation";
-import { AlertCircle, FileText, Loader2, Sparkles } from "lucide-react";
-import { Logo } from "@/components/logo";
+import {
+  AlertCircle,
+  CheckCircle2,
+  FileText,
+  Loader2,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui";
 import { useYarnContext } from "@/lib/yarn-context";
 import { devTestInputs } from "@/lib/dev-test-inputs";
 
 const messages = [
-  "Reading your notice…",
+  "Reading your information…",
   "Finding what matters…",
   "Making it easier to understand…",
-  "Translating to your language…",
 ];
 
 export function ProcessingScreen() {
@@ -34,19 +39,17 @@ export function ProcessingScreen() {
   useEffect(() => {
     const timer = window.setInterval(() => {
       setMessageIndex((current) => (current + 1) % messages.length);
-    }, 1400);
+    }, 1450);
 
     return () => window.clearInterval(timer);
   }, []);
 
   useEffect(() => {
-    // If we already have a result, go straight to result screen
     if (analysisResult && !isAnalyzing) {
       router.push("/result");
       return;
     }
 
-    // If analysis hasn't started yet and we have text, start it
     if (!executedRef.current && sourceText.trim() && !isAnalyzing) {
       executedRef.current = true;
       runAnalysis(sourceText, language).then((success) => {
@@ -74,135 +77,114 @@ export function ProcessingScreen() {
   const hasNoText = !sourceText.trim() && !isAnalyzing;
 
   return (
-    <div className="ambient-pulse flex min-h-dvh flex-col justify-between overflow-hidden bg-background">
-      <header className="mx-auto flex w-full max-w-[720px] justify-center px-container-margin py-xl">
-        <div className="flex h-14 w-14 items-center justify-center rounded-sm bg-white shadow-sm">
-          <Logo compact />
-        </div>
-      </header>
-
-      <main className="mx-auto flex w-full max-w-[720px] flex-1 flex-col items-center justify-center px-container-margin pb-xl">
-        <div className="mb-xl flex w-full max-w-sm items-center gap-sm rounded-xl border border-outline-variant/30 bg-surface p-md opacity-90 shadow-soft">
-          <div className="flex rounded-lg bg-surface-container-high p-xs text-primary">
-            <FileText aria-hidden="true" size={28} />
+    <div className="ambient-pulse flex min-h-dvh flex-col overflow-hidden bg-background">
+      <main className="mx-auto flex w-full max-w-[620px] flex-1 flex-col items-center justify-center px-container-margin py-xl">
+        <div className="mb-xl flex w-full items-center gap-md rounded-2xl border border-surface-container-high bg-surface-container-lowest p-md shadow-card">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-surface-container-low text-primary">
+            <FileText aria-hidden="true" size={32} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-label-lg font-semibold text-on-surface">
-              {sourceText ? "Notice loaded" : "No notice text"}
+            <p className="truncate text-label-lg font-bold text-on-surface">
+              {sourceText ? "Information loaded" : "No information loaded"}
             </p>
-            <p className="mt-xs text-label-sm text-on-surface-variant">
-              {isAnalyzing ? "Processing..." : error ? "Needs attention" : "Ready"}
+            <p className="mt-xs flex items-center gap-xs text-label-lg text-on-surface-variant">
+              {isAnalyzing ? (
+                <Loader2 aria-hidden="true" className="animate-spin text-secondary" size={16} />
+              ) : error ? (
+                <AlertCircle aria-hidden="true" className="text-error" size={16} />
+              ) : (
+                <ShieldCheck aria-hidden="true" className="text-secondary" size={16} />
+              )}
+              <span>
+                {isAnalyzing ? "Securely reviewing" : error ? "Needs attention" : "Securely encrypted"}
+              </span>
             </p>
           </div>
+          {!error && sourceText ? (
+            <CheckCircle2 aria-hidden="true" className="shrink-0 text-primary-fixed-dim" size={30} />
+          ) : null}
         </div>
 
-        <div className="flex flex-col items-center">
-          <div className="relative flex h-48 w-48 items-center justify-center">
-            <svg
-              className="h-full w-full -rotate-90"
-              viewBox="0 0 100 100"
-              aria-hidden="true"
-            >
-              <circle
-                className="stroke-surface-container-high"
-                cx="50"
-                cy="50"
-                r="45"
-                fill="none"
-                strokeWidth="4"
-              />
-              <circle
-                className="progress-ring-circle stroke-primary"
-                cx="50"
-                cy="50"
-                r="45"
-                fill="none"
-                strokeLinecap="round"
-                strokeWidth="4"
-              />
-            </svg>
-            <Sparkles
-              aria-hidden="true"
-              className="absolute text-primary motion-safe:animate-pulse"
-              size={52}
+        <div className="relative flex h-64 w-64 items-center justify-center">
+          <div className="absolute inset-0 rounded-full bg-secondary-container/15 blur-2xl" />
+          <svg className="relative h-full w-full -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
+            <circle
+              className="stroke-surface-container-high"
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              strokeWidth="4"
             />
+            <circle
+              className="progress-ring-circle stroke-secondary-container"
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              strokeLinecap="round"
+              strokeWidth="5"
+            />
+          </svg>
+          <div className="absolute flex h-32 w-32 items-center justify-center rounded-full bg-surface-container-lowest text-primary shadow-card">
+            <Sparkles aria-hidden="true" className="motion-safe:animate-pulse" size={54} />
           </div>
-
-          {error ? (
-            <div className="mt-xl flex w-full max-w-sm flex-col items-center gap-md text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-error/10 text-error">
-                <AlertCircle size={28} />
-              </div>
-              <p className="text-headline-md font-semibold text-on-background">
-                Something did not work
-              </p>
-              <p className="text-body-md text-on-surface-variant">{error}</p>
-              <div className="flex flex-col gap-xs w-full">
-                <Button
-                  variant="primary"
-                  className="h-14 rounded-full px-xl w-full"
-                  onClick={() => {
-                    executedRef.current = false;
-                    void runAnalysis(sourceText, language).then((s) => s && router.push("/result"));
-                  }}
-                  disabled={isAnalyzing}
-                >
-                  {isAnalyzing ? (
-                    <Loader2 className="animate-spin" size={20} />
-                  ) : (
-                    "Try again"
-                  )}
-                </Button>
-                <button
-                  type="button"
-                  onClick={handleBackHome}
-                  className="text-label-md text-on-surface-variant hover:text-primary py-xs"
-                >
-                  Edit notice text
-                </button>
-              </div>
-            </div>
-          ) : hasNoText ? (
-            <div className="mt-xl flex w-full max-w-sm flex-col items-center gap-md text-center">
-              <p className="text-headline-md font-semibold text-on-background">
-                No notice found to explain
-              </p>
-              <p className="text-body-md text-on-surface-variant">
-                You can try a sample notice or go back to paste your own.
-              </p>
-              <div className="flex flex-col gap-sm w-full">
-                <Button
-                  variant="primary"
-                  className="h-14 rounded-full px-xl w-full"
-                  onClick={() => void handleTrySample()}
-                >
-                  Try sample notice
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="h-12 rounded-full px-xl w-full"
-                  onClick={handleBackHome}
-                >
-                  Paste your notice
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="mt-xl flex h-24 items-center justify-center text-center">
-                <p className="text-headline-md font-semibold text-on-background transition">
-                  {messages[messageIndex]}
-                </p>
-              </div>
-              <p className="max-w-[280px] text-center text-body-md text-on-surface-variant">
-                Just relax. It won&apos;t take long. YarnMe is translating and organizing everything.
-              </p>
-            </>
-          )}
         </div>
-      </main>
 
-      <div className="pointer-events-none fixed bottom-0 h-32 w-full bg-gradient-to-t from-surface-container to-transparent" />
+        {error ? (
+          <div className="mt-xl flex w-full flex-col items-center gap-md text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-error-container text-error">
+              <AlertCircle aria-hidden="true" size={30} />
+            </div>
+            <div>
+              <h1 className="text-headline-md text-on-surface">Something did not work</h1>
+              <p className="mt-xs text-body-md text-on-surface-variant">{error}</p>
+            </div>
+            <div className="grid w-full gap-sm">
+              <Button
+                variant="primary"
+                className="h-14"
+                onClick={() => {
+                  executedRef.current = false;
+                  void runAnalysis(sourceText, language).then((s) => s && router.push("/result"));
+                }}
+                disabled={isAnalyzing}
+              >
+                {isAnalyzing ? <Loader2 className="animate-spin" size={20} /> : "Try again"}
+              </Button>
+              <Button variant="secondary" className="h-14" onClick={handleBackHome}>
+                Edit notice text
+              </Button>
+            </div>
+          </div>
+        ) : hasNoText ? (
+          <div className="mt-xl flex w-full flex-col items-center gap-md text-center">
+            <h1 className="text-headline-md text-on-surface">No notice found to explain</h1>
+            <p className="text-body-md text-on-surface-variant">
+              You can try a sample notice or go back to paste your own.
+            </p>
+            <div className="grid w-full gap-sm">
+              <Button variant="primary" className="h-14" onClick={() => void handleTrySample()}>
+                Try sample notice
+              </Button>
+              <Button variant="secondary" className="h-14" onClick={handleBackHome}>
+                Paste your notice
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <section className="mt-xl text-center">
+            <div className="flex min-h-[92px] items-center justify-center">
+              <p className="text-headline-md text-on-surface transition">
+                {messages[messageIndex]}
+              </p>
+            </div>
+            <p className="mx-auto max-w-[320px] text-body-md text-on-surface-variant">
+              YarnMe is reading only the information you sent and arranging it clearly.
+            </p>
+          </section>
+        )}
+      </main>
     </div>
   );
 }
