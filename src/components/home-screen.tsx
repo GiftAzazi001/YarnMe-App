@@ -203,7 +203,7 @@ export function HomeScreen() {
   return (
     <AppShell
       header="brand"
-      className="lg:bg-result-background"
+      className="bg-result-background"
       mainClassName="lg:max-w-none lg:px-0"
     >
       <div className="mx-auto w-full max-w-[720px] pb-xl pt-lg lg:grid lg:min-h-[calc(100dvh-72px)] lg:max-w-[1180px] lg:grid-cols-[1fr_560px] lg:items-center lg:gap-xl lg:px-lg lg:py-xl">
@@ -221,7 +221,7 @@ export function HomeScreen() {
             </span>
           </div>
 
-          <h1 className="text-[40px] font-extrabold leading-[1.08] text-on-surface lg:text-[64px] lg:leading-[1.05] lg:text-primary">
+          <h1 className="text-[40px] font-extrabold leading-[1.08] text-primary lg:text-[64px] lg:leading-[1.05]">
             {mode === "upload" ? "What are we reviewing?" : "Wetin you no understand?"}
           </h1>
           <p className="mt-sm text-body-lg text-on-surface-variant lg:text-[28px] lg:leading-[38px]">

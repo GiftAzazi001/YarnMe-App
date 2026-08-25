@@ -54,14 +54,14 @@ export function HistoryScreen() {
             Your recent explanations will appear here after you yarn a notice.
           </p>
           <div className="mt-xl grid w-full max-w-xs gap-sm">
-            <Button onClick={() => router.push("/")} className="h-14 text-label-lg">
+            <Button onClick={() => router.push("/")} className="text-label-lg">
               <MessageSquarePlus aria-hidden="true" size={20} />
               <span>Start a yarn</span>
             </Button>
             <Button
               variant="secondary"
               onClick={() => void handleLoadSample(0)}
-              className="h-12 text-label-md"
+              className="text-label-lg"
             >
               <BriefcaseBusiness aria-hidden="true" size={18} />
               <span>Try sample notice</span>

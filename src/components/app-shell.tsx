@@ -20,6 +20,7 @@ export function AppShell({
   mainClassName = "",
 }: AppShellProps) {
   const pathname = usePathname();
+  const shellBackground = className ? className : "bg-background";
   const activeSection = pathname.startsWith("/history")
     ? "history"
     : pathname.startsWith("/settings")
@@ -27,25 +28,27 @@ export function AppShell({
       : "yarn";
 
   return (
-    <div className={`min-h-dvh bg-background pb-[112px] lg:pb-0 ${className}`}>
+    <div className={`min-h-dvh pb-[112px] lg:pb-0 ${shellBackground}`}>
       {header !== "none" ? (
         <header className="sticky top-0 z-40 w-full bg-surface-container-lowest/92 backdrop-blur">
           <div className="mx-auto flex w-full max-w-[1180px] items-center justify-between px-container-margin py-sm lg:h-[72px] lg:px-lg">
             <div className="hidden lg:block">
-              <Logo compact={header === "compact"} />
+              <Link
+                href="/"
+                aria-label="YarnMe home"
+                className="inline-flex items-center"
+              >
+                <Logo compact={header === "compact"} />
+              </Link>
             </div>
 
             <Link
               href="/"
-              aria-label="YarnMe"
+              aria-label="YarnMe home"
               className="touch-target flex items-center justify-start text-primary lg:hidden"
             >
-              <MessageSquare aria-hidden="true" size={32} strokeWidth={2.4} />
+              <Logo />
             </Link>
-
-            <div className="lg:hidden">
-              <Logo centered />
-            </div>
 
             <nav
               aria-label="Primary"
