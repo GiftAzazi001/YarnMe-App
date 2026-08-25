@@ -5,6 +5,8 @@ import { BottomNav } from "@/components/bottom-nav";
 import { Logo } from "@/components/logo";
 import { History, MessageSquare, Settings } from "lucide-react";
 import { Link, usePathname } from "@/lib/navigation";
+import { appCopy } from "@/lib/app-copy";
+import { useYarnSettings } from "@/lib/settings";
 
 type AppShellProps = {
   children: ReactNode;
@@ -20,6 +22,8 @@ export function AppShell({
   mainClassName = "",
 }: AppShellProps) {
   const pathname = usePathname();
+  const { settings: yarnSettings } = useYarnSettings();
+  const navCopy = appCopy[yarnSettings.language].navigation;
   const shellBackground = className ? className : "bg-background";
   const activeSection = pathname.startsWith("/history")
     ? "history"
@@ -34,7 +38,7 @@ export function AppShell({
           <div className="mx-auto flex h-[66px] w-full max-w-[1180px] items-center justify-start px-container-margin md:h-[76px] md:justify-between md:px-lg">
             <Link
               href="/"
-              aria-label="YarnMe home"
+              aria-label={navCopy.homeAria}
               className="touch-target inline-flex items-center justify-start text-primary"
             >
               <Logo compact={header === "compact"} />
@@ -45,9 +49,9 @@ export function AppShell({
               className="hidden items-center gap-md text-label-lg font-bold md:flex lg:gap-xl"
             >
               {[
-                { href: "/", label: "Yarn", icon: MessageSquare, section: "yarn" },
-                { href: "/history", label: "History", icon: History, section: "history" },
-                { href: "/settings", label: "Settings", icon: Settings, section: "settings" },
+                { href: "/", label: navCopy.yarn, icon: MessageSquare, section: "yarn" },
+                { href: "/history", label: navCopy.history, icon: History, section: "history" },
+                { href: "/settings", label: navCopy.settings, icon: Settings, section: "settings" },
               ].map((item) => {
                 const Icon = item.icon;
                 const active = item.section === activeSection;

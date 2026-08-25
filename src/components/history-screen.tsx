@@ -15,12 +15,8 @@ import {
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui";
 import { useYarnContext } from "@/lib/yarn-context";
-
-const langBadges = {
-  "simple-english": { label: "Simple English" },
-  pidgin: { label: "Pidgin" },
-  hausa: { label: "Hausa" },
-};
+import { analysisLanguageLabels, appCopy } from "@/lib/app-copy";
+import { useYarnSettings } from "@/lib/settings";
 
 export function HistoryScreen() {
   const {
@@ -31,6 +27,8 @@ export function HistoryScreen() {
     setLanguage,
     loadSample,
   } = useYarnContext();
+  const { settings } = useYarnSettings();
+  const activeCopy = appCopy[settings.language].history;
   const router = useRouter();
 
   function handleOpenHistoryItem(item: (typeof historyList)[0]) {
@@ -53,22 +51,22 @@ export function HistoryScreen() {
           <div className="mb-lg flex h-20 w-20 items-center justify-center rounded-full bg-surface-container-high text-primary">
             <FileClock aria-hidden="true" size={40} />
           </div>
-          <h1 className="text-headline-lg-mobile text-primary">Your Yarn</h1>
+          <h1 className="text-headline-lg-mobile text-primary">{activeCopy.title}</h1>
           <p className="mt-sm max-w-[320px] text-body-lg text-on-surface-variant">
-            Your recent explanations will appear here after you yarn a notice.
+            {activeCopy.emptyBody}
           </p>
           <div className="mt-xl grid w-full max-w-xs gap-sm">
-            <Button onClick={() => router.push("/")} className="text-label-lg">
+            <Button onClick={() => router.push("/")} className="h-12 text-label-md">
               <MessageSquarePlus aria-hidden="true" size={20} />
-              <span>Start a yarn</span>
+              <span>{activeCopy.startYarn}</span>
             </Button>
             <Button
               variant="secondary"
               onClick={() => handleLoadSample(0)}
-              className="text-label-lg"
+              className="h-12 text-label-md"
             >
               <BriefcaseBusiness aria-hidden="true" size={18} />
-              <span>Try sample notice</span>
+              <span>{activeCopy.trySampleNotice}</span>
             </Button>
           </div>
         </section>
@@ -80,22 +78,21 @@ export function HistoryScreen() {
     <AppShell header="brand" className="lg:bg-result-background">
       <section className="pb-xl pt-xl">
         <h1 className="text-[48px] font-extrabold leading-[56px] text-primary">
-          Your Yarn
+          {activeCopy.title}
         </h1>
         <p className="mt-xs text-body-lg text-on-surface-variant">
-          Review your recent translations and insights.
+          {activeCopy.subtitle}
         </p>
 
         <div className="mt-xl space-y-md">
           {historyList.map((item, idx) => {
-            const badge = langBadges[item.language] || langBadges["simple-english"];
             const hasUncertainty = item.analysis.uncertainties.length > 0;
             const formattedDate = item.createdAt
               ? new Date(item.createdAt).toLocaleDateString(undefined, {
                   month: "short",
                   day: "numeric",
                 })
-              : "Today";
+              : activeCopy.today;
             const Icon = item.language === "hausa" ? BookOpenCheck : item.language === "pidgin" ? FileText : BriefcaseBusiness;
 
             return (
@@ -115,15 +112,15 @@ export function HistoryScreen() {
 
                 <span className="min-w-0 flex-1">
                   <span className="yarnme-reading-title line-clamp-2 text-headline-md text-on-surface">
-                    {item.analysis.meaning || "YarnMe explanation"}
+                    {item.analysis.meaning || activeCopy.fallbackTitle}
                   </span>
                   <span className="mt-xs flex flex-wrap items-center gap-sm">
                     <span className="rounded-full bg-surface-container-low px-sm py-xs text-label-lg font-semibold text-primary">
-                      {badge.label}
+                      {analysisLanguageLabels[item.language] ?? analysisLanguageLabels["simple-english"]}
                     </span>
                     <span className="inline-flex items-center gap-xs text-body-md text-on-surface-variant">
                       <Clock aria-hidden="true" size={16} />
-                      {idx === 0 ? "Today" : formattedDate}
+                      {idx === 0 ? activeCopy.today : formattedDate}
                     </span>
                   </span>
                 </span>
@@ -141,7 +138,7 @@ export function HistoryScreen() {
                   ) : (
                     <CheckCircle2 aria-hidden="true" size={17} />
                   )}
-                  {hasUncertainty ? "Incomplete" : "Clear"}
+                  {hasUncertainty ? activeCopy.incomplete : activeCopy.clear}
                 </span>
 
                 <ChevronRight
@@ -161,7 +158,7 @@ export function HistoryScreen() {
             className="h-12 px-xl"
           >
             <MessageSquarePlus aria-hidden="true" size={18} />
-            <span>Explain another notice</span>
+            <span>{activeCopy.explainAnother}</span>
           </Button>
         </div>
       </section>

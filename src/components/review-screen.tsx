@@ -17,6 +17,8 @@ import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui";
 import { type LanguageCode } from "@/lib/analysis";
 import { useYarnContext } from "@/lib/yarn-context";
+import { analysisLanguageLabels } from "@/lib/app-copy";
+import { useYarnSettings } from "@/lib/settings";
 
 const copy: Record<
   LanguageCode,
@@ -42,6 +44,9 @@ const copy: Record<
     noReview: string;
     noReviewBody: string;
     backToResult: string;
+    goBack: string;
+    closeCorrectionSheet: string;
+    close: string;
   }
 > = {
   "simple-english": {
@@ -66,6 +71,9 @@ const copy: Record<
     noReview: "No review needed",
     noReviewBody: "YarnMe did not find an unclear part in the latest yarn.",
     backToResult: "Back to result",
+    goBack: "Go back",
+    closeCorrectionSheet: "Close correction sheet",
+    close: "Close",
   },
   pidgin: {
     languageName: "Pidgin",
@@ -89,6 +97,9 @@ const copy: Record<
     noReview: "No review needed",
     noReviewBody: "YarnMe no see unclear part for the latest yarn.",
     backToResult: "Back to result",
+    goBack: "Go back",
+    closeCorrectionSheet: "Close correction sheet",
+    close: "Close",
   },
   hausa: {
     languageName: "Hausa",
@@ -112,19 +123,23 @@ const copy: Record<
     noReview: "Babu bukatar dubawa",
     noReviewBody: "YarnMe bai ga wani bangare mara tabbas a sabon bayanin ba.",
     backToResult: "Koma zuwa sakamako",
+    goBack: "Koma baya",
+    closeCorrectionSheet: "Rufe shafin gyara",
+    close: "Rufe",
   },
 };
 
 export function ReviewScreen() {
   const { analysisResult } = useYarnContext();
+  const { settings } = useYarnSettings();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [correction, setCorrection] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [showOriginal, setShowOriginal] = useState(false);
   const router = useRouter();
 
-  const language = analysisResult?.language ?? "pidgin";
-  const activeCopy = copy[language];
+  const language = analysisResult?.language ?? settings.language;
+  const activeCopy = copy[settings.language];
   const uncertainty = analysisResult?.analysis.uncertainties[0];
 
   function closeSheet() {
@@ -160,7 +175,7 @@ export function ReviewScreen() {
       <header className="sticky top-0 z-40 -mx-container-margin flex items-center justify-between bg-background/95 px-container-margin py-md backdrop-blur">
         <button
           type="button"
-          aria-label="Go back"
+          aria-label={activeCopy.goBack}
           onClick={() => router.push("/result")}
           className="touch-target flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface shadow-soft transition hover:text-primary"
         >
@@ -168,7 +183,7 @@ export function ReviewScreen() {
         </button>
         <span className="inline-flex min-h-[48px] items-center gap-xs rounded-full border border-surface-container-high bg-surface-container-low px-md text-label-lg font-bold text-primary">
           <Languages aria-hidden="true" size={18} />
-          {activeCopy.languageName}
+          {analysisLanguageLabels[language]}
         </span>
         <span className="touch-target" aria-hidden="true" />
       </header>
@@ -255,7 +270,7 @@ export function ReviewScreen() {
         <div className="fixed inset-0 z-[60]">
           <button
             type="button"
-            aria-label="Close correction sheet"
+            aria-label={activeCopy.closeCorrectionSheet}
             className="absolute inset-0 bg-[#121c2a]/62"
             onClick={closeSheet}
           />
@@ -269,7 +284,7 @@ export function ReviewScreen() {
                   <h2 className="text-headline-md text-on-surface">{activeCopy.sheetTitle}</h2>
                   <button
                     type="button"
-                    aria-label="Close"
+                    aria-label={activeCopy.close}
                     onClick={closeSheet}
                     className="touch-target flex shrink-0 items-center justify-center rounded-full bg-surface-container-low text-on-surface transition hover:bg-surface-container"
                   >

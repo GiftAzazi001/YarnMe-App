@@ -28,12 +28,21 @@ type SettingsContextValue = {
 };
 
 export const defaultSettings: YarnMeSettings = {
-  language: "simple-english",
+  language: "pidgin",
   textSize: "medium",
 };
 
 const textSizeValues = new Set<TextSizePreference>(["small", "medium", "large"]);
 const SettingsContext = createContext<SettingsContextValue | null>(null);
+
+function normalizeStoredLanguage(value: unknown): LanguageCode | null {
+  if (value === "english") {
+    return "simple-english";
+  }
+
+  const parsedLanguage = languageSchema.safeParse(value);
+  return parsedLanguage.success ? parsedLanguage.data : null;
+}
 
 function parseStoredSettings(value: unknown): YarnMeSettings {
   if (!value || typeof value !== "object") {
@@ -41,10 +50,8 @@ function parseStoredSettings(value: unknown): YarnMeSettings {
   }
 
   const maybeSettings = value as Partial<Record<keyof YarnMeSettings, unknown>>;
-  const parsedLanguage = languageSchema.safeParse(maybeSettings.language);
-  const language = parsedLanguage.success
-    ? parsedLanguage.data
-    : defaultSettings.language;
+  const language =
+    normalizeStoredLanguage(maybeSettings.language) ?? defaultSettings.language;
   const textSize =
     typeof maybeSettings.textSize === "string" &&
     textSizeValues.has(maybeSettings.textSize as TextSizePreference)

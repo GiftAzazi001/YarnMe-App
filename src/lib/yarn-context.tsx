@@ -17,7 +17,8 @@ import {
   type NormalizedStoredAnalysis,
 } from "@/lib/analysis-normalization";
 import { devTestInputs } from "@/lib/dev-test-inputs";
-import { useYarnSettings } from "@/lib/settings";
+import { defaultSettings, useYarnSettings } from "@/lib/settings";
+import { appCopy } from "@/lib/app-copy";
 
 export type QAMessage = {
   id: string;
@@ -91,11 +92,14 @@ function safeStorageSet(key: string, value: string) {
 
 export function YarnProvider({ children }: { children: React.ReactNode }) {
   const { settings, languageRevision } = useYarnSettings();
+  const runtimeCopy = appCopy[settings.language].runtimeErrors;
   const [sourceText, setSourceText] = useState("");
   const [sourceImage, setSourceImage] = useState<SourceUploadInput | null>(null);
-  const [language, setLanguage] = useState<LanguageCode>("simple-english");
+  const [language, setLanguage] = useState<LanguageCode>(
+    defaultSettings.language,
+  );
   const [lastAppliedDefaultLanguage, setLastAppliedDefaultLanguage] =
-    useState<LanguageCode>("simple-english");
+    useState<LanguageCode>(defaultSettings.language);
   const [lastAppliedLanguageRevision, setLastAppliedLanguageRevision] =
     useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -194,7 +198,7 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
         typeof imageToAnalyze === "undefined" ? sourceImage : imageToAnalyze;
 
       if (!activeText && !activeImage) {
-        setError("Please enter, paste, or upload your notice first.");
+        setError(runtimeCopy.emptySource);
         return false;
       }
 
@@ -228,7 +232,7 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
           const errorMsg =
             data && typeof data === "object" && "error" in data && typeof data.error === "string"
               ? data.error
-              : "YarnMe could not explain this notice right now. Please try again.";
+              : runtimeCopy.genericAnalysis;
           setError(errorMsg);
           setIsAnalyzing(false);
           return false;
@@ -236,7 +240,7 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
 
         const parsed = analyzeResponseSchema.safeParse(data);
         if (!parsed.success) {
-          setError("Received an unexpected format from the server. Please try again.");
+          setError(runtimeCopy.unexpectedFormat);
           setIsAnalyzing(false);
           return false;
         }
@@ -247,7 +251,7 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (!normalized) {
-          setError("Could not parse the explanation response.");
+          setError(runtimeCopy.parseFailed);
           setIsAnalyzing(false);
           return false;
         }
@@ -264,12 +268,12 @@ export function YarnProvider({ children }: { children: React.ReactNode }) {
         return true;
       } catch (err: unknown) {
         console.error("Analysis execution failed:", err);
-        setError("Could not connect to YarnMe server. Please check your internet connection.");
+        setError(runtimeCopy.connection);
         setIsAnalyzing(false);
         return false;
       }
     },
-    [sourceText, sourceImage, language, saveToHistory],
+    [sourceText, sourceImage, language, saveToHistory, runtimeCopy],
   );
 
   const switchLanguage = useCallback(

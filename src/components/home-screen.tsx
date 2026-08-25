@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "@/lib/navigation";
 import {
-  ArrowRight,
   BriefcaseBusiness,
   CloudUpload,
   FileCheck,
@@ -22,7 +21,6 @@ import {
   IMAGE_UPLOAD_MAX_BYTES,
   PDF_UPLOAD_MAX_BYTES,
   supportedPdfMimeTypes,
-  type LanguageCode,
 } from "@/lib/analysis";
 import {
   useYarnContext,
@@ -30,54 +28,10 @@ import {
 } from "@/lib/yarn-context";
 import { useYarnSettings } from "@/lib/settings";
 import { devTestInputs } from "@/lib/dev-test-inputs";
-
-const languages: Array<{
-  label: string;
-  value: LanguageCode;
-}> = [
-  { label: "Simple English", value: "simple-english" },
-  { label: "Pidgin", value: "pidgin" },
-  { label: "Hausa", value: "hausa" },
-];
-
-type ExampleKey = "scholarship" | "government" | "school";
-type HomeCopy = {
-  eyebrow: string;
-  heading: string;
-  supporting: string;
-  desktopSupporting: string;
-  languageLine: string;
-  explainIn: string;
-  pasteTab: string;
-  uploadTab: string;
-  textareaLabel: string;
-  textareaPlaceholder: string;
-  uploadTitle: string;
-  uploadSubtitle: string;
-  browseFiles: string;
-  replaceFile: string;
-  pdfDocument: string;
-  removeUploadedFile: string;
-  imagePreviewAlt: (name: string) => string;
-  fileTypes: Record<SourceImageInput["kind"], string>;
-  ready: string;
-  cta: string;
-  analyzing: string;
-  tryOne: string;
-  trust: string;
-  examples: Record<ExampleKey, string>;
-  howItWorks: Array<{
-    title: string;
-    body: string;
-  }>;
-  errors: {
-    unsupportedFile: string;
-    unreadableFile: string;
-    fileTooLarge: (limitMb: number) => string;
-    uploadRequired: string;
-    pasteRequired: string;
-  };
-};
+import {
+  analysisLanguageOptions,
+  appCopy,
+} from "@/lib/app-copy";
 
 const examples = [
   { key: "scholarship" as const, icon: GraduationCap, index: 1, tone: "mint" },
@@ -86,151 +40,6 @@ const examples = [
 ];
 
 const uploadLimitMb = Math.floor(IMAGE_UPLOAD_MAX_BYTES / (1024 * 1024));
-
-const homeCopy: Record<LanguageCode, HomeCopy> = {
-  "simple-english": {
-    eyebrow: "LOCAL-LANGUAGE INFORMATION ASSISTANT",
-    heading: "What is unclear?",
-    supporting: "Drop it here. YarnMe will break it down.",
-    desktopSupporting:
-      "Turn confusing notices and documents into clear explanations and next steps.",
-    languageLine: "Hausa - Nigerian Pidgin - Simple English",
-    explainIn: "Explain in",
-    pasteTab: "Paste Text",
-    uploadTab: "Upload File",
-    textareaLabel: "Paste the information",
-    textareaPlaceholder: "Paste the information you want YarnMe to explain...",
-    uploadTitle: "Drop a PDF or image here",
-    uploadSubtitle: `PDF, JPG, PNG or WEBP - up to ${uploadLimitMb}MB`,
-    browseFiles: "Browse files",
-    replaceFile: "Replace file",
-    pdfDocument: "PDF document",
-    removeUploadedFile: "Remove uploaded file",
-    imagePreviewAlt: (name) => `Preview of ${name}`,
-    fileTypes: {
-      image: "Image",
-      pdf: "PDF",
-    },
-    ready: "ready",
-    cta: "Yarn it",
-    analyzing: "Yarning...",
-    tryOne: "Try an example",
-    trust: "YarnMe only explains what it can confirm. It won't guess.",
-    examples: {
-      scholarship: "Scholarship notice",
-      government: "Government application",
-      school: "School announcement",
-    },
-    howItWorks: [
-      { title: "Add it", body: "Paste text or upload a file." },
-      { title: "Choose your language", body: "Hausa, Pidgin or Simple English." },
-      { title: "Understand it", body: "Get important details and next steps." },
-    ],
-    errors: {
-      unsupportedFile: "YarnMe can read PNG, JPG, JPEG, WEBP, and PDF files for now.",
-      unreadableFile: "This file could not be read. Please choose another file.",
-      fileTooLarge: (limitMb) =>
-        `This file is too large. Please upload a file under ${limitMb}MB.`,
-      uploadRequired: "Please upload a PNG, JPG, JPEG, WEBP, or PDF file first.",
-      pasteRequired: "Please paste your notice first, or tap one of the examples below.",
-    },
-  },
-  pidgin: {
-    eyebrow: "HELPER WEY DEY EXPLAIN FOR LOCAL LANGUAGE",
-    heading: "Wetin you no understand?",
-    supporting: "Drop am here. YarnMe go break am down.",
-    desktopSupporting:
-      "Make confusing notices and documents turn to clear explanation and next steps.",
-    languageLine: "Hausa - Nigerian Pidgin - Simple English",
-    explainIn: "Make am clear in",
-    pasteTab: "Paste Text",
-    uploadTab: "Upload File",
-    textareaLabel: "Paste the information",
-    textareaPlaceholder: "Paste wetin you want make YarnMe explain...",
-    uploadTitle: "Drop PDF or image here",
-    uploadSubtitle: `PDF, JPG, PNG or WEBP - up to ${uploadLimitMb}MB`,
-    browseFiles: "Browse files",
-    replaceFile: "Replace file",
-    pdfDocument: "PDF document",
-    removeUploadedFile: "Remove uploaded file",
-    imagePreviewAlt: (name) => `Preview of ${name}`,
-    fileTypes: {
-      image: "Image",
-      pdf: "PDF",
-    },
-    ready: "ready",
-    cta: "Yarn am",
-    analyzing: "We dey yarn am...",
-    tryOne: "Try one",
-    trust: "If the source no talk am, YarnMe no go guess.",
-    examples: {
-      scholarship: "Scholarship notice",
-      government: "Government application",
-      school: "School announcement",
-    },
-    howItWorks: [
-      { title: "Add am", body: "Paste text or upload file." },
-      { title: "Choose your language", body: "Hausa, Pidgin or Simple English." },
-      { title: "Understand am", body: "See important details and next steps." },
-    ],
-    errors: {
-      unsupportedFile: "YarnMe fit read PNG, JPG, JPEG, WEBP, and PDF files for now.",
-      unreadableFile: "YarnMe no fit read this file. Choose another file.",
-      fileTooLarge: (limitMb) =>
-        `This file too large. Abeg upload file wey dey under ${limitMb}MB.`,
-      uploadRequired: "Abeg upload PNG, JPG, JPEG, WEBP, or PDF file first.",
-      pasteRequired: "Abeg paste your notice first, or tap one example below.",
-    },
-  },
-  hausa: {
-    eyebrow: "MAI TAIMAKON BAYANI A YAREN GIDA",
-    heading: "Me kake son fahimta?",
-    supporting: "Saka shi nan. YarnMe zai saukaka maka.",
-    desktopSupporting:
-      "Mayar da sanarwa da takardu masu rikitarwa zuwa bayani mai sauki da matakai na gaba.",
-    languageLine: "Hausa - Nigerian Pidgin - Simple English",
-    explainIn: "A bayyana da",
-    pasteTab: "Manna Rubutu",
-    uploadTab: "Saka Fayil",
-    textareaLabel: "Manna bayanin",
-    textareaPlaceholder: "Manna bayanin da kake son YarnMe ya bayyana...",
-    uploadTitle: "Ajiye PDF ko hoto a nan",
-    uploadSubtitle: `PDF, JPG, PNG ko WEBP - har zuwa ${uploadLimitMb}MB`,
-    browseFiles: "Zabi fayil",
-    replaceFile: "Sauya fayil",
-    pdfDocument: "Takardar PDF",
-    removeUploadedFile: "Cire fayil din da aka saka",
-    imagePreviewAlt: (name) => `Samfurin ${name}`,
-    fileTypes: {
-      image: "Hoto",
-      pdf: "PDF",
-    },
-    ready: "a shirye",
-    cta: "Fayyace shi",
-    analyzing: "Ana fayyacewa...",
-    tryOne: "Gwada misali",
-    trust: "YarnMe yana bayyana abin da zai iya tabbatarwa ne kawai. Ba zai yi zato ba.",
-    examples: {
-      scholarship: "Sanarwar tallafin karatu",
-      government: "Neman aikin gwamnati",
-      school: "Sanarwar makaranta",
-    },
-    howItWorks: [
-      { title: "Saka shi", body: "Manna rubutu ko saka fayil." },
-      { title: "Zabi yare", body: "Hausa, Pidgin ko Simple English." },
-      { title: "Fahimce shi", body: "Samu muhimman bayanai da matakai na gaba." },
-    ],
-    errors: {
-      unsupportedFile:
-        "A yanzu YarnMe na iya karanta fayilolin PNG, JPG, JPEG, WEBP, da PDF.",
-      unreadableFile: "Ba a iya karanta wannan fayil ba. Zabi wani fayil.",
-      fileTooLarge: (limitMb) =>
-        `Wannan fayil ya yi girma. Saka fayil kasa da ${limitMb}MB.`,
-      uploadRequired: "Da farko, saka fayil na PNG, JPG, JPEG, WEBP, ko PDF.",
-      pasteRequired: "Da farko, manna sanarwarka ko ka taba daya daga cikin misalan kasa.",
-    },
-  },
-};
 
 function getUploadDetails(file: File) {
   const extension = file.name.split(".").pop()?.toLowerCase();
@@ -291,12 +100,14 @@ export function HomeScreen() {
     language,
     setLanguage,
     isAnalyzing,
+    analysisResult,
     error,
     setError,
     setAnalysisResult,
+    resetAll,
   } = useYarnContext();
   const { settings } = useYarnSettings();
-  const activeCopy = homeCopy[settings.language];
+  const activeCopy = appCopy[settings.language].home;
 
   const [mode, setMode] = useState<"paste" | "upload">("paste");
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -309,6 +120,22 @@ export function HomeScreen() {
   useEffect(() => {
     setLanguage(settings.language);
   }, [settings.language, setLanguage]);
+
+  useEffect(() => {
+    if (!analysisResult || isAnalyzing) {
+      return;
+    }
+
+    const resultSourceText = analysisResult.sourceText.trim();
+    const currentSourceText = sourceText.trim();
+    const homeIsShowingPreviousResult =
+      sourceImage !== null ||
+      (resultSourceText.length > 0 && currentSourceText === resultSourceText);
+
+    if (homeIsShowingPreviousResult) {
+      resetAll();
+    }
+  }, [analysisResult, isAnalyzing, resetAll, sourceImage, sourceText]);
 
   useEffect(() => {
     if (!sourceImage || sourceImage.kind !== "image") {
@@ -371,6 +198,7 @@ export function HomeScreen() {
       size: file.size,
     };
 
+    setAnalysisResult(null);
     setSourceImage(imageInput);
     setSourceText("");
     setMode("upload");
@@ -430,7 +258,7 @@ export function HomeScreen() {
         {activeCopy.explainIn}
       </p>
       <div className="flex flex-wrap gap-xs sm:gap-sm">
-        {languages.map((item) => {
+        {analysisLanguageOptions.map((item) => {
           const isSelected = language === item.value;
           return (
             <button
@@ -578,7 +406,7 @@ export function HomeScreen() {
       className="bg-result-background"
       mainClassName="md:max-w-[850px] lg:max-w-none lg:px-0"
     >
-      <div className="mx-auto w-full pb-xl pt-xs md:pb-xl md:pt-md lg:grid lg:min-h-[calc(100dvh-76px)] lg:max-w-[1180px] lg:grid-cols-[minmax(0,0.86fr)_minmax(500px,1.14fr)] lg:items-center lg:gap-xl lg:px-lg lg:py-xl">
+      <div className="mx-auto w-full pb-xl pt-xs md:pb-xl md:pt-md lg:grid lg:min-h-[calc(100dvh-76px)] lg:max-w-[1240px] lg:grid-cols-[minmax(0,0.82fr)_minmax(520px,1.18fr)] lg:items-center lg:gap-lg lg:px-lg lg:py-lg xl:max-w-[1280px]">
         <section className="py-sm md:py-lg lg:max-w-[520px] lg:py-0">
           <p className="text-label-sm font-bold uppercase text-on-surface-variant">
             {activeCopy.eyebrow}
@@ -676,10 +504,7 @@ export function HomeScreen() {
                   <span>{activeCopy.analyzing}</span>
                 </>
               ) : (
-                <>
-                  <span>{activeCopy.cta}</span>
-                  <ArrowRight aria-hidden="true" size={22} />
-                </>
+                <span>{activeCopy.cta}</span>
               )}
             </Button>
 

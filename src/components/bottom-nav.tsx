@@ -2,12 +2,8 @@
 
 import { Link, usePathname } from "@/lib/navigation";
 import { History, MessageSquare, Settings } from "lucide-react";
-
-const items = [
-  { href: "/", label: "Yarn", icon: MessageSquare, section: "yarn" },
-  { href: "/history", label: "History", icon: History, section: "history" },
-  { href: "/settings", label: "Settings", icon: Settings, section: "settings" },
-];
+import { appCopy } from "@/lib/app-copy";
+import { useYarnSettings } from "@/lib/settings";
 
 function sectionForPath(pathname: string) {
   if (pathname.startsWith("/history")) return "history";
@@ -18,7 +14,14 @@ function sectionForPath(pathname: string) {
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { settings: yarnSettings } = useYarnSettings();
+  const navCopy = appCopy[yarnSettings.language].navigation;
   const activeSection = sectionForPath(pathname);
+  const items = [
+    { href: "/", label: navCopy.yarn, icon: MessageSquare, section: "yarn" },
+    { href: "/history", label: navCopy.history, icon: History, section: "history" },
+    { href: "/settings", label: navCopy.settings, icon: Settings, section: "settings" },
+  ];
 
   return (
     <nav

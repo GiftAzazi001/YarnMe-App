@@ -14,6 +14,7 @@ import { AnimatedCircularProgressBar } from "@/components/ui/animated-circular-p
 import { useYarnContext } from "@/lib/yarn-context";
 import { devTestInputs } from "@/lib/dev-test-inputs";
 import { type LanguageCode } from "@/lib/analysis";
+import { useYarnSettings } from "@/lib/settings";
 
 const processingCopy: Record<
   LanguageCode,
@@ -202,6 +203,7 @@ export function ProcessingScreen() {
     runAnalysis,
     loadSample,
   } = useYarnContext();
+  const { settings } = useYarnSettings();
 
   const executedRef = useRef(false);
   const completionTimerRef = useRef<number | null>(null);
@@ -239,7 +241,7 @@ export function ProcessingScreen() {
   const hasExistingResultBeforeRun = Boolean(
     existingResultMatchesCurrentSource && !executedRef.current && !isAnalyzing,
   );
-  const activeCopy = processingCopy[language];
+  const activeCopy = processingCopy[settings.language];
   const currentMessage =
     activeCopy.progressMessages.find((message) => progress <= message.max) ??
     activeCopy.progressMessages[activeCopy.progressMessages.length - 1];

@@ -1,29 +1,16 @@
 "use client";
 
 import { AppShell } from "@/components/app-shell";
-import { type LanguageCode } from "@/lib/analysis";
+import {
+  analysisLanguageOptions,
+  appCopy,
+} from "@/lib/app-copy";
 import {
   type TextSizePreference,
   useYarnSettings,
 } from "@/lib/settings";
 
-const languageOptions: Array<{
-  label: string;
-  value: LanguageCode;
-}> = [
-  { label: "Simple English", value: "simple-english" },
-  { label: "Pidgin", value: "pidgin" },
-  { label: "Hausa", value: "hausa" },
-];
-
-const textSizes: Array<{
-  label: string;
-  value: TextSizePreference;
-}> = [
-  { label: "Small", value: "small" },
-  { label: "Medium", value: "medium" },
-  { label: "Large", value: "large" },
-];
+const textSizeValues: TextSizePreference[] = ["small", "medium", "large"];
 
 export function SettingsScreen() {
   const {
@@ -31,19 +18,20 @@ export function SettingsScreen() {
     setDefaultLanguage,
     setTextSize,
   } = useYarnSettings();
+  const activeCopy = appCopy[settings.language].settings;
 
   return (
     <AppShell header="brand" className="lg:bg-result-background">
       <section className="pb-xl pt-xl">
         <h1 className="text-headline-lg-mobile text-primary">
-          Settings
+          {activeCopy.title}
         </h1>
 
         <div className="mt-xl space-y-xl">
           <section className="rounded-2xl bg-surface-container-lowest p-lg shadow-card">
-            <h2 className="text-headline-sm text-on-surface">Default Language</h2>
+            <h2 className="text-headline-sm text-on-surface">{activeCopy.defaultLanguage}</h2>
             <div className="mt-lg flex flex-wrap gap-md">
-              {languageOptions.map((option) => {
+              {analysisLanguageOptions.map((option) => {
                 const checked = settings.language === option.value;
 
                 return (
@@ -67,16 +55,16 @@ export function SettingsScreen() {
           </section>
 
           <section className="rounded-2xl bg-surface-container-lowest p-lg shadow-card">
-            <h2 className="text-headline-sm text-on-surface">Text Size</h2>
+            <h2 className="text-headline-sm text-on-surface">{activeCopy.textSize}</h2>
             <div className="mt-lg grid grid-cols-3 gap-md">
-              {textSizes.map((size) => {
-                const active = settings.textSize === size.value;
+              {textSizeValues.map((size) => {
+                const active = settings.textSize === size;
 
                 return (
                   <button
-                    key={size.value}
+                    key={size}
                     type="button"
-                    onClick={() => setTextSize(size.value)}
+                    onClick={() => setTextSize(size)}
                     aria-pressed={active}
                     className={[
                       "touch-target rounded-full px-sm text-label-lg font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95",
@@ -85,7 +73,7 @@ export function SettingsScreen() {
                         : "bg-surface-container-high text-primary hover:bg-primary-fixed/40",
                     ].join(" ")}
                   >
-                    {size.label}
+                    {activeCopy.textSizeOptions[size]}
                   </button>
                 );
               })}

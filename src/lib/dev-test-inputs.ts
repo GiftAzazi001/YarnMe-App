@@ -1,17 +1,17 @@
 export const devTestInputs = [
   {
-    label: "Public Service",
+    label: "Government Notice",
     category: "public-service",
-    text: "Residents of Ward 4 are requested to update their voter registration details at any approved INEC centre on or before 15 October 2026. Bring your PVC or National Identification Number. The update is free. Anyone who does not update before the deadline may not be able to correct their details before the next local election.",
+    text: "The fictional Rivergate Community Office asks residents applying for the small business permit to submit one valid ID and proof of address before 30 September 2026. The office will not accept late submissions.",
   },
   {
-    label: "Education",
+    label: "Scholarship Notice",
     category: "education",
-    text: "Greenfield Junior School announces that all JSS2 students going for the science excursion on Friday 12 June 2026 must submit a signed parent consent form, school ID card, lunch pack, and a transport fee of ₦5,000 by Monday 8 June 2026. Students without the consent form will not be allowed to travel.",
+    text: "The fictional Bright Path Scholarship is open to final-year students. Applicants must upload a school ID, last term result, and a short personal statement by 15 August 2026. The notice does not state when winners will be announced.",
   },
   {
-    label: "Community",
+    label: "School Announcement",
     category: "vague-community",
-    text: "There will be an important community meeting soon. Everyone affected should attend and come with the required papers. More details will be shared later.",
+    text: "The fictional Unity School says JSS2 students going for the science visit must bring a signed parent consent form and lunch pack. The notice says payment details will be shared later.",
   },
 ];
