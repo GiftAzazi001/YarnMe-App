@@ -111,7 +111,7 @@ const audioLanguageMap: Record<LanguageCode, AudioLanguage> = {
   hausa: "hausa",
 };
 
-const audioTranscriptMaxChars = 5500;
+const audioTranscriptMaxChars = 2800;
 
 const copy: Record<LanguageCode, ResultCopy> = {
   "simple-english": {
@@ -122,7 +122,7 @@ const copy: Record<LanguageCode, ResultCopy> = {
     pause: "Pause",
     resume: "Resume",
     replay: "Replay",
-    audioUnavailable: "Audio no dey available now.",
+    audioUnavailable: "Audio isn't available right now.",
     meaning: "Main meaning",
     audience: "Who this concerns",
     eligibility: "Who can apply",
@@ -165,7 +165,7 @@ const copy: Record<LanguageCode, ResultCopy> = {
     noResultTitle: "No notice explained yet",
     noResultBody:
       "Paste an official notice or pick an example below to see YarnMe in action.",
-    pasteNewNotice: "Paste a new notice",
+    pasteNewNotice: "Paste new notice",
     trySampleNotice: "Try sample notice",
     backToYarn: "Back to Yarn",
     newYarn: "Start new yarn",
@@ -179,11 +179,11 @@ const copy: Record<LanguageCode, ResultCopy> = {
     languageName: "Pidgin",
     resultTitle: "Here’s wetin this notice dey talk",
     listen: "Listen",
-    loadingAudio: "Preparing audio",
+    loadingAudio: "Audio dey prepare",
     pause: "Pause",
     resume: "Continue",
     replay: "Play again",
-    audioUnavailable: "Ba a iya kunna sauti yanzu ba.",
+    audioUnavailable: "Audio no dey available right now.",
     meaning: "Main meaning",
     audience: "Who e concern",
     eligibility: "Who fit apply",
@@ -225,7 +225,7 @@ const copy: Record<LanguageCode, ResultCopy> = {
     sendQuestion: "Send question",
     noResultTitle: "No notice don explain yet",
     noResultBody:
-      "Paste official notice or pick one example make you see YarnMe for action.",
+      "Paste notice, upload document, or try one example make you see how YarnMe works.",
     pasteNewNotice: "Paste new notice",
     trySampleNotice: "Try sample notice",
     backToYarn: "Back to Yarn",
@@ -244,7 +244,7 @@ const copy: Record<LanguageCode, ResultCopy> = {
     pause: "Dakata",
     resume: "Ci gaba",
     replay: "Sake saurara",
-    audioUnavailable: "Audio isn't available right now.",
+    audioUnavailable: "Ba a iya kunna sauti yanzu ba.",
     meaning: "Babban bayani",
     audience: "Wanda abin ya shafa",
     eligibility: "Wanda zai iya nema",
@@ -337,7 +337,11 @@ function fitAudioTranscript(sections: string[]) {
     }
 
     if (selected.length === 0) {
-      selected.push(`${section.slice(0, audioTranscriptMaxChars - 3).trim()}...`);
+      const clipped = section.slice(0, audioTranscriptMaxChars - 3);
+      const lastSpace = clipped.lastIndexOf(" ");
+      selected.push(
+        `${clipped.slice(0, lastSpace > 120 ? lastSpace : clipped.length).trim()}...`,
+      );
     }
     break;
   }
@@ -357,29 +361,25 @@ function buildAudioTranscript(
   appendAudioSection(
     sections,
     activeCopy.actions,
-    analysis.actions.map((item, index) => `${index + 1}. ${cleanDisplayItem(item)}`),
-  );
-  appendAudioSection(sections, activeCopy.documents, analysis.documents);
-  appendAudioSection(sections, activeCopy.legacyRequirements, analysis.legacyRequirements);
-  appendAudioSection(
-    sections,
-    activeCopy.payments,
-    analysis.payments.map((payment, index) =>
-      [
-        `${index + 1}.`,
-        `${activeCopy.paymentAmount}: ${displayPaymentValue(payment.amount, activeCopy.notStated)}.`,
-        `${activeCopy.paymentPurpose}: ${displayPaymentValue(payment.purpose, activeCopy.notStated)}.`,
-        `${activeCopy.paymentWhen}: ${displayPaymentValue(payment.when, activeCopy.notStated)}.`,
-        `${activeCopy.paymentWho}: ${displayPaymentValue(payment.who, activeCopy.notStated)}.`,
-      ].join(" "),
-    ),
+    analysis.actions.map(cleanDisplayItem),
   );
   appendAudioSection(
     sections,
     activeCopy.importantDate,
     analysis.dates.map(
-      (item, index) =>
-        `${index + 1}. ${cleanDisplayItem(item.date)}: ${cleanDisplayItem(item.context)}`,
+      (item) => `${cleanDisplayItem(item.date)}: ${cleanDisplayItem(item.context)}`,
+    ),
+  );
+  appendAudioSection(
+    sections,
+    activeCopy.payments,
+    analysis.payments.map((payment) =>
+      [
+        `${activeCopy.paymentAmount}: ${displayPaymentValue(payment.amount, activeCopy.notStated)}.`,
+        `${activeCopy.paymentPurpose}: ${displayPaymentValue(payment.purpose, activeCopy.notStated)}.`,
+        `${activeCopy.paymentWhen}: ${displayPaymentValue(payment.when, activeCopy.notStated)}.`,
+        `${activeCopy.paymentWho}: ${displayPaymentValue(payment.who, activeCopy.notStated)}.`,
+      ].join(" "),
     ),
   );
   appendAudioSection(sections, activeCopy.warnings, analysis.warnings);
@@ -593,7 +593,15 @@ export function ResultScreen() {
       });
 
       if (!response.ok) {
-        throw new Error("Audio request failed");
+        const errorBody = await response.json().catch(() => null);
+        const message =
+          typeof errorBody === "object" &&
+          errorBody !== null &&
+          "error" in errorBody &&
+          typeof errorBody.error === "string"
+            ? errorBody.error
+            : "Audio request failed";
+        throw new Error(message);
       }
 
       const blob = await response.blob();
@@ -631,15 +639,14 @@ export function ResultScreen() {
 
       await playPreparedAudio(audio);
     } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") {
-        return;
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        setAudioError(activeCopy.audioUnavailable);
       }
-      setAudioError(activeCopy.audioUnavailable);
-      setAudioState("idle");
     } finally {
       if (audioAbortRef.current === controller) {
         audioAbortRef.current = null;
       }
+      setAudioState((current) => (current === "loading" ? "idle" : current));
     }
   }
 
@@ -710,23 +717,26 @@ export function ResultScreen() {
   if (!analysisResult) {
     return (
       <AppShell header="brand">
-        <section className="flex min-h-[calc(100dvh-220px)] flex-col items-center justify-center py-xl text-center">
+        <section className="mx-auto flex min-h-[calc(100dvh-220px)] w-full max-w-[640px] flex-col items-center justify-center py-lg text-center">
           <div className="mb-md flex h-20 w-20 items-center justify-center rounded-full bg-primary-fixed text-primary">
             <Lightbulb aria-hidden="true" size={38} />
           </div>
           <h1 className="text-headline-lg-mobile text-primary">{activeCopy.noResultTitle}</h1>
-          <p className="mt-xs max-w-[320px] text-body-md text-on-surface-variant">
+          <p className="mt-sm max-w-[460px] text-body-md text-on-surface-variant">
             {activeCopy.noResultBody}
           </p>
-          <div className="mt-xl grid w-full max-w-sm gap-sm">
-            <Button onClick={handleStartNewYarn} className="h-14 text-label-lg">
+          <div className="mt-lg flex w-full max-w-[320px] flex-col gap-sm sm:max-w-none sm:flex-row sm:justify-center sm:gap-sm">
+            <Button
+              onClick={handleStartNewYarn}
+              className="h-[50px] w-full min-w-[190px] whitespace-nowrap !rounded-2xl px-6 text-label-md sm:w-auto"
+            >
               <MessageSquarePlus aria-hidden="true" size={20} />
               <span>{activeCopy.pasteNewNotice}</span>
             </Button>
             <Button
               variant="secondary"
               onClick={() => handleLoadSample(0)}
-              className="h-14 text-label-lg"
+              className="h-[50px] w-full min-w-[190px] whitespace-nowrap !rounded-2xl px-6 text-label-md sm:w-auto"
             >
               {activeCopy.trySampleNotice}
             </Button>

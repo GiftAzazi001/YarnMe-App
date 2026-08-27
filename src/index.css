@@ -240,6 +240,26 @@ button {
   animation: ambient-pulse 7s ease-in-out infinite alternate;
 }
 
+.home-hero-enter {
+  animation: yarnme-home-enter 520ms ease-out both;
+}
+
+.home-hero-enter-delay-1 {
+  animation-delay: 70ms;
+}
+
+.home-hero-enter-delay-2 {
+  animation-delay: 120ms;
+}
+
+.home-hero-enter-delay-3 {
+  animation-delay: 160ms;
+}
+
+.home-card-enter {
+  animation: yarnme-home-card-enter 560ms ease-out 130ms both;
+}
+
 @keyframes ambient-pulse {
   0% {
     background-color: #f8f9ff;
@@ -252,12 +272,39 @@ button {
   }
 }
 
+@keyframes yarnme-home-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes yarnme-home-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
   .ambient-pulse {
+    animation: none;
+  }
+
+  .home-hero-enter,
+  .home-card-enter {
     animation: none;
   }
 }

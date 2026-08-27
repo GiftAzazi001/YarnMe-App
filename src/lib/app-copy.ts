@@ -169,8 +169,8 @@ export const appCopy: Record<LanguageCode, AppCopy> = {
       title: "Your Yarn",
       emptyBody:
         "Your recent explanations will appear here after you yarn a notice.",
-      startYarn: "Start Yarn",
-      trySampleNotice: "Try Sample Notice",
+      startYarn: "Paste new notice",
+      trySampleNotice: "Try sample notice",
       subtitle: "Review your recent explanations and insights.",
       fallbackTitle: "YarnMe explanation",
       today: "Today",
@@ -261,9 +261,9 @@ export const appCopy: Record<LanguageCode, AppCopy> = {
     history: {
       title: "Your Yarn",
       emptyBody:
-        "Your recent explanations go show here after you yarn a notice.",
-      startYarn: "Start Yarn",
-      trySampleNotice: "Try Sample Notice",
+        "Paste notice, upload document, or try one example make you see how YarnMe works.",
+      startYarn: "Paste new notice",
+      trySampleNotice: "Try sample notice",
       subtitle: "Check your recent explanations and insights.",
       fallbackTitle: "YarnMe explanation",
       today: "Today",

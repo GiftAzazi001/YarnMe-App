@@ -47,23 +47,26 @@ export function HistoryScreen() {
   if (historyList.length === 0) {
     return (
       <AppShell header="brand" className="lg:bg-result-background">
-        <section className="flex min-h-[calc(100dvh-220px)] flex-col items-center justify-center py-xl text-center">
-          <div className="mb-lg flex h-20 w-20 items-center justify-center rounded-full bg-surface-container-high text-primary">
+        <section className="mx-auto flex min-h-[calc(100dvh-220px)] w-full max-w-[640px] flex-col items-center justify-center py-lg text-center">
+          <div className="mb-md flex h-20 w-20 items-center justify-center rounded-full bg-surface-container-high text-primary">
             <FileClock aria-hidden="true" size={40} />
           </div>
           <h1 className="text-headline-lg-mobile text-primary">{activeCopy.title}</h1>
-          <p className="mt-sm max-w-[320px] text-body-lg text-on-surface-variant">
+          <p className="mt-sm max-w-[460px] text-body-lg text-on-surface-variant">
             {activeCopy.emptyBody}
           </p>
-          <div className="mt-xl grid w-full max-w-xs gap-sm">
-            <Button onClick={() => router.push("/")} className="h-12 text-label-md">
+          <div className="mt-lg flex w-full max-w-[320px] flex-col gap-sm sm:max-w-none sm:flex-row sm:justify-center sm:gap-sm">
+            <Button
+              onClick={() => router.push("/")}
+              className="h-[50px] w-full min-w-[190px] whitespace-nowrap !rounded-2xl px-6 text-label-md sm:w-auto"
+            >
               <MessageSquarePlus aria-hidden="true" size={20} />
               <span>{activeCopy.startYarn}</span>
             </Button>
             <Button
               variant="secondary"
               onClick={() => handleLoadSample(0)}
-              className="h-12 text-label-md"
+              className="h-[50px] w-full min-w-[190px] whitespace-nowrap !rounded-2xl px-6 text-label-md sm:w-auto"
             >
               <BriefcaseBusiness aria-hidden="true" size={18} />
               <span>{activeCopy.trySampleNotice}</span>

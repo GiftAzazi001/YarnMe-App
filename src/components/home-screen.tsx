@@ -267,7 +267,7 @@ export function HomeScreen() {
               onClick={() => setLanguage(item.value)}
               aria-pressed={isSelected}
               className={[
-                "min-h-[44px] rounded-full border px-md text-label-lg transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95",
+                "min-h-[44px] rounded-full border px-md text-label-lg transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:hover:shadow-none motion-reduce:active:scale-100",
                 isSelected
                   ? "border-primary bg-primary text-on-primary shadow-button"
                   : "border-outline-variant bg-surface-container-lowest text-on-surface hover:border-primary hover:text-primary",
@@ -406,27 +406,27 @@ export function HomeScreen() {
       className="bg-result-background"
       mainClassName="md:max-w-[850px] lg:max-w-none lg:px-0"
     >
-      <div className="mx-auto w-full pb-xl pt-xs md:pb-xl md:pt-md lg:grid lg:min-h-[calc(100dvh-76px)] lg:max-w-[1240px] lg:grid-cols-[minmax(0,0.82fr)_minmax(520px,1.18fr)] lg:items-center lg:gap-lg lg:px-lg lg:py-lg xl:max-w-[1280px]">
-        <section className="py-sm md:py-lg lg:max-w-[520px] lg:py-0">
-          <p className="text-label-sm font-bold uppercase text-on-surface-variant">
+      <div className="mx-auto w-full pb-xl pt-md md:pb-xl md:pt-md lg:grid lg:min-h-[calc(100dvh-76px)] lg:max-w-[1240px] lg:grid-cols-[minmax(0,0.82fr)_minmax(520px,1.18fr)] lg:items-center lg:gap-lg lg:px-lg lg:py-lg xl:max-w-[1280px]">
+        <section className="py-sm md:py-lg lg:max-w-[520px] lg:-translate-y-[104px] lg:py-0">
+          <p className="home-hero-enter text-label-sm font-bold uppercase text-on-surface-variant">
             {activeCopy.eyebrow}
           </p>
-          <h1 className="mt-xs max-w-[340px] text-[38px] font-extrabold leading-[1.08] text-primary md:mt-sm md:max-w-[720px] md:text-[52px] md:leading-[1.04] lg:max-w-[520px] lg:text-[64px] lg:leading-[1.02]">
+          <h1 className="home-hero-enter home-hero-enter-delay-1 mt-xs max-w-[340px] text-[38px] font-extrabold leading-[1.08] text-primary md:mt-sm md:max-w-[720px] md:text-[52px] md:leading-[1.04] lg:max-w-[520px] lg:text-[64px] lg:leading-[1.02]">
             {activeCopy.heading}
           </h1>
-          <p className="mt-xs max-w-[620px] text-body-lg text-on-surface-variant md:mt-sm md:text-[20px] md:leading-[30px] lg:max-w-[500px] lg:text-[24px] lg:leading-[34px]">
+          <p className="home-hero-enter home-hero-enter-delay-2 mt-xs max-w-[620px] text-body-lg text-on-surface-variant md:mt-sm md:text-[20px] md:leading-[30px] lg:max-w-[500px] lg:text-[24px] lg:leading-[34px]">
             {activeCopy.supporting}
           </p>
-          <p className="mt-sm hidden max-w-[520px] text-body-lg text-on-surface-variant lg:block">
+          <p className="home-hero-enter home-hero-enter-delay-2 mt-sm hidden max-w-[520px] text-body-lg text-on-surface-variant lg:block">
             {activeCopy.desktopSupporting}
           </p>
-          <p className="mt-sm text-label-lg font-bold text-primary md:mt-md">
+          <p className="home-hero-enter home-hero-enter-delay-3 mt-sm text-label-lg font-bold text-primary md:mt-md">
             {activeCopy.languageLine}
           </p>
         </section>
 
         <section className="lg:mt-0">
-          <div className="rounded-2xl bg-surface-container-lowest p-sm shadow-card md:p-md lg:p-xl">
+          <div className="home-card-enter rounded-2xl bg-surface-container-lowest p-sm shadow-card md:p-md lg:p-xl">
             <div className="mb-md grid grid-cols-2 rounded-full bg-surface-container-high p-1 lg:mb-lg lg:rounded-xl lg:bg-surface-container-low">
               <button
                 type="button"
@@ -436,7 +436,7 @@ export function HomeScreen() {
                   mode === "paste"
                     ? "bg-primary text-on-primary shadow-button"
                     : "text-on-surface-variant hover:bg-surface-container-lowest hover:text-primary",
-                  "min-h-[48px] rounded-full px-md text-label-lg font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 lg:rounded-lg",
+                  "min-h-[48px] rounded-full px-md text-label-lg font-bold transition duration-200 ease-out hover:-translate-y-px hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:hover:shadow-none motion-reduce:active:scale-100 lg:rounded-lg",
                 ].join(" ")}
               >
                 {activeCopy.pasteTab}
@@ -449,7 +449,7 @@ export function HomeScreen() {
                   mode === "upload"
                     ? "bg-primary text-on-primary shadow-button"
                     : "text-on-surface-variant hover:bg-surface-container-lowest hover:text-primary",
-                  "min-h-[48px] rounded-full px-md text-label-lg font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 lg:rounded-lg",
+                  "min-h-[48px] rounded-full px-md text-label-lg font-bold transition duration-200 ease-out hover:-translate-y-px hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:hover:shadow-none motion-reduce:active:scale-100 lg:rounded-lg",
                 ].join(" ")}
               >
                 {activeCopy.uploadTab}
@@ -496,7 +496,7 @@ export function HomeScreen() {
             <Button
               onClick={handleStartYarn}
               disabled={isAnalyzing}
-              className="mt-md h-14 w-full text-label-lg font-bold md:h-[56px] lg:mt-lg"
+              className="mt-md h-14 w-full text-label-lg font-bold duration-200 ease-out hover:-translate-y-0.5 hover:brightness-105 motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 md:h-[56px] lg:mt-lg"
             >
               {isAnalyzing ? (
                 <>
@@ -547,7 +547,7 @@ export function HomeScreen() {
                   key={example.key}
                   type="button"
                   onClick={() => handleUseExample(example.index)}
-                  className="flex min-h-[84px] items-center gap-md rounded-2xl bg-surface-container-low p-md text-left shadow-soft transition hover:-translate-y-0.5 hover:bg-surface-container focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-0"
+                  className="flex min-h-[84px] items-center gap-md rounded-2xl bg-surface-container-low p-md text-left shadow-soft transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-surface-container hover:shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:hover:shadow-soft motion-reduce:active:scale-100"
                 >
                   <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${tone}`}>
                     <Icon aria-hidden="true" size={24} strokeWidth={2.2} />
